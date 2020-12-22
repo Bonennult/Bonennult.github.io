@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。 1. 线性空间线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)=\sum_i a_ix_i$，因此可以看出来包含了数乘和加法两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系">
+<meta name="keywords" content="线性空间,赋范空间,Banach空间,Hamel基,Schauder基,线性算子,算子范数,线性泛函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="泛函分析笔记2：赋范空间">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;11&#x2F;10&#x2F;functional-analysis&#x2F;ch2-normed-space&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。 1. 线性空间线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)=\sum_i a_ix_i$，因此可以看出来包含了数乘和加法两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-11-10T12:18:48.214Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/11/10/functional-analysis/ch2-normed-space/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>泛函分析笔记2：赋范空间 | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/10/functional-analysis/ch2-normed-space/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          泛函分析笔记2：赋范空间
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-11-10 20:15:17 / Modified: 20:18:48" itemprop="dateCreated datePublished" datetime="2020-11-10T20:15:17+08:00">2020-11-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Functional-Analysis/" itemprop="url" rel="index"><span itemprop="name">Functional Analysis</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/11/10/functional-analysis/ch2-normed-space/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/10/functional-analysis/ch2-normed-space/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。</p>
+<h2 id="1-线性空间"><a href="#1-线性空间" class="headerlink" title="1. 线性空间"></a>1. 线性空间</h2><p>线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)=\sum_i a_ix_i$，因此可以看出来包含了<strong>数乘</strong>和<strong>加法</strong>两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系的自洽性，我们还需要规定一些其他的运算规则。最后，给出来线性空间的定义：</p>
+<a id="more"></a>
+<p>考虑 $\mathbb{K=C\ or\ R}, X\ne \varnothing,\forall x,y\in X,\forall \lambda\in\mathbb{K}$，可以定义 $x+y\in X,\lambda x\in X$，如果满足</p>
+<ol>
+<li>$x+y=y+x$</li>
+<li>$(x+y)+z=x+(y+z)$</li>
+<li>$\exists 0\in X,\forall x\in X, x+0=0+x=x$</li>
+<li>$\forall x,\exists! y\in X,x+y=0,y=-x$</li>
+<li>$\alpha(\beta x)=(\alpha\beta)x$</li>
+<li>$1x=x$</li>
+<li>$(\alpha+\beta)x=\alpha x+\beta x$</li>
+<li>$\alpha(x+y)=\alpha x+\alpha y$</li>
+</ol>
+<p>则称 $X$ 为 $\mathbb{K}$ 上的<strong>线性空间</strong>。</p>
+<p><strong><em>例子 1</em></strong>：$S=\{(x_n)_{n\ge1},x_n\in\mathbb{K} \}$，定义加法 $(x_n)_{n\ge1}+(y_n)_{n\ge1}=(x_n+y_n)_{n\ge1}\in S$，定义数乘 $\lambda(x_n)_{n\ge1}=(\lambda x_n)_{n\ge1}\in S$，那么可以验证 $S$ 为线性空间。</p>
+<p><strong><em>例子 2</em></strong>：$C[a,b]$，定义 $(f+g)(t)=f(t)+g(t), (\lambda f)(t)=\lambda f(t)$，可以验证 $C[a,b]$ 为线性空间。</p>
+<p><strong>定义</strong>：$X$ 为 $\mathbb{K}$ 上的线性空间，$Y\subset X$，称 $Y$ 为 $X$ 的线性子空间，若 $\forall x,y\in Y,\forall \lambda\in\mathbb{K}$，有 $x+y\in Y,\lambda x\in Y$，并且 $Y$ 本身也是线性空间。</p>
+<p><strong><em>例子 3</em></strong>：$\ell^\infty \subset S$ 是线性空间。</p>
+<p><strong><em>例子 4</em></strong>：$\ell^p \subset S,1\le p &lt; \infty$ 是线性空间。</p>
+<p><strong><em>例子 5</em></strong>：$\ell^p \subset c_0(x_n\to0的序列\{(x_n)\}) \subset c(x_n收敛的序列) \subset \ell^\infty\subset S(无穷维序列)$，每一个都是线性空间。</p>
+<p><strong><em>例子 6</em></strong>：$P$ 所有多项式的集合，$P\subset C[a,b]$ 也是线性空间。</p>
+<p><strong>命题</strong>：若 $X$ 为线性空间，$(Y_i)_{i\in I}$ 为 $X$ 的一族线性子空间，则 $Y=\bigcap_{i\in I}Y_i$ 仍然是 $X$ 的线性子空间。</p>
+<p><strong>定义</strong>：$X$ 为线性空间，$M\subset X$ 非空，令 $\mathcal{E}$ 为所有包含 $M$ 的线性子空间，那么一定有 $X\in\mathcal{E}$，因此 $\mathcal{E}$ 一定非空。令 $Z=\bigcap_{Y\in\mathcal{E}}Y$ 也一定是 $X$ 的线性子空间，记 $Z=\text{span}(M)$ 称为 $M$ <strong>生成的线性子空间</strong>。</p>
+<p><strong>命题</strong>：若 $M\subset X$ 非空，那么 $Z=\text{span}(M) = \{\sum_i^n \lambda_i x_i,n\ge1,x_i\in M,\lambda_i\in\mathbb{K}\}$ 为包含 $M$ 的 $X$ 的<strong>最小线性子空间</strong>。</p>
+<p>证明：略。</p>
+<p><strong><em>例子 1</em></strong>：$X=S,e_n=(0,\cdots,0,1,0,\cdots)\in S, M=\{e_n,n\ge1\}\subset S$，则 $\text{span}(M)=c_{00}$(只有有限个元素非零的无穷维序列)。</p>
+<p><strong>定义</strong>：$M\subset X$ 为<strong>线性无关</strong>的，若 $\forall x_1,…,x_n\in M$ 两两不等，都有 $x_1,…,x_n$ 都线性无关(也即任意有限个元素都线性无关)。</p>
+<p><strong><em>例子 2</em></strong>：$X=C[a,b],\alpha_1&lt;\alpha_2&lt;\cdots&lt;\alpha_n\le\cdots, f_n=e^{\alpha_n t}\in C[a,b]$，那么取 $M=\{f_1,f_2,\cdots\}$ 是线性无关的 $\iff \forall n\ge1, f_1,…,f_n$ 线性无关。</p>
+<p><em>证明</em>：利用线性相关的定义，重复求导、相减的过程，细节略。</p>
+<p><strong>定义</strong>： $X$ 为线性空间，若 $X$ 中存在 $n$ 个元素线性无关，但任意 $n+1$ 个元素都线性相关，则称 $X$ 为 $n$ <strong>维</strong>的，记为 $\text{dim}X=n$。若 $\forall n\ge1,\exists x_!,…,x_n$ 线性无关，则称 $X$ 为<strong>无穷维</strong>的。</p>
+<p><strong>命题</strong>：$\text{dim}X=n,\forall x\in X$ 都存在唯一的系数 $a_1,…,a_n$ 使得 $x=a_1x_1+\cdots+a_nx_n$。</p>
+<p>证明：略。</p>
+<p>对于复空间 $\mathbb{C}^n$，认为 $\text{dim}\mathbb{C}^n=2n$。</p>
+<p><strong>定义</strong>：$X$ 为线性空间，$M\subset X$ 线性无关，若 $\text{span}(M)=X$，则称 $M$ 为 $X$ 的 <strong>Hamel 基</strong>。</p>
+<blockquote>
+<p><strong>命题</strong>：$\forall x\in X$，则 $\exists x_1,…,x_n\in M$ 两两不等，$\exists \lambda_1,…,\lambda_n\in\mathbb{K}$ 均不为 0，使得 $x=\lambda_1 x_1+…+\lambda_n x_n$，并且上述<strong>表示唯一</strong>。</p>
+<p>证明：略。</p>
+</blockquote>
+<p><strong><em>例子 1</em></strong>：$\{e_1,e_1,…\}$ 为 $c_{00}$ 的 Hamel 基。</p>
+<p><strong>定理</strong>：$X$ 为线性空间，$M\subset X$ 线性无关，则 $\exists N$ 为 $X$ 的 Hamel 基，使得 $M\subset N$。</p>
+<blockquote>
+<p><strong>小结</strong>：这一部分主要是讲解了线性空间的定义，最关键的概念就在于</p>
+<ol>
+<li>对于加法和数乘封闭；</li>
+<li>可以找到一组基，任意向量都可以用基的线性组合来表示，并且表示方法唯一。</li>
+</ol>
+</blockquote>
+<h2 id="2-赋范空间与Banach空间"><a href="#2-赋范空间与Banach空间" class="headerlink" title="2. 赋范空间与Banach空间"></a>2. 赋范空间与Banach空间</h2><p>假设 $X$ 为 $\mathbb{K}$ 上的线性空间，定义范数运算 $\Vert\cdot\Vert:X\to \mathbb{R}$，满足如下条件：</p>
+<ol>
+<li>$\Vert x\Vert \ge 0$</li>
+<li>$\Vert x\Vert =0\iff x=0$</li>
+<li>$\Vert\lambda x\Vert=|\lambda|\cdot\Vert x\Vert$</li>
+<li>$\forall x,y\in X, \Vert x+y\Vert\le \Vert x\Vert + \Vert y\Vert$</li>
+</ol>
+<p>则称 $\Vert\cdot\Vert$ 为 $X$ 上的范数，$(X,\Vert\cdot\Vert)$ 为<strong>赋范空间</strong>。</p>
+<p><strong>定义</strong>：在赋范空间中，$\forall x,y\in X$，若定义 $d(x,y)=\Vert x-y\Vert$，那么该方法定义的 $d(x,y)$ 也是度量，称为 $\Vert\cdot\Vert$ <strong>诱导的度量</strong>。若此时 $(X,d)$ 为<strong>完备空间</strong>，则称 $(X,\Vert\cdot\Vert)$ 为 <strong>Banach 空间</strong>（即完备的赋范空间）。</p>
+<p><strong>注</strong>：由于范数的定义中第 3 条存在，以及诱导度量只有 $x-y$ 决定，使得诱导度量相比于一般定义的度量还具有一些特别性质，例如：</p>
+<ul>
+<li>平移不变性 $d(x+a,y+a)=d(x+y)$</li>
+<li>齐次性 $d(\lambda x,\lambda y)=|\lambda| d(x,y)$</li>
+</ul>
+<p><strong><em>例子 1</em></strong>：$(\mathbb{K}^n,\Vert\cdot\Vert_\infty),(\mathbb{K}^n,\Vert\cdot\Vert_p),(\ell^\infty,\Vert\cdot\Vert_\infty),(\ell^p,\Vert\cdot\Vert_p),(c_{0},\Vert\cdot\Vert_\infty),(c,\Vert\cdot\Vert_\infty)$ 均为 Banach 空间。</p>
+<p><strong><em>例子 2</em></strong>：$S=\{(x_n)_{n\ge1},x_n\in\mathbb{K}\},d(x,y)=\sum_n \frac{1}{2^n}\frac{|x_n-y_n|}{1+|x_n-y_n|}$，<strong>不存在</strong> $S$ 上的范数 $\Vert\cdot\Vert$ 使 $d$ 被诱导出，因为 $d$ 不满足齐次性。</p>
+<p> <strong><em>例子 3</em></strong>：$(C[a,b],\Vert\cdot\Vert_\infty)$ 为 Banach 空间，$(C[a,b],\Vert\cdot\Vert_p)$ 不是 Banach 空间。</p>
+<p><strong><em>例子 4</em></strong>：离散度量不满足齐次性，因此不可能由范数诱导出。</p>
+<p><strong>命题 1</strong>：$(X,\Vert\cdot\Vert_\infty)$ 为赋范空间，$Y$ 为 $X$ 的线性子空间。若 $Y$ 为 Banach 空间，则 $Y$ 在 $X$ 中必为闭集。</p>
+<p><strong>命题 2</strong>：$(X,\Vert\cdot\Vert_\infty)$ 为 Banach 空间，$Y\subset X$ 为闭集线性子空间，则 $Y$ 必为 Banach 空间。</p>
+<p>证明：赋范空间的线性子空间仍然是赋范空间，完备空间一定要是闭集。细节略。</p>
+<blockquote>
+<p>只需要掌握关键点，那么上面的命题都可以由下面的关键点轻松导出：</p>
+<ol>
+<li>完备空间一定是闭集；完备空间的子空间也完备 $\iff$ 该子空间为闭集；</li>
+<li>赋范空间 + 完备性 = Banach 空间。</li>
+</ol>
+</blockquote>
+<p><strong>命题</strong>：若 $(X,\Vert\cdot\Vert)$ 为 Banach 空间，$x_n\in X$，且 $\sum_n^\infty \Vert x_n\Vert &lt; \infty$，则 $\sum^\infty x_n$ 收敛。</p>
+<p>证明：完备空间中，证明序列收敛可以证明序列是柯西列。</p>
+<p><strong>定义</strong>：$(X,\Vert\cdot\Vert)$ 为赋范空间，$e_n\in X(n\ge 1)$，称 $(e_n)_{n\ge1}$ 为 $X$ 的一组 <strong>Schauder 基</strong>，若 $\forall x\in X, \exists ! \lambda_n,x=\sum^\infty_n \lambda_n e_n$。</p>
+<p><strong>命题</strong>：若 $X$ 有 Schauder 基，那么 $X$ 一定是可分的。</p>
+<p>证明：可以取 $M=\{\sum^n_{i=1}x_ie_i \in X, n\ge1, x_i\in\mathbb{Q} \}$，是可数个可数集的并。</p>
+<blockquote>
+<p>Hamel 基与 Schauder 基的区别：</p>
+<ol>
+<li>最主要的区别是 Hamel 基可以是有限维也可以是无穷维的，这由集合 $X$ 的维数决定，而 Schauder 基则只定义在无穷维上；</li>
+<li>前者针对线性空间，后者针对 Banach 空间。</li>
+</ol>
+</blockquote>
+<h2 id="3-有限维赋范空间"><a href="#3-有限维赋范空间" class="headerlink" title="3. 有限维赋范空间"></a>3. 有限维赋范空间</h2><p>有限维赋范空间相比于一般的赋范空间有很多很好的性质，比如所有范数等价、有限维赋范空间都是 Banach 空间。</p>
+<p>假设 $X$ 为 $\mathbb{K}$ 上的线性空间，并且存在两个范数 $\Vert\cdot\Vert_1,\Vert\cdot\Vert_2$，称二者等价，若</p>
+<script type="math/tex; mode=display">
+\exists \alpha,\beta > 0,\forall x\in X,\quad \alpha\Vert x\Vert_1\le \Vert x\Vert_2\le \beta\Vert x\Vert_2</script><p>此时 $(X,\Vert\cdot\Vert_1),(X,\Vert\cdot\Vert_2)$ 有：</p>
+<ul>
+<li>相同的收敛列、柯西列；</li>
+<li>相同的开集、闭集、闭包、内部；</li>
+<li>$(X,\Vert\cdot\Vert_1)$ Banach $\iff (X,\Vert\cdot\Vert_2)$ Banach；</li>
+</ul>
+<blockquote>
+<p><strong>引理</strong>：$(X,\Vert\cdot\Vert)$，$Y\subset X$ 为有限维线性子空间，设 $e_1,…,e_n$ 为 $Y$ 的一组基，则 $\exists c &gt; 0,\forall \lambda_1,…,\lambda_n \in \mathbb{K}$，有</p>
+<script type="math/tex; mode=display">
+c(|\lambda_1|+\cdots+|\lambda_n|) \le \Vert\lambda_1 e_1+\cdots+\lambda_n e_n\Vert \le \max_i\Vert e_i\Vert (|\lambda_1|+\cdots+|\lambda_n|)</script><p>证明：需要用到 Bolzano-Weierstrass 定理，即<strong>有界列存在收敛子列</strong>。反证法，证明略。</p>
+<p><strong>定理</strong>：若 $\text{dim}X&lt;\infty$，则 $X$ 上的<strong>范数互相等价</strong>，且均为 Banach 空间。</p>
+<p>证明：只需要证明所有范数与 $\Vert\cdot\Vert_1$ 范数等价，且 $(X,\Vert\cdot\Vert_1)$ 构成 Banach 空间。</p>
+</blockquote>
+<p><strong>推论</strong>：$(X,\Vert\cdot\Vert)$，若 $Y\subset X$ 为有限维线性子空间，则 $Y$ 为闭集。</p>
+<p>有限维赋范空间除了这个良好的性质（一定是 Bananch 空间）之外，还有其他的好性质。下面引入紧集的概念。</p>
+<p><strong>定义</strong>：$(X,d)$，$M\subset X$ 为紧集，若 $\forall x_n\in M,\exists n_k\uparrow \infty,\exists x\in M, x_{n_k}\to x(k\to \infty).$</p>
+<p>实际上，紧集的概念跟完备性的概念有点像，前者是任意序列一定存在收敛子列，后者说明柯西列一定是收敛列。他们都跟序列的收敛性有关，后面也可以看到，他们都跟闭集有一定的关系。</p>
+<p>实际上，紧集一定是有界闭集，但是闭集不一定是紧集。不过对于有限维赋范空间来说，二者等价，后面会有定理专门证明。</p>
+<p><strong>定理</strong>：$(X,d)$，若 $M\subset X$ 为<strong>紧集</strong>，则 $M$ 一定<strong>完备</strong>，并且一定是<strong>有界闭集</strong>。</p>
+<p><strong>定理</strong>：$(X,d)$，$M\subset X$ 为紧集，$N\subset M$，则 $N$ 为紧集 $\iff N$ 为闭集。</p>
+<p>证明：略。</p>
+<p><strong>定理</strong>：$(X,\Vert\cdot\Vert)$，$\text{dim}X=n&lt;\infty$，$M\subset X$ 为紧集 $\iff M$ 为有界闭集。</p>
+<p><strong>证明</strong>：必要性易证，充分性证明的关键是首先找到 Hamel 基表示，将在 $M$ 中寻找收敛子列的任务分解到对每一个坐标维度上寻找收敛子列，而这可以根据 Bolzano-Weiertrass 定理得到，然后再根据每个坐标为度上的收敛子列得到 $M$ 中的收敛子列。证毕。</p>
+<p><strong>引理</strong>：$(X,\Vert\cdot\Vert)$，$M\subsetneq X$ 为闭集线性子空间，对于 $\forall 0 &lt; \theta &lt; 1$，$\exists z\in X,\Vert z\Vert =1,\forall y\in M,\Vert z-y\Vert \ge \theta.$</p>
+<p><strong>证明</strong>：固定 $\forall v\in Y^c$，令 $a=\inf_{y\in Y}\Vert v-y\Vert$，那么 $a&gt;0$，否则的话与 $Y$ 是闭集相矛盾。因此存在 $y_0\in Y$ 使得 $a\le \Vert v-y_0\Vert \le a/\varepsilon$。那么我们就可以把这个 $v$ 平移到 $0$ 点附近，同时也把对应的 $y_0$ 平移到原点附近，也就是取 $y=\frac{v-y_0}{\Vert v-y_0\Vert}$，那么 $\Vert y\Vert=1$，并且可以验证 $\forall z\in X$，都有 $\Vert y-z\Vert \ge \varepsilon.$ 证毕。</p>
+<p><strong>定理</strong>(F.Riesz)：$(X,\Vert\cdot\Vert)$，则 $\text{dim}X&lt;\infty \iff \bar{B}(0,1)$ 为紧集。</p>
+<p><strong>证明</strong>：必要性易证。充分性可以利用反证法，若维度无穷，则可以构造出特殊的序列，使得序列中任意两个元素的距离都大于 $1/2$（这要用到上一个引理），从而不存在收敛子列，即 $\bar{B}(0,1)$ 不是紧集。证毕。</p>
+<p><strong>推论</strong>：$(X,\Vert\cdot\Vert)$，则 $\text{dim}X&lt;\infty\iff S(0,1)=\{x:\Vert x\Vert=1\}$ 为紧集。</p>
+<p><strong>定义</strong>：$(X,d)$，$M\subset X$ 非空，$x_0\in X$，令</p>
+<script type="math/tex; mode=display">
+\rho(x_0, M) = \inf_{y\in M} d(x_0, y)</script><p>称为 $x_0$ 到 $M$ 的距离。若 $\exists y_0\in M$，使得 $\rho(x_0,M)=d(x_0,y_0)$，则称 $y_0$ 为 $x_0$ 在 $M$ 中的最佳逼近元。</p>
+<p><strong>命题</strong>：设 $M$ 为非空紧集，则 $\forall x_0 \in X$，$x_0$ 在 $M$ 中的最佳逼近元存在。</p>
+<p><strong>命题</strong>：$(X,d), M$ 为 $X$ 的有限维线性子空间，$\forall x_0\in X, \rho(x_0,M)=\inf_{y\in M}\{\Vert x_0-y\Vert\}$，则 $x_0$ 在 $M$ 中的最佳逼近元一定存在。</p>
+<p>证明：略。</p>
+<blockquote>
+<p><strong>小结</strong>：本部分主要证明了有限维赋范空间的良好性质：</p>
+<ol>
+<li>有限维赋范空间<strong>所有范数等价</strong>，且均为 <strong>Banach 空间</strong>；</li>
+<li>有限维赋范空间<strong>紧集</strong>（即任意序列存在收敛子列） $\iff$ <strong>有界闭集</strong>；</li>
+</ol>
+</blockquote>
+<h2 id="4-有界线性算子"><a href="#4-有界线性算子" class="headerlink" title="4. 有界线性算子"></a>4. 有界线性算子</h2><h3 id="4-1-线性算子"><a href="#4-1-线性算子" class="headerlink" title="4.1 线性算子"></a>4.1 线性算子</h3><p><strong>定义</strong>：$X,Y$ 为 $\mathbb{K}$ 上的线性子空间，$D(T)\subset X$ 为线性子空间，$T:D(T)\to Y$ 为<strong>线性算子</strong>，若 $\forall x,y\in D(T),\forall \lambda \in \mathbb{K}$，都有</p>
+<script type="math/tex; mode=display">
+T(x+y)=Tx+Ty,\quad T(\lambda x)=\lambda Tx \\
+\iff T(\lambda x+\mu y) = \lambda Tx + \mu Ty.</script><p><strong>定义</strong>：零空间 $N(T)=\text{ker}(T)=\{x\in D(T), Tx=0\}=T^{-1}(0),$ 像空间 $R(T)=\{Tx, x\in D(T)\}.$</p>
+<p><strong>命题</strong>：$N(T)$ 为 $D(T)$ 的线性子空间，$R(T)$ 为 $Y$ 的线性子空间。</p>
+<p><strong>命题</strong>：$T$ 为单射 $N(T)=\{0\}$。</p>
+<p><strong>命题</strong>：$M\subset D(T)$ 为 $n$ 维线性子空间，则 $\text{dim} T(M) \le n$。</p>
+<p>证明：略。</p>
+<h3 id="4-2-算子范数"><a href="#4-2-算子范数" class="headerlink" title="4.2 算子范数"></a>4.2 算子范数</h3><p><strong>定义</strong>：对于线性算子，若 $\exists c\ge 0,\forall x\in D(T), \Vert Tx\Vert_Y \le c\Vert x\Vert_X$，则称 $T$ 是<strong>有界的</strong>。使该式成立的最小 $c$ 称为 $T$ 的<strong>范数</strong>，等价于</p>
+<script type="math/tex; mode=display">
+\Vert T\Vert = \sup_{x\in D(T),x\ne 0} \frac{\Vert Tx\Vert}{\Vert x\Vert} = \sup_{x\in D(T),\Vert x\Vert \le 1} \frac{\Vert Tx\Vert}{\Vert x\Vert} = \sup_{x\in D(T),\Vert x\Vert < 1} \frac{\Vert Tx\Vert}{\Vert x\Vert}</script><p><strong><em>例子 1</em></strong>：$X=Y=C[0,1],(Tx)(t)=\int_0^t x(\tau)d\tau$，则 $\Vert T\Vert = 1, x(t)\equiv1$ 时取到。</p>
+<p><strong><em>例子 2</em></strong>：$X=C[-1,1],f(x)=\int_{-1}^0x(t)dt - \in_0^1x(t)dt,|f(x)|\le 2\Vert x\Vert_\infty$，但是 $2$ 取不到。</p>
+<p><strong><em>例子 3</em></strong>：$T:C^1[0,1]\to C[0,1],T(x)=x’$，那么 $T$ 为线性<strong>无界</strong>算子。令 $x_n(t)=t^n,t\in[0,1]$，则 $(Tx_n)(t)=nt^{n-1}.$</p>
+<p><strong><em>例子 4</em></strong>：$A=(a_{ij})_{n\times n},a_{ij}\in\mathbb{K},Tx=Ax.\Vert T\Vert=?$</p>
+<p><strong>定理</strong>：$X,Y$ 为 $\mathbb{K}$ 上的赋范空间，假设 $\text{dim}X=n&lt;\infty$，$T:X\to Y$ 是线性算子，那么 $T$ 一定是有界的。</p>
+<p>证明：用基来表示 $X$ 中的元素，并利用性质 $\Vert\lambda_1 e_1+\cdots+\lambda_n e_n\Vert \ge c(|\lambda_1|+\cdots+|\lambda_n|)$ 即可得证。证毕。</p>
+<p><strong>定理</strong>：$X,Y$ 为 $\mathbb{K}$ 上的赋范空间，$T:X\to Y$ 是线性算子，那么以下命题等价</p>
+<ol>
+<li>$T$ 有界</li>
+<li>$T$ 处处连续</li>
+<li>$T$ 在 $X$ 上某一点连续</li>
+</ol>
+<p><strong>证明</strong>：$(1)\to(2),(2)\to(3)$ 易证；</p>
+<p>$(2)\to(1)$：由于 $T$ 连续，在 $x=0$ 点附近，存在 $\delta&gt;0, \forall x \in B(0,\delta)$，有 $\Vert Tx\Vert\le1$，因而 $\Vert Tx\Vert \le \frac{2}{\delta}\Vert x\Vert$；</p>
+<p>$(3)\to(2)$：由于 $T$ 为线性算子，那么只要在任一 $x_0$ 点处连续，经过平移可以得到 $T$ 在任意一点处都连续。</p>
+<p>证毕。</p>
+<p><strong>推论</strong>：$X,Y$ 为 $\mathbb{K}$ 上的赋范空间，$T:X\to Y$ 线性有界，那么 $N(T)$ 为 $X$ 的闭集线性子空间。</p>
+<p>用符号 $B(X,Y)$ 来表示 $X\to Y$ 的有界线性算子。</p>
+<p><strong>定理</strong>：假设 $X$ 为赋范空间，$Y$ 为 Banach 空间，那么 $B(X,Y)$ 为 Banach 空间。</p>
+<p>证明：略。</p>
+<blockquote>
+<p><strong>小结</strong>：本部分定义了线性算子，以及有界线性算子的范数。由于<strong>有界线性算子等价于连续算子</strong>，今后主要研究的也是有界线性算子。</p>
+</blockquote>
+<h2 id="5-有界线性泛函"><a href="#5-有界线性泛函" class="headerlink" title="5. 有界线性泛函"></a>5. 有界线性泛函</h2><p>从赋范空间 $X$ 到 $\mathbb{K}$ 的线性算子称为 $X$ 上的<strong>线性泛函</strong>。</p>
+<p><strong>定义</strong>：$(X,\Vert\cdot\Vert)$，用 $X’$ 表示 $X$ 上所有有界线性泛函全体，称之为 $X$ 的<strong>拓扑对偶空间</strong>。</p>
+<p>若 $X$ 上的一组基为 $\{e_1,e_2,\cdots\}$（有限维或者无限维均可），那么 $f:X\to\mathbb{K}$ 由 $f(e_1),f(e_2),\cdots$ 唯一确定。</p>
+<p><strong>定义</strong>：$(X,Y)$ 赋范空间，若存在线性算子 $T:X\to Y$，并且 $\Vert Tx\Vert_Y = \Vert x\Vert_X,\forall x\in X$，则称 $X,Y$ 为<strong>等距同构</strong>的，因此可以视 $X,Y$ 为同一空间。</p>
+<p><strong>命题</strong>：$(\mathbb{K}^n,\Vert\cdot\Vert_2)’ = (\mathbb{K}^n,\Vert\cdot\Vert_2)$（此命题的含义为 $(\mathbb{K}^n,\Vert\cdot\Vert_2)$ 的对偶空间等价于 $n$ 维空间，也就是说每一个有界线性泛函都可以映射为 $\mathbb{K}^n$ 上的一个点/向量）</p>
+<p>证明：略。</p>
+<p>对于形如 $(X,\Vert\cdot\Vert_1)’ = (Y,\Vert\cdot\Vert_2)$ 的命题，证明思路如下。</p>
+<p><strong>证明</strong>：要想证明两个空间等价，那么只需要找到一个线性映射  $T:(X,\Vert\cdot\Vert_1)’ \to (Y,\Vert\cdot\Vert_2)$，使得映射前后在两个空间的范数相等。考虑对 $\forall f\in (X,\Vert\cdot\Vert_1)’$，取 $f\mapsto (f(e_1),f(e_2),\cdots,f(e_n))$，那么按照以下步骤证明：</p>
+<ol>
+<li>证明对于任意 $\forall f\in (X,\Vert\cdot\Vert_1)’$，的确有 $(f(e_1),f(e_2),\cdots,f(e_n))\in Y$，即映射的源空间和像空间的确是 $X,Y$；</li>
+<li>证明 $T$ 为单射（即证明若 $Tf=Tg$，那么有 $f=g$）；</li>
+<li>证明 $T$ 为满射，此时 $T$ 为双射（即证明 $\forall \alpha \in Y$，存在 $f \in (X,\Vert\cdot\Vert_1)’$ 使得 $Tf=\alpha$，一般需要构造线性算子 $f$）；</li>
+<li>证明 $\Vert Tf\Vert = \Vert f\Vert$。</li>
+</ol>
+<p>证毕。</p>
+<p>因此按照上面的方法，还可以证明如下几个命题。</p>
+<ul>
+<li>$(\mathbb{K}^n,\Vert\cdot\Vert_p)’ = (\mathbb{K}^n,\Vert\cdot\Vert_q),\frac{1}{p}+\frac{1}{q}=1$</li>
+<li>$(c_0, \Vert \cdot\Vert_\infty)’=(\ell^1,\Vert \cdot\Vert_1)$</li>
+<li>$(\ell^1,\Vert \cdot\Vert_1)’=(\ell^\infty,\Vert \cdot\Vert_\infty)$</li>
+<li>$(\ell^p,\Vert \cdot\Vert_p)’=(\ell^q,\Vert \cdot\Vert_q)$</li>
+</ul>
+<blockquote>
+<p><strong>小结</strong>：有界线性泛函可以映射到某个我们熟悉的空间，对于后面的处理很有用。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BA%BF%E6%80%A7%E7%A9%BA%E9%97%B4/" rel="tag"># 线性空间</a>
+              <a href="/tags/%E8%B5%8B%E8%8C%83%E7%A9%BA%E9%97%B4/" rel="tag"># 赋范空间</a>
+              <a href="/tags/Banach%E7%A9%BA%E9%97%B4/" rel="tag"># Banach空间</a>
+              <a href="/tags/Hamel%E5%9F%BA/" rel="tag"># Hamel基</a>
+              <a href="/tags/Schauder%E5%9F%BA/" rel="tag"># Schauder基</a>
+              <a href="/tags/%E7%BA%BF%E6%80%A7%E7%AE%97%E5%AD%90/" rel="tag"># 线性算子</a>
+              <a href="/tags/%E7%AE%97%E5%AD%90%E8%8C%83%E6%95%B0/" rel="tag"># 算子范数</a>
+              <a href="/tags/%E7%BA%BF%E6%80%A7%E6%B3%9B%E5%87%BD/" rel="tag"># 线性泛函</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/18/functional-analysis/ch1-metric-space/" rel="prev" title="泛函分析笔记1：度量空间">
+      <i class="fa fa-chevron-left"></i> 泛函分析笔记1：度量空间
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/11/functional-analysis/ch3-hilbert-space/" rel="next" title="泛函分析笔记3：内积空间">
+      泛函分析笔记3：内积空间 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-线性空间"><span class="nav-text">1. 线性空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-赋范空间与Banach空间"><span class="nav-text">2. 赋范空间与Banach空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-有限维赋范空间"><span class="nav-text">3. 有限维赋范空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-有界线性算子"><span class="nav-text">4. 有界线性算子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-线性算子"><span class="nav-text">4.1 线性算子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-算子范数"><span class="nav-text">4.2 算子范数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-有界线性泛函"><span class="nav-text">5. 有界线性泛函</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <% if (theme.snow1){ %>
+    <script type="text/javascript" src="/js/snow1.js"></script>
+  <% } %>
+  <% if (theme.snow2){ %>
+    <script type="text/javascript" src="/js/snow2.js"></script>
+  <% } %>
+
+</body>
+</html>

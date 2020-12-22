@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前面的章节要么从原始问题出发，要么从对偶问题出发，通过求解近似点或者一个子优化问题进行迭代，而且推导过程中我们发现根据问题的参数特征，比如矩阵 $A$ 是瘦高型的还是矮胖型的，采用对偶和原始问题的复杂度会不一样，可以选择一个更简单的。而这一节，我们将要从原始对偶问题出发来优化，什么是原始对偶问题呢？就是原始优化变量和对偶优化变量（原始函数和共轭函数）混合在一块，看下面的原理就知道了。">
+<meta name="keywords" content="近似点算子,PPA,算子分裂法,原始对偶问题,PDHG">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记25：原始对偶问题 PDHG">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;24&#x2F;optimization&#x2F;ch25-PDHG&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面的章节要么从原始问题出发，要么从对偶问题出发，通过求解近似点或者一个子优化问题进行迭代，而且推导过程中我们发现根据问题的参数特征，比如矩阵 $A$ 是瘦高型的还是矮胖型的，采用对偶和原始问题的复杂度会不一样，可以选择一个更简单的。而这一节，我们将要从原始对偶问题出发来优化，什么是原始对偶问题呢？就是原始优化变量和对偶优化变量（原始函数和共轭函数）混合在一块，看下面的原理就知道了。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;25-example.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;25-set-valued.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;25-transformation.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;25-maximal-monotone.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;25-ppa.PNG">
+<meta property="og:updated_time" content="2020-05-24T03:42:10.889Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;25-example.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/05/24/optimization/ch25-PDHG/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>凸优化笔记25：原始对偶问题 PDHG | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/24/optimization/ch25-PDHG/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          凸优化笔记25：原始对偶问题 PDHG
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-05-24 10:41:17 / Modified: 11:42:10" itemprop="dateCreated datePublished" datetime="2020-05-24T10:41:17+08:00">2020-05-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Convex-Optimization/" itemprop="url" rel="index"><span itemprop="name">Convex Optimization</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/05/24/optimization/ch25-PDHG/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/05/24/optimization/ch25-PDHG/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前面的章节要么从原始问题出发，要么从对偶问题出发，通过求解近似点或者一个子优化问题进行迭代，而且推导过程中我们发现根据问题的参数特征，比如矩阵 $A$ 是瘦高型的还是矮胖型的，采用对偶和原始问题的复杂度会不一样，可以选择一个更简单的。而这一节，我们将要从<strong>原始对偶问题</strong>出发来优化，什么是原始对偶问题呢？就是原始优化变量和对偶优化变量（原始函数和共轭函数）混合在一块，看下面的原理就知道了。</p>
+<a id="more"></a>
+<h2 id="1-原始对偶问题"><a href="#1-原始对偶问题" class="headerlink" title="1. 原始对偶问题"></a>1. 原始对偶问题</h2><p>现在考虑原始优化问题，其中 $f,g$ 为闭凸函数</p>
+<script type="math/tex; mode=display">
+\min \quad f(x)+g(Ax)</script><p>这个问题我们前面遇到好多次了，一般都是取 $y=Ax$ 加一个约束条件然后计算拉格朗日函数（自己拿小本本写一下），再求解 KKT 条件对吧。好，让我们列出来 KKT 条件：</p>
+<ol>
+<li>原始可行性：$x\in\text{dom}f,Ax=y\in\text{dom}g$</li>
+<li>$x,z$ 是拉格朗日函数的最小值点，因此 $-A^Tz\in\partial f(x),z\in\partial g(y)$</li>
+</ol>
+<p>其中 $z\in\partial g(y)\iff Ax=y\in\partial g^\star(z)$。也就是说，要想求解 KKT 条件，我们需要的实际上是求解下面一个“方程”</p>
+<script type="math/tex; mode=display">
+0 \in\left[\begin{array}{cc}0 & A^{T} \\-A & 0\end{array}\right]\left[\begin{array}{l}x \\z\end{array}\right]+\left[\begin{array}{c}\partial f(x) \\\partial g^{\star}(z)\end{array}\right]</script><blockquote>
+<p><strong>Remarks</strong>：这个式子可重要啦，后面还会用到！而且他从集合的角度揭示了我们求解最优值问题的本质，那就是找一个<strong>包含关系</strong>。</p>
+<p>比如上面的这个式子我们用一个算子来表示为 $T(x,z)$，我们求解最优值实际上要就是找满足 $0\in T(x,z)$ 的解 $(x^\star,z^\star)$。而对一个简单的优化问题 $\min f(x)$，我们实际上就是在找满足 $0\in\partial f(x)$ 的 $x^\star$，这个时候我们可以把次梯度看作是一个算子。</p>
+<p>在这一章的后面几个小节，我们将从算子的角度重新来看待优化问题，看完之后可以再回到这里细细品味。</p>
+</blockquote>
+<p>好我们先把这个东西放一放，再来看看另一个跟拉格朗日函数有关的函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+h(x,z)&=\inf_{y}L(x,y,z)\\
+&=f(x)-g^\star(z)+z^TAx
+\end{aligned}</script><p>如果计算 $0\in\partial h(x,z)$ 是不是就是上面那个方程？！也就是说上面很重要的那个方程实际上就是在求解 $h(x,z)$ 的鞍点！很容易理解，因为 KKT 条件本质上就是在求拉格朗日函数的鞍点（当然，如果存在不等式约束就不一定是鞍点了）。大家注意，你看这个 $h$ <del>他又长又宽</del>，这个 $h$ 同时包含了原始变量 $x$ 和对偶变量 $z$，同时还既有原始函数 $f$ 又有对偶函数 $g^\star$，所以我们叫他原始对偶优化问题，$h$ 也是部分拉格朗日函数(partial Lagrangian)。</p>
+<h2 id="2-PDHG"><a href="#2-PDHG" class="headerlink" title="2. PDHG"></a>2. PDHG</h2><p>前面说了我们要求解的问题是</p>
+<script type="math/tex; mode=display">
+0 \in\left[\begin{array}{cc}
+0 & A^{T} \\
+-A & 0
+\end{array}\right]\left[\begin{array}{l}
+x \\
+z
+\end{array}\right]+\left[\begin{array}{c}
+\partial f(x) \\
+\partial g^{\star}(z)
+\end{array}\right]</script><blockquote>
+<p><strong>PDHG(Primal-dual hybrid gradient method)</strong>的迭代格式是这样的</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{\tau f}\left(x_{k}-\tau A^{T} z_{k}\right) \\
+z_{k+1}=\operatorname{prox}_{\sigma g^{*}}\left(z_{k}+\sigma A\left(2 x_{k+1}-x_{k}\right)\right)
+\end{array}</script><p>步长需要满足 $\sigma\tau|A|_2^2\le1$。</p>
+</blockquote>
+<p>是不是看起来跟 DR 方法很像呢？事实上他们两个是等价的，后面会证明。回忆 ADMM，我们每次需要求解的优化问题是</p>
+<script type="math/tex; mode=display">
+x^{k+1}=\arg\min_x f(x)+\frac{t}{2}\| Ax-y^k+\frac{z^k}{t}\|^2</script><p>要求解这个优化问题，我们往往会得到一个线性方程，还需要计算 $(A^TA)^{-1}$，这就很麻烦了。但是观察 PDHG 的迭代格式，我们只需要求解 $f,g^\star$ 的 $\text{prox}$ 算子，我们只需要求解 $A,A^T$ 之间的乘法而不需要求逆了，这就方便很多了。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/25-example.png" alt="example"></p>
+<p>看上面这个例子，我们前面说过 ADMM 等价于 dual DR，不过这个例子里边 PDHG 是最慢的。</p>
+<p>下面我们就来证明一下如何从 PDHG 导出 DR 方法。</p>
+<p>对于优化问题 $\min f(x)+g(x)$，实际上相当于 $\min f(x)+g(Ax),A=I$，另外我们再取 PDHG 中的 $\sigma=\tau=1$，那么就可以得到</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{f}\left(x_{k}-z_{k}\right) \\
+z_{k+1}=\operatorname{prox}_{g^{*}}\left(z_{k}+2 x_{k+1}-x_{k}\right)
+\end{array}</script><p>这实际上就是 DR Splitting 那一节讲的原始对偶形式。</p>
+<p>另外也可以从 DR 方法导出 PDHG。我们可以将原问题 $\min f(x)+g(A x)$ 改写为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\operatorname{minimize} &\quad f(x)+g(A x+B y) \\
+\text{subject to} &\quad y=0
+\end{aligned}</script><p>这里边我们可以选择 $B$ 使 $AA^T+BB^T=(1/\alpha)I$，其中 $1/\alpha\ge|A|_2^2$。为什么这么选呢？令 </p>
+<script type="math/tex; mode=display">
+\tilde{g}(x,y)=g(Ax+By)=g\left(\tilde{A}\left(\begin{array}{c}x\\ y\end{array}\right)\right)</script><p>那么就有 $\tilde{A}\tilde{A}^T=(1/\alpha)I$，而前面讲 $\text{prox}$ 算子的时候我们讲了一个性质，满足这个条件的时候 $\text{prox}_{\tilde{g}}$ 可以用 $\text{prox}_g$ 来表示。</p>
+<blockquote>
+<p>复习：$\text{prox}$ 算子的性质</p>
+<p>$f(x)=g(Ax+b)$，对于一般的 $A$ 并不能得到比较好的性质，但如果 $AA^T=(1/\alpha)I$，则有 </p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{f}(x) &=\left(I-\alpha A^{T} A\right) x+\alpha A^{T}\left(\operatorname{prox}_{\alpha^{-1} g}(A x+b)-b\right) \\&=x-\alpha A^{T}\left(A x+b-\operatorname{prox}_{\alpha^{-1} g}(A x+b)\right)\end{aligned}</script></blockquote>
+<p>我们还可以取 $\tilde{f}(x,y)=f(x)+\delta_{0}(y)$，那么优化问题就变成了 $\min \tilde{f}(x,y)+\tilde{g}(x,y)$，应用 DR 方法迭代格式为</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+{\left[\begin{array}{c}
+x_{k+1} \\
+y_{k+1}
+\end{array}\right]=\operatorname{prox}_{\tau \tilde{f}} \left(\left[\begin{array}{c}
+x_{k}-p_{k} \\
+y_{k}-q_{k}
+\end{array}\right]\right)} \\
+{\left[\begin{array}{c}
+p_{k+1} \\
+q_{k+1}
+\end{array}\right]=\operatorname{prox}_{(\tau \tilde{g})^{*}}\left(\left[\begin{array}{c}
+p_{k}+2 x_{k+1}-x_{k} \\
+q_{k}+2 y_{k+1}-y_{k}
+\end{array}\right]\right)}
+\end{array}</script><p>我们需要计算 $\text{prox}_{\tilde{f}}$ 和 $\text{prox}_{\tilde{g}}$</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{\tau \tilde{f}}(x, y)=\left[\begin{array}{c}
+\operatorname{prox}_{\tau f}(x) \\
+0
+\end{array}\right]</script><script type="math/tex; mode=display">
+\begin{aligned}
+\operatorname{prox}_{\tau \tilde{g}}(x, y) &=\left[\begin{array}{c}
+x \\
+y
+\end{array}\right]-\alpha\left[\begin{array}{c}
+A^{T} \\
+B^{T}
+\end{array}\right]\left(A x+B y-\operatorname{prox}_{(\tau / \alpha) g}(A x+B y)\right.\\
+&=\left[\begin{array}{c}
+x \\
+y
+\end{array}\right]-\tau\left[\begin{array}{c}
+A^{T} \\
+B^{T}
+\end{array}\right] \operatorname{prox}_{\sigma g^{\star}}(\sigma(A x+B y)) \\
+&=\left[\begin{array}{c}
+x \\
+y
+\end{array}\right]-\operatorname{prox}_{(\tau \tilde{g})^\star}(x, y)
+\end{aligned}</script><p>其中 $\sigma=\alpha/\tau$。代入到 DR 方法的迭代方程</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+{\left[\begin{array}{c}
+x_{k+1} \\
+y_{k+1}
+\end{array}\right]=\left[\begin{array}{c}
+\operatorname{prox}_{\tau f}\left(x_{k}-p_{k}\right) \\
+0
+\end{array}\right]} \\
+{\left[\begin{array}{c}
+p_{k+1} \\
+q_{k+1}
+\end{array}\right]=\tau\left[\begin{array}{c}
+A^{T} \\
+B^{T}
+\end{array}\right] \operatorname{prox}_{\sigma g^{*}}\left(\sigma\left[\begin{array}{cc}
+A & B
+\end{array}\right]\left[\begin{array}{c}
+p_{k}+2 x_{k+1}-x_{k} \\
+q_{k}+2 y_{k+1}-y_{k}
+\end{array}\right]\right)}
+\end{array}</script><p>根据第二个式子应该有 $\left[\begin{array}{c} p_{k} \\ q_{k} \end{array}\right] \in \text { range }\left[\begin{array}{c} A^{T} \\ B^{T} \end{array}\right]$，因此存在 $z_k$ 满足 $\left[\begin{array}{c}p_{k+1} \\<br>q_{k+1}\end{array}\right]=\tau\left[\begin{array}{c}A^{T} \\ B^{T}\end{array}\right]z_k$。同时因为 $AA^T+BB^T=(1/\alpha)I$，所以能找到唯一的 $z_k$ 同时满足 $z_k=\sigma(Ap_k+Bq_k)$。那么把 $z_k$ 代入到上面的迭代方程，同时消掉 $y_k=0$，就可以得到</p>
+<script type="math/tex; mode=display">
+x_{k+1}=\operatorname{prox}_{\tau f}\left(x_{k}-\tau A^{T} z_{k}\right)\\ z_{k+1}=\operatorname{prox}_{\sigma g^{*}}\left(z_{k}+\sigma A\left(2 x_{k+1}-x_{k}\right)\right)</script><p>这就是 PDHG 算法，其中 $\sigma\tau=\alpha\le 1/|A|^2$。</p>
+<p>当然，我们还可以对 PDHG 算法进行改进，比如：</p>
+<p><strong>PDHG withover relaxation</strong>：$\rho_k\in(0,2)$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\bar{x}_{k+1} &=\operatorname{prox}_{\tau f}\left(x_{k}-\tau A^{T} z_{k}\right) \\
+\bar{z}_{k+1} &=\operatorname{prox}_{\sigma g^{*}}\left(z_{k}+\sigma A\left(2 \bar{x}_{k+1}-x_{k}\right)\right) \\
+\left[\begin{array}{c}
+x_{k+1} \\
+z_{k+1}
+\end{array}\right] &=\left[\begin{array}{c}
+x_{k} \\
+z_{k}
+\end{array}\right]+\rho_{k}\left[\begin{array}{c}
+\bar{x}_{k+1}-x_{k} \\
+\bar{z}_{k+1}-z_{k}
+\end{array}\right]
+\end{aligned}</script><p>其收敛性与 DR 方法相同。</p>
+<p><strong>PDHG with acceleration</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{\tau_{k} f}\left(x_{k}-\tau_{k} A^{T} z_{k}\right) \\
+z_{k+1}=\operatorname{prox}_{\sigma_{k} g^{*}}\left(z_{k}+\sigma_{k} A\left(\left(1+\theta_{k}\right) x_{k+1}-\theta_{k} x_{k}\right)\right)
+\end{array}</script><p>对于强凸函数 $f$，以及适当的选择 $\sigma_k,\tau_k,\theta_k$，收敛速度可以达到 $1/k^2$。</p>
+<h2 id="3-单调算子"><a href="#3-单调算子" class="headerlink" title="3. 单调算子"></a>3. 单调算子</h2><p>单调算子(monotone operator)我们在讲次梯度的时候提到过，这次我们从算子的角度理解一下 PDHG 方法。</p>
+<h3 id="3-1-集值算子"><a href="#3-1-集值算子" class="headerlink" title="3.1 集值算子"></a>3.1 集值算子</h3><p>集值算子(Multivalued/set-valued operator)，就是说映射得到的不是单个的值，而是一个集合。比如算子 $F$ 把向量 $x\in R^n$ 映射到集合 $F(x)\subseteq R^n$。有两个定义</p>
+<ul>
+<li>定义域 $\operatorname{dom} F =\left\{x \in \mathbf{R}^{n} | F(x) \neq \emptyset\right\}$</li>
+<li>图 $\operatorname{gr}(F) =\left\{(x, y) \in \mathbf{R}^{n} \times \mathbf{R}^{n} | x \in \operatorname{dom} F, y \in F(x)\right\}$</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/25-set-valued.png" alt="set-valued"></p>
+<p>对算子放缩、求逆等操作都可以表示为对“<strong>图</strong>”的<strong>线性变换</strong>。</p>
+<p><strong>求逆</strong>：$F^{-1}(x)=\{y| x\in F(y)\}$</p>
+<script type="math/tex; mode=display">
+\operatorname{gr}\left(F^{-1}\right)=\left[\begin{array}{cc}
+0 & I \\
+I & 0
+\end{array}\right] \operatorname{gr}(F)</script><p><strong>放缩</strong>：$(\lambda F)(x)=\lambda F(x)$ and $(F\lambda)(x)=F(\lambda x)$</p>
+<script type="math/tex; mode=display">
+\operatorname{gr}(\lambda F)=\left[\begin{array}{cc}
+I & 0 \\
+0 & \lambda I
+\end{array}\right] \operatorname{gr}(F), \quad \operatorname{gr}(F \lambda)=\left[\begin{array}{cc}
+(1 / \lambda) I & 0 \\
+0 & I
+\end{array}\right] \operatorname{gr}(F)</script><p><strong>相加</strong>：$(I+\lambda F)(x)=\{x+\lambda y | y \in F(x)\}$</p>
+<script type="math/tex; mode=display">
+\operatorname{gr}(I+\lambda F)=\left[\begin{array}{cc}
+I & 0 \\
+I & \lambda I
+\end{array}\right] \operatorname{gr}(F)</script><p>注意 $(I+\lambda F)$ 这个形式很特别，如果我们取 $F(x)=\partial f(x)$，那么 $(I+\lambda F)^{-1}$ 实际上就是 $\text{prox}$ 算子（$\lambda&gt;0$），不过我们给他取了另一个名字 <strong>Resolvent</strong>，$y\in(I+\lambda F)^{-1}(x)\iff x-y\in\partial f(y)$，用图来表示就是</p>
+<script type="math/tex; mode=display">
+\operatorname{gr}\left((I+\lambda F)^{-1}\right)=\left[\begin{array}{cc}
+I & \lambda I \\
+I & 0
+\end{array}\right] \operatorname{gr}(F)</script><p><strong><em>例子 1</em></strong>：$(I+\lambda \partial f(x))^{-1}=\text{prox}_{\lambda f}(x)$</p>
+<p><strong><em>例子 2</em></strong>：$F(x)=Ax+b$，$(I+\lambda F)^{-1}(x)=(I+\lambda A)^{-1}(x-\lambda b)$，后面这个求逆完全就是矩阵求逆。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/25-transformation.PNG" alt="transformation"></p>
+<h3 id="3-2-单调算子"><a href="#3-2-单调算子" class="headerlink" title="3.2 单调算子"></a>3.2 单调算子</h3><p><strong>定义</strong>：$F$ 是单调算子，若</p>
+<script type="math/tex; mode=display">
+(y-\hat{y})^{T}(x-\hat{x}) \geq 0 \quad \text { for all } x, \hat{x} \in \operatorname{dom} F, y \in F(x), \hat{y} \in F(\hat{x})</script><p>如果用图表示，就应该有</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{c}x-\hat{x} \\y-\hat{y}\end{array}\right]^{T}\left[\begin{array}{cc}0 & I \\I & 0\end{array}\right]\left[\begin{array}{c}x-\hat{x} \\y-\hat{y}\end{array}\right] \geq 0 \quad \text { for all }(x, y),(\hat{x}, \hat{y}) \in \operatorname{gr}(F) \quad (\bigstar)</script><p>上面这个式子很重要！！！后面会多次用到。</p>
+<p><strong><em>例子</em></strong>：我们需要用到的单调算子有：</p>
+<ol>
+<li>凸函数次梯度 $\partial f(x)$</li>
+<li>仿射变换 $F(x)=Cx+d$，并且需要满足 $C+C^T\succeq 0$</li>
+<li>他们的组合，比如</li>
+</ol>
+<script type="math/tex; mode=display">
+F(x, z)=\left[\begin{array}{cc}
+0 & A^{T} \\
+-A & 0
+\end{array}\right]\left[\begin{array}{c}
+x \\
+z
+\end{array}\right]+\left[\begin{array}{c}
+\partial f(x) \\
+\partial g^{*}(z)
+\end{array}\right]</script><p>除了单调算子，还有个<strong>最大单调算子(Maximal monotone operator)</strong>，也就是说它的图不能是其他任意单调算子的真子集，举个栗子就明白了，参考下面的图。我们可以知道b闭凸函数的偏导数、单调仿射变换是最大单调算子，除此之外，还有定理。</p>
+<p><strong>Minty’s Theorem</strong>：单调算子 $F$ 是最大单调算子当且仅当</p>
+<script type="math/tex; mode=display">
+\operatorname{im}(I+F)=\bigcup_{x \in \operatorname{dom} F}(x+F(x))=\mathbf{R}^{n}</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/25-maximal-monotone.PNG" alt="maximal-monotone"></p>
+<p>除了单调性质，我们在证明收敛新的时候往往还要用到 Lipschitz 连续、强凸性质等等，实际上我们前面已经介绍过很多次了，而且用了一堆名词 coercivity、expansive、firmly nonexpansive，我实在是晕了……这里我们就再总结一下。假设算子 $F$ 有 $y=F(x),\hat{y}=F(\hat{x})$</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>$(y-\hat{y})^T(x-\hat{x})\ge \mu \Vert x-\hat{x}\Vert^2,\mu&gt;0$</th>
+<th>$(y-\hat{y})^T(x-\hat{x})\ge \gamma \Vert y-\hat{y}\Vert^2,\gamma&gt;0$</th>
+<th>$(y-\hat{y})^T(x-\hat{x})\le L\Vert x-\hat{x}\Vert^2 $</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>coercive</td>
+<td>co-coercive</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>ﬁrmly nonexpansive($\gamma=1$)</td>
+<td>nonexpansive($L\le 1$)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Lipschitz continuous</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>它们之间的关系</strong></p>
+<ol>
+<li>如果满足 co-coercive 并且有 $\gamma=1$，则其为 firmly nonexpansive</li>
+<li>如果满足 Lipschitz continuous 并且有 $L\le 1$，则其为 nonexpansive</li>
+<li>co-coercivity 可以导出 Lipschitz continuous($L=1/\gamma$)，但反之不一定。不过对于闭凸函数他们是等价的。</li>
+</ol>
+<p><strong>它们各自的性质</strong></p>
+<p><strong>Coercivity</strong>等价于 $F-\mu I$ 是一个单调算子，也等价于</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{c}
+x-\hat{x} \\
+y-\hat{y}
+\end{array}\right]^{T}\left[\begin{array}{cc}
+-2 \mu I & I \\
+I & 0
+\end{array}\right]\left[\begin{array}{c}
+x-\hat{x} \\
+y-\hat{y}
+\end{array}\right] \geq 0 \quad \text { for all }(x, y),(\hat{x}, \hat{y}) \in \operatorname{gr}(F)</script><p><strong>Co-coercivity</strong>等价于</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{c}
+x-\hat{x} \\
+y-\hat{y}
+\end{array}\right]^{T}\left[\begin{array}{cc}
+0 & I \\
+I & -2 \gamma I
+\end{array}\right]\left[\begin{array}{c}
+x-\hat{x} \\
+y-\hat{y}
+\end{array}\right] \geq 0 \quad \text { for all }(x, y),(\hat{x}, \hat{y}) \in \operatorname{gr}(F)</script><p>对前面提到的 resolvent 来说，算子单调性有以下重要性质：</p>
+<blockquote>
+<p>重要性质：<strong>算子是单调的，当且仅当他的 resolvant 是 firmly nonexpansive</strong></p>
+<p>证明只需要根据矩阵等式 $\lambda\left[\begin{array}{ll}0 &amp; I \\ I &amp; 0\end{array}\right]=\left[\begin{array}{cc}I &amp; I \\ \lambda I &amp; 0 \end{array}\right]\left[\begin{array}{cc}0 &amp; I \\ I &amp; -2 I \end{array}\right]\left[\begin{array}{cc}I &amp; \lambda I \\ I &amp; 0 \end{array}\right]$ 就可以得到（结合 $(\bigstar)$ 式）。</p>
+</blockquote>
+<p>另外单调算子 $F$ 是最大单调算子，当且仅当</p>
+<script type="math/tex; mode=display">
+\text{dom}(I+\lambda F)^{-1}=R^n</script><p>这可以由 Minty’s theorem 得到。</p>
+<h2 id="4-近似点算法"><a href="#4-近似点算法" class="headerlink" title="4. 近似点算法"></a>4. 近似点算法</h2><h3 id="4-1-回望-PPA"><a href="#4-1-回望-PPA" class="headerlink" title="4.1 回望 PPA"></a>4.1 回望 PPA</h3><p>前面讲到了 Resolvant  $(I+\lambda F)^{-1}$ 实际上就是近似点算子，而 PPA 就是在计算近似点，回忆 PPA 的迭代格式为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x_{k+1} &= \text{prox}_{t_k f}(x_k) \\
+&= (1+t_k F)^{-1}(x_k)
+\end{aligned}</script><p>我们实际上就是在找 Resolvant 算子 $R_t=(I+t F)^{-1}$ 的<strong>不动点</strong></p>
+<script type="math/tex; mode=display">
+x=R_t(x)\iff x\in(1+tF)(x)\iff 0\in F(x)</script><p>加入松弛后的 PPA 可以写成下面的形式，其中 $\rho_k\in(0,2)$ 为松弛参数</p>
+<script type="math/tex; mode=display">
+x_{k+1}=x_k+\rho_k(R_{t_k}(x_k)-x_k)</script><p>那么<strong>收敛性</strong>是怎么样呢？假如 $F^{-1}(0)\neq \varnothing$，在满足以下条件时 PPA 可以收敛</p>
+<ul>
+<li>$t_k=t&gt;0,\rho_k=\rho\in(0,2)$ 都选择常数值；或者</li>
+<li>$t_k,\rho_k$ 随迭代次数变化，但是需要满足 $t_k\ge t_{\min}&gt; 0,0&lt;\rho_{\min}\le \rho_k\le \rho_{\max}&lt; 2,\forall k$</li>
+</ul>
+<p>这个收敛性的证明可以通过证明 Resolvant 的 firmly nonexpansiveness 性质来完成（可以去复习 DR 方法的收敛性证明，那里实际上也是一个不动点迭代）。</p>
+<h3 id="4-2-再看-PPA"><a href="#4-2-再看-PPA" class="headerlink" title="4.2 再看 PPA"></a>4.2 再看 PPA</h3><p>先打个预防针，这一部分很重要！！！看完以后也许会对 PPA 以及其他优化算法有更多的理解！！！</p>
+<p>首先我们回忆 PPA 是什么。对于优化问题 $\min f(x)$，迭代格式为 $x^+=\text{prox}_{tf}(x)$。如果我们把 $\partial f(x)$ 用算子 $F$ 来表示，那么优化问题实际上就是在找满足 $0\in F(x)$ 的解，PPA 实际上就是在找不动点 $x=(1+tF)^{-1}(x)$。</p>
+<p>假如我们现在引入一个<strong>非奇异矩阵</strong> $A$，令 $x=Ay$ 代入到原方程（为什么要这么做？如果合适地选择 $A$ 的话，有时候可以使问题简化，跟着推导的思路看到最后就能理解了，来吧！）</p>
+<p>记 $g(y)=f(Ay)$，那么优化问题变为了 $\min g(y)$，注意由于 $A$ 是非奇异的，所以这个问题跟原问题 $\min f(x)$ 是等价的。我们需要找满足 $0\in\partial g(y)=A^T\partial f(Ay)$ 的解，于是可以定义算子 $G(y)=\partial g(y)=A^TF(Ay)$，这个时候 $G$ 的图就是做一个线性变换</p>
+<script type="math/tex; mode=display">
+\operatorname{gr}(G)=\left[\begin{array}{cc}A^{-1} & 0 \\0 & A^{T}\end{array}\right] \operatorname{gr}(F)</script><p>如果 $F$ 是一个单调算子的话，那么 $G$ 也是一个<strong>单调算子</strong>，这是因为（结合 $(\bigstar)$ 式）</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{cc}A^{-1} & 0 \\0 & A^{T}\end{array}\right]^{T}\left[\begin{array}{cc}0 & I \\I & 0\end{array}\right]\left[\begin{array}{cc}A^{-1} & 0 \\0 & A^{T}\end{array}\right]=\left[\begin{array}{cc}0 & I \\I & 0\end{array}\right]</script><p>然后对 $\min g(y)$ 应用 PPA 迭代格式为</p>
+<script type="math/tex; mode=display">
+y_{k+1}=(I+t_kG)^{-1}(y_k)</script><p>我们把 $x_k=Ay_k,G=A^TF(Ay)$ 都代入进去，就能把上面的式子等价表示为</p>
+<script type="math/tex; mode=display">
+\frac{1}{t_k}H(x_k-x)\in F(x)</script><p>其中 $H=(AA^T)^{-1}\succ 0$。这个式子又可以表示为</p>
+<script type="math/tex; mode=display">
+x_{k+1}=(H+t_kF)^{-1}(Hx_k)</script><p>因为 $\min g(y)\iff \min f(x)$，所以上面这个迭代格式也完全适用于原问题，如果取 $H=I$ 那就是原始形式的 PPA，如果取别的形式，那么就获得了推广形式的 PPA！</p>
+<p>引入 $A$ 有什么作用呢？我们看</p>
+<script type="math/tex; mode=display">
+\frac{1}{t_k}H(x_k-x)\in F(x) \iff x_{k+1}=\arg\min_x\left(f(x)+\frac{1}{2t_k}\|x-x_k\|_H^2 \right)</script><p>其中 $|x|_H^2=x^THx$，如果说 $f(x)=(1/2)|Bx-b|^2$，那么我们就可以选择 $A$ 使 $H=(1/\alpha) I-B^TB$，这样迭代求解 $x_{k+1}$ 就简单了。当然这个作用范围很有限，下面的例子更能显现他的威力。</p>
+<p>我们再回到原始对偶问题，记算子 $F$ 为</p>
+<script type="math/tex; mode=display">
+F(x,z)=\left[\begin{array}{cc}0 & A^{T} \\-A & 0\end{array}\right]\left[\begin{array}{l}x \\z\end{array}\right]+\left[\begin{array}{c}\partial f(x) \\\partial g^{\star}(z)\end{array}\right]</script><p>优化问题就是要找到 $0\in F(x,z)$。如果用原始的 PPA 算法，迭代方程为 $(x_{k+1},z_{k+1})=(I+tF)^{-1}(x_k,z_k)$，$(x_{k+1},z_{k+1})$ 是下面方程的解</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/25-ppa.PNG" alt="ppa"></p>
+<p>注意到 $x,z$ 纠缠在一起了，我们想把他们拆开来分别求解 $x,z$，问题就能更简单。怎么做呢，引入一个 $H$</p>
+<script type="math/tex; mode=display">
+H=\left[\begin{array}{cc}I & -\tau A^{T} \\-\tau A & (\tau / \sigma) I\end{array}\right]</script><p>其中若 $\sigma\tau|A|_2^2&lt; 1$ 则 $H$ 为正定矩阵。这个时候 $(x_{k+1},z_{k+1})$ 就是下面方程的解</p>
+<script type="math/tex; mode=display">
+\begin{array}{c}
+{\frac{1}{\tau}\left[\begin{array}{cc}
+I & -\tau A^{T} \\
+-\tau A & (\tau / \sigma) I
+\end{array}\right]\left[\begin{array}{c}
+x_{k}-x \\
+z_{k}-z
+\end{array}\right] \in\left[\begin{array}{cc}
+0 & A^{T} \\
+-A & 0
+\end{array}\right]\left[\begin{array}{c}
+x \\
+z
+\end{array}\right]+\left[\begin{array}{c}
+\partial f(x) \\
+\partial g^{*}(z)
+\end{array}\right] }\\
+\Updownarrow \\
+{\begin{array}{l}
+0 \in \partial f(x)+\frac{1}{\tau}\left(x-x_{k}+\tau A^{T} z_{k}\right) \\
+0 \in \partial g^{*}(z)+\frac{1}{\sigma}\left(z-z_{k}-\sigma A\left(2 x-x_{k}\right)\right)
+\end{array} }\\
+\Updownarrow \\
+{\begin{aligned}
+x_{k+1} &=(I+\tau \partial f)^{-1}\left(x_{k}-\tau A^{T} z_{k}\right) \\
+z_{k+1} &=\left(I+\sigma \partial g^{*}\right)^{-1}\left(z_{k}+\sigma A\left(2 x_{k+1}-x_{k}\right)\right)
+\end{aligned} }
+\end{array}</script><p>对于化简后的式子，我们就可以先单独求解 $x_{k+1}$，然后再求解 $z_{k+1}$。这实际上也是 PDHG 的迭代方程</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}x_{k+1}=\operatorname{prox}_{\tau f}\left(x_{k}-\tau A^{T} z_{k}\right) \\z_{k+1}=\operatorname{prox}_{\sigma g^{*}}\left(z_{k}+\sigma A\left(2 x_{k+1}-x_{k}\right)\right)\end{array}</script>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BF%91%E4%BC%BC%E7%82%B9%E7%AE%97%E5%AD%90/" rel="tag"># 近似点算子</a>
+              <a href="/tags/PPA/" rel="tag"># PPA</a>
+              <a href="/tags/%E7%AE%97%E5%AD%90%E5%88%86%E8%A3%82%E6%B3%95/" rel="tag"># 算子分裂法</a>
+              <a href="/tags/%E5%8E%9F%E5%A7%8B%E5%AF%B9%E5%81%B6%E9%97%AE%E9%A2%98/" rel="tag"># 原始对偶问题</a>
+              <a href="/tags/PDHG/" rel="tag"># PDHG</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/20/optimization/ch24-ADMM/" rel="prev" title="凸优化笔记24：ADMM">
+      <i class="fa fa-chevron-left"></i> 凸优化笔记24：ADMM
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/27/optimization/ch26-fixed-point/" rel="next" title="凸优化笔记26：不动点迭代">
+      凸优化笔记26：不动点迭代 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-原始对偶问题"><span class="nav-text">1. 原始对偶问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-PDHG"><span class="nav-text">2. PDHG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-单调算子"><span class="nav-text">3. 单调算子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-集值算子"><span class="nav-text">3.1 集值算子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-单调算子"><span class="nav-text">3.2 单调算子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-近似点算法"><span class="nav-text">4. 近似点算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-回望-PPA"><span class="nav-text">4.1 回望 PPA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-再看-PPA"><span class="nav-text">4.2 再看 PPA</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <% if (theme.snow1){ %>
+    <script type="text/javascript" src="/js/snow1.js"></script>
+  <% } %>
+  <% if (theme.snow2){ %>
+    <script type="text/javascript" src="/js/snow2.js"></script>
+  <% } %>
+
+</body>
+</html>

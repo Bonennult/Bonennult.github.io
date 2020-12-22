@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1. 凸函数1.1 凸函数定义凸函数(convex function)的定义：  f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y),\quad \forall x,y\in\text{dom}f,\theta\in[0,1]函数 $f$ 的扩展函数(extended-value extension) $\tilde{f}$ 定义为  \til">
+<meta name="keywords" content="凸函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记 4：凸函数 Convex Function">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;29&#x2F;optimization&#x2F;ch4-cvx-function&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="1. 凸函数1.1 凸函数定义凸函数(convex function)的定义：  f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y),\quad \forall x,y\in\text{dom}f,\theta\in[0,1]函数 $f$ 的扩展函数(extended-value extension) $\tilde{f}$ 定义为  \til">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;4-epigraph.PNG">
+<meta property="og:updated_time" content="2020-03-27T09:59:17.244Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;4-epigraph.PNG">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/29/optimization/ch4-cvx-function/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>凸优化笔记 4：凸函数 Convex Function | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/29/optimization/ch4-cvx-function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          凸优化笔记 4：凸函数 Convex Function
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-29 20:46:56" itemprop="dateCreated datePublished" datetime="2020-02-29T20:46:56+08:00">2020-02-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-27 17:59:17" itemprop="dateModified" datetime="2020-03-27T17:59:17+08:00">2020-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Convex-Optimization/" itemprop="url" rel="index"><span itemprop="name">Convex Optimization</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/02/29/optimization/ch4-cvx-function/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/29/optimization/ch4-cvx-function/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-凸函数"><a href="#1-凸函数" class="headerlink" title="1. 凸函数"></a>1. 凸函数</h2><h3 id="1-1-凸函数定义"><a href="#1-1-凸函数定义" class="headerlink" title="1.1 凸函数定义"></a>1.1 凸函数定义</h3><p><strong>凸函数(convex function)</strong>的定义：</p>
+<script type="math/tex; mode=display">
+f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y),\quad \forall x,y\in\text{dom}f,\theta\in[0,1]</script><p>函数 $f$ 的<strong>扩展函数(extended-value extension)</strong> $\tilde{f}$ 定义为</p>
+<script type="math/tex; mode=display">
+\tilde{f}(x)=\begin{cases}f(x),&x\in\text{dom}f\\\infty,&x\notin\text{dom}f\end{cases}</script><p>相当于对原来函数 $f$ 的定义域进行了扩展。</p>
+<a id="more"></a>
+<h3 id="1-2-常见凸函数"><a href="#1-2-常见凸函数" class="headerlink" title="1.2 常见凸函数"></a>1.2 常见凸函数</h3><h4 id="1-2-1-R"><a href="#1-2-1-R" class="headerlink" title="1.2.1 $R$"></a>1.2.1 $R$</h4><p>凸函数(convex)</p>
+<ul>
+<li>仿射函数 $ax+b$，for any $a,b\in R$</li>
+<li>指数函数 $e^{ax}$，for any $a\in R$</li>
+<li>幂函数 $x^\alpha,x\in R_{++}$，for $\alpha\ge1$ or $\alpha\le0$</li>
+<li>绝对值幂函数 $\vert x\vert^p,x\in R$，for $p\ge 1$</li>
+<li>负熵 $x\log x,x\in R_{++}$</li>
+</ul>
+<p>凹函数(concave)</p>
+<ul>
+<li>仿射函数 $ax+b$，for any $a,b\in R$</li>
+<li>幂函数 $x^\alpha,x\in R_{++}$，for $0\le\alpha\le1$</li>
+<li>对数函数 $\log x,x\in R_{++}$</li>
+</ul>
+<h4 id="1-2-2-R-n"><a href="#1-2-2-R-n" class="headerlink" title="1.2.2 $R^n$"></a>1.2.2 $R^n$</h4><ul>
+<li>仿射函数 $a^Tx+b$</li>
+<li>范数 $\Vert x\Vert_p,p\ge 1$</li>
+</ul>
+<h4 id="1-2-3-R-m-times-n"><a href="#1-2-3-R-m-times-n" class="headerlink" title="1.2.3 $R^{m\times n}$"></a>1.2.3 $R^{m\times n}$</h4><ul>
+<li>仿射函数 $f(X)=\text{tr}(A^TX)+b$</li>
+<li>谱范数 $f(X)=\Vert X\Vert_2=\sigma_{\max}(X)=(\lambda_\max(X^TX))^{1/2}$</li>
+</ul>
+<h2 id="2-凸函数判定"><a href="#2-凸函数判定" class="headerlink" title="2. 凸函数判定"></a>2. 凸函数判定</h2><h3 id="2-1-“降维打击”"><a href="#2-1-“降维打击”" class="headerlink" title="2.1 “降维打击”"></a>2.1 “降维打击”</h3><p>“降维打击”是指对于函数 $f:R^n\to R$ 限制在某一个方向上观察，若对于任意一个方向上都是凸函数，则 $f$ 就是凸函数。准确的定义如下。</p>
+<blockquote>
+<p>设 $f:R^n\to R$，有映射 $g:R\to R$</p>
+<script type="math/tex; mode=display">
+g(t)=f(x+tv),\quad \text{dom}\ g=\{t|x+tv\in\text{dom}\ f\}</script><p>则 $f$ 为凸函数<strong>当且仅当</strong> $g(t)$ 对任意 $x\in\text{dom}f,v\in R^n$ 都是凸函数。</p>
+</blockquote>
+<p><strong><em>例</em></strong>：函数 $f:S^n\to R$，有 $f(X)=\log\det X,\text{dom}f=S^n_{++}$</p>
+<script type="math/tex; mode=display">
+\begin{align}g(t)=\log\det(X+tV)&=\log\det X + \log\det(I+tX^{-1/2}VX^{-1/2})\\&=\log\det X + \sum_{i=1}^n \log(1+t\lambda_i)\end{align}</script><p>由于 $g$ 关于 $t$ 是凹函数，因此 $f$ 是凹函数。</p>
+<h3 id="2-2-一阶条件"><a href="#2-2-一阶条件" class="headerlink" title="2.2 一阶条件"></a>2.2 一阶条件</h3><blockquote>
+<p>函数 $f$ 为凸函数<strong>当且仅当</strong></p>
+<script type="math/tex; mode=display">
+f(y)\ge f(x)+\nabla f^T(x)(y-x) \quad \forall x,y\in\text{dom}f</script><p>证明：略。用定义即可。</p>
+</blockquote>
+<h3 id="2-3-二阶条件"><a href="#2-3-二阶条件" class="headerlink" title="2.3 二阶条件"></a>2.3 二阶条件</h3><blockquote>
+<p>函数 $f$ 为凸函数<strong>当且仅当</strong>海森矩阵(Hessian matrix)（若二阶可微）</p>
+<script type="math/tex; mode=display">
+\nabla^2 f(x)\succeq0 \quad \forall x\in\text{dom}f</script></blockquote>
+<p>可用海森矩阵验证为凸函数的例子</p>
+<ul>
+<li>二次函数 $f(x)=(1/2)x^TPx+q^Tx+r$ (with $P\in S^n$)</li>
+<li>最小二乘目标函数 $f(x)=\Vert Ax-b\Vert_2^2$</li>
+<li>二次函数 $f(x,y)=x^2/y$</li>
+<li>log-sum-exp $f(x)=\log\sum_k\exp x_k$</li>
+<li>几何均值 $f(x)=(\Pi_k x_k)^{1/n}$ on $R^n_{++}$</li>
+</ul>
+<h2 id="3-Sublevel-set-amp-Epigraph"><a href="#3-Sublevel-set-amp-Epigraph" class="headerlink" title="3. Sublevel set &amp; Epigraph"></a>3. Sublevel set &amp; Epigraph</h2><p>函数 $f:R^n\to R$ 的 $\alpha$ <strong>下水平集($\alpha$-sublevel set)</strong> 的定义为</p>
+<script type="math/tex; mode=display">
+C_\alpha=\{x\in\text{dom}f|f(x)\le\alpha\}</script><p><strong>凸函数的下水平集也是凸集，但是反之不一定成立</strong>。</p>
+<p>针对函数 $f:R^n\to R$ 定义的 <strong>epigraph</strong> 为</p>
+<script type="math/tex; mode=display">
+\text{epi}f=\{(x,t)\in R^{n+1}|x\in\text{dom}f,f(x)\le t\}</script><blockquote>
+<p>函数 $f$ 为凸函数<strong>当且仅当</strong>其 epigraph 为凸集。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/4-epigraph.PNG" alt="epigraph"></p>
+<p><strong>Remarks</strong>：对于 epigraph 内的点，有</p>
+<script type="math/tex; mode=display">
+\begin{align}
+t\ge f(y)\ge f(x)+\nabla f^T(x)(y-x) \\
+\iff 
+\left[\begin{array}{cc}\nabla f^T(x)\\-1\end{array}\right]
+\left(\left[\begin{array}{cc}y\\t\end{array}\right] - \left[\begin{array}{cc}x\\f(x)\end{array}\right]\right)\le0
+\end{align}</script><p>上面的式子实际上就是找到了一个在 $(x,f(x))$ 处的<strong>支撑超平面</strong>，<strong>法向量</strong>即为 $[\begin{array}{cc}\nabla f^T(x) &amp;-1\end{array}]^T$</p>
+</blockquote>
+<h2 id="4-Jensen’s-Inequality"><a href="#4-Jensen’s-Inequality" class="headerlink" title="4. Jensen’s Inequality"></a>4. Jensen’s Inequality</h2><p>对于凸函数 $f$，有</p>
+<script type="math/tex; mode=display">
+f(\mathbb{E}z)=\mathbb{E}f(z)</script><p>证明：离散情况易证，连续情况可以用一阶条件证明。</p>
+<p><strong>Lemma</strong>：$f:R^n\to R$ 为凸函数，那么 $f$ 在任一<strong>内点</strong>处都<strong>连续</strong>(连续但不一定可导)。</p>
+<p><strong>Remarks</strong>：往往绝大部分点都是可微的，但是我们经常会遇到那些不可微的点，比如 ReLU 函数。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%87%B8%E5%87%BD%E6%95%B0/" rel="tag"># 凸函数</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/26/fuzzy/ch1-set/" rel="prev" title="模糊数学笔记 1：模糊集 Fuzzy set">
+      <i class="fa fa-chevron-left"></i> 模糊数学笔记 1：模糊集 Fuzzy set
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/01/fuzzy/ch2-nearness/" rel="next" title="模糊数学笔记 2：贴近度">
+      模糊数学笔记 2：贴近度 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-凸函数"><span class="nav-text">1. 凸函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-凸函数定义"><span class="nav-text">1.1 凸函数定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-常见凸函数"><span class="nav-text">1.2 常见凸函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-R"><span class="nav-text">1.2.1 $R$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-R-n"><span class="nav-text">1.2.2 $R^n$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-R-m-times-n"><span class="nav-text">1.2.3 $R^{m\times n}$</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-凸函数判定"><span class="nav-text">2. 凸函数判定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-“降维打击”"><span class="nav-text">2.1 “降维打击”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-一阶条件"><span class="nav-text">2.2 一阶条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-二阶条件"><span class="nav-text">2.3 二阶条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Sublevel-set-amp-Epigraph"><span class="nav-text">3. Sublevel set &amp; Epigraph</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Jensen’s-Inequality"><span class="nav-text">4. Jensen’s Inequality</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <% if (theme.snow1){ %>
+    <script type="text/javascript" src="/js/snow1.js"></script>
+  <% } %>
+  <% if (theme.snow2){ %>
+    <script type="text/javascript" src="/js/snow2.js"></script>
+  <% } %>
+
+</body>
+</html>
