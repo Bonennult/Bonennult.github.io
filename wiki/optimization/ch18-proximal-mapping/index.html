@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>凸优化笔记18：近似点算子 Proximal Mapping | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="共轭函数,近似点算子" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做近似点算子(Proximal mapping)，也是为了处理非光滑问题。">
+<meta name="keywords" content="共轭函数,近似点算子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记18：近似点算子 Proximal Mapping">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;optimization&#x2F;ch18-proximal-mapping&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做近似点算子(Proximal mapping)，也是为了处理非光滑问题。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-closed-set.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-closed-set2.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-moreau.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-distance-proof1.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-distance-proof2.PNG">
+<meta property="og:updated_time" content="2020-05-09T06:06:23.931Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-closed-set.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file active"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-optimization/ch18-proximal-mapping" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%85%B1%E8%BD%AD%E5%87%BD%E6%95%B0/" rel="tag">共轭函数</a>, <a class="tag-link" href="/tags/%E8%BF%91%E4%BC%BC%E7%82%B9%E7%AE%97%E5%AD%90/" rel="tag">近似点算子</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch18-proximal-mapping/">
+            <time datetime="2020-04-16T12:39:17.000Z" itemprop="datePublished">2020-04-16</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch18-proximal-mapping.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch18-proximal-mapping.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch18-proximal-mapping.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            凸优化笔记18：近似点算子 Proximal Mapping
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做<strong>近似点算子(Proximal mapping)</strong>，也是为了处理非光滑问题。</p>
+<a id="more"></a>
+<h2 id="1-闭函数"><a href="#1-闭函数" class="headerlink" title="1. 闭函数"></a>1. 闭函数</h2><p>在引入<strong>闭函数(closed function)</strong>的概念之前，我们先回顾一下<strong>闭集</strong>的概念：集合 $\mathcal{C}$ 是闭的，如果它包含边界，也即</p>
+<script type="math/tex; mode=display">
+x^{k} \in \mathcal{C}, \quad x^{k} \rightarrow \bar{x} \quad \Rightarrow \quad \bar{x} \in \mathcal{C}</script><p>并且有以下几个简单的原则可以保持集合闭的性质：</p>
+<ol>
+<li>闭集的<strong>交集</strong>还是闭集；</li>
+<li><strong>有限个</strong>闭集的<strong>并集</strong>还是闭集；</li>
+<li>如果 $\mathcal{C}$ 是闭集，则<strong>线性映射</strong>的<strong>原象</strong>也是闭集，也即 $\{x|Ax\in\mathcal{C}\}$ 是闭集。</li>
+</ol>
+<p>第 3 条原则反过来则不一定成立，也即如果 $x\in\mathcal{C}$ 是闭集，那么 $\{Ax|x\in\mathcal{C}\}$ 则不一定是闭集，比如我们可以取函数 $f(x)=1/x$ 的 epigraph 为闭集 $\mathcal{C}$，然而 $(x,y)$ 向 $x$ 轴的投影则是一个开集，严格表示与图示如下</p>
+<script type="math/tex; mode=display">
+\mathcal{C}=\left\{\left(x_{1}, x_{2}\right) \in \mathbb{R}_{+}^{2} | x_{1} x_{2} \geq 1\right\}, \quad A=[1,0], A \mathcal{C}=\mathbb{R}_{++}</script><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>第3条逆原则反例</th>
+<th>第3条逆原则充分条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-closed-set.png" alt="counter example"></td>
+<td><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-closed-set2.PNG" alt="sufficient condition"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>当然，如果加一些其他的约束条件，则可以保证第 3 条反过来也成立：$A\mathcal{C}$ 是闭的，如果</p>
+<ol>
+<li>$\mathcal{C}$ 是闭的且为凸集；</li>
+<li>并且 $\mathcal{C}$ 不存在一个可以无穷延伸的方向(recession direction)属于 $A$ 的零空间，也即 $A y=0, \hat{x} \in \mathcal{C}, \hat{x}+\alpha y \in \mathcal{C}, \forall \alpha&gt;0 \Rightarrow y=0$，图示即如上。</li>
+</ol>
+<p>然后我们就可以定义<strong>闭函数(closed function)</strong>了，函数 $f$ 为闭的，如果他的 epigraph 为闭集或者他的所有下水平集为闭集。有以下两种简单的特殊情况：</p>
+<ol>
+<li>如果 $f$ 连续且定义域 $\text{dom}f$ 为闭的，则 $f$ 为闭函数；</li>
+<li>如果 $f$ 连续且定义域 $\text{dom}f$ 为开的，则 $f$ 为闭函数<strong>当且仅当</strong>其在 $\text{dom}f$ 边界处收敛至 $\infty$。</li>
+</ol>
+<p><strong><em>例子 1</em></strong>：$f(x)=x\log x,\quad\text{dom}f=R_+,f(0)=0$</p>
+<p><strong><em>例子 2</em></strong>：闭集的指示函数 $\delta_C(x)=\begin{cases}0&amp;x\in C\\ +\infty &amp; o.w.\end{cases}$</p>
+<p><strong><em>反例 3</em></strong>：$f(x)=x\log x,\quad\text{dom}f=R_{++}$ 或者 $f(x)=x\log x,\quad\text{dom}f=R_+,f(0)=1$ 不是闭函数</p>
+<p><strong><em>反例 4</em></strong>：开集的指示函数不是闭函数</p>
+<p>闭函数有一些有用的性质，比如：</p>
+<ol>
+<li>$f$ 为闭函数<strong>当且仅当</strong>他的所有下水平集都是闭集；</li>
+<li>如果 $f$ 为闭函数，且下水平集有界，那么存在<strong>最小值点(minimizer)</strong>。</li>
+</ol>
+<p><strong>Theorem (Weierstrass) </strong>：假设集合 $D\subset \mathcal{E}$ ($R^n$空间中有限维向量子空间) 非空且闭，并且连续函数 $f:D\to R$ 的所有下水平集都有界，则 $f$ 存在<strong>全局最小值点(global minimizer)</strong>。</p>
+<p>对于闭函数来说也有一些原则可以保持闭的性质：</p>
+<ol>
+<li>如果 $f,g$ 均为闭函数，则 $f+g$ 为闭函数</li>
+<li>如果 $f$ 为闭函数，则 $f(Ax+b)$ 为闭函数</li>
+<li>如果任意 $f_\alpha$ 都是闭函数，则 $\sup_\alpha f_\alpha(x)$ 为闭函数</li>
+</ol>
+<h2 id="2-共轭函数"><a href="#2-共轭函数" class="headerlink" title="2. 共轭函数"></a>2. 共轭函数</h2><p><strong>共轭函数(conjugate function)</strong> 前面已经讲过了，这里再简单回顾一遍。函数 $f$ 的共轭函数定义为</p>
+<script type="math/tex; mode=display">
+f^\star(y)=\sup_{x\in\text{dom}f} (y^Tx-f(x))</script><blockquote>
+<p>并且共轭函数有一些重要的性质：</p>
+<ol>
+<li>共轭函数一定是闭函数，且为凸函数，不论 $f$ 是否为凸函数或闭函数（因为 $f^\star$ 的 epigraph 可以看成很多个半空间的交集）；</li>
+<li><strong>(Fenchel’s inequality)</strong> $f(x)+f^{\star}(y) \geq x^{\top} y, \forall x, y$</li>
+<li><strong>(Legendre transform)</strong> 如果 $f$ 为凸函数且为闭函数，则有 $y \in \partial f(x) \Leftrightarrow x \in \partial f^{\star}(y) \Leftrightarrow x^{\top} y=f(x)+f^{\star}(y)$</li>
+<li>如果 $f$ 为凸函数且为闭函数，则 $f^{\star\star}=f$</li>
+</ol>
+<p>除此之外还有一些代数变换的原则，推导也都比较简单：</p>
+<ol>
+<li>$f\left(x_{1}, x_{2}\right)=g\left(x_{1}\right)+h\left(x_{2}\right), \quad f^{\star}\left(y_{1}, y_{2}\right)=g^{\star}\left(y_{1}\right)+h^{\star}\left(y_{2}\right)$</li>
+<li>$f(x)=\alpha g(x), \quad f^{\star}(y) {=} \alpha g^{\star}(y / \alpha) \quad(\bigstar)$</li>
+<li>$f(x)=g(x)+a^{\top} x+b \quad f^{\star}(y)=g^{\star}(y-a)-b$</li>
+<li>$f(x)=\inf _{u+v=x}(g(u)+h(v)) \quad f^{\star}(y)=g^{\star}(y)+h^{\star}(y)$</li>
+</ol>
+</blockquote>
+<p>共轭函数的计算就不多举例子了，这里主要列出来后面用的比较多的而且比较重要的，其他的可以参考前面的笔记 6：</p>
+<p><strong><em>例子 1</em></strong>：$C$ 为凸集，则<strong>指示函数</strong> $f(x)=\delta_C(x)$，其共轭函数为<strong>支撑函数</strong></p>
+<script type="math/tex; mode=display">
+f^\star(y) = \sup\{y^Tx|x\in C\}</script><p>如果求两次共轭函数也很容易得到：支撑函数的共轭函数为指示函数。</p>
+<p><strong><em>例子 2</em></strong>：范数 $f(x)=\Vert x\Vert$ 的共轭函数也是<strong>指示函数</strong></p>
+<script type="math/tex; mode=display">
+f^\star(y) = \left\{\begin{array}{ll}
+0 & \|y\|_{*} \leq 1 \\
+\infty & \text { otherwise }
+\end{array}\right.</script><h2 id="3-近似点算子"><a href="#3-近似点算子" class="headerlink" title="3. 近似点算子"></a>3. 近似点算子</h2><p>首先给出来<strong>近似点算子(Proximal mapping)</strong>的定义：<strong>闭凸函数</strong> $f$ 的近似点算子定义为</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{f}(x)=\underset{u}{\operatorname{argmin}}\left(f(u)+\frac{1}{2}\|u-x\|_{2}^{2}\right)</script><p>根据这个定义，实际上我们是在求解函数 $g(u)=f(u)+\frac{1}{2}|u-x|_{2}^{2}$ 的最小值，由于 $g$ 是闭函数且下水平集有界，因此最小值一定<strong>存在</strong>；同时由于 $g$ 为<strong>强凸函数</strong>，因此最小值点<strong>唯一</strong>。</p>
+<p>那么怎么理解这个算子函数 $\text{prox}_f(x)$ 呢？可以看到这实际上是一个 $\text{prox}_f:R^n\to R^n$ 的映射。如果 $u=\text{prox}_f(x)$，则应该有 $x-u\in \partial f(u)$。下面看一些简单的例子。</p>
+<p><strong><em>例子 1</em></strong>：二次函数 $A\succeq 0$</p>
+<script type="math/tex; mode=display">
+f(x)=\frac{1}{2} x^{T} A x+b^{T} x+c, \quad \operatorname{prox}_{t f}(x)=(I+t A)^{-1}(x-t b)</script><p><strong><em>例子 2</em></strong>：欧几里得范数 $f(x)=\Vert x\Vert_2$</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t f}(x)=\left\{\begin{array}{ll}
+\left(1-t /\|x\|_{2}\right) x & \|x\|_{2} \geq t \\
+0 & \text { otherwise }
+\end{array}\right.</script><p><strong><em>例子 3</em></strong>：Logarithmic barrier</p>
+<script type="math/tex; mode=display">
+f(x)=-\sum_{i=1}^{n} \log x_{i}, \quad \operatorname{prox}_{t f}(x)_{i}=\frac{x_{i}+\sqrt{x_{i}^{2}+4 t}}{2}, \quad i=1, \ldots, n</script><blockquote>
+<p>上面是比较简单的例子，近似点算子也有一些很容易验证的代数运算规律：</p>
+<ol>
+<li>$f\left(\left[\begin{array}{l} x \\ y \end{array}\right]\right)=g(x)+h(y), \quad \operatorname{prox}_{f}\left(\left[\begin{array}{l} x \\ y<br>\end{array}\right]\right)=\left[\begin{array}{l}<br>\operatorname{prox}_{g}(x) \\<br>\operatorname{prox}_{h}(y)<br>\end{array}\right]$</li>
+<li>$f(x)=g(a x+b), \quad \operatorname{prox}_{f}(x)=\frac{1}{a}\left(\operatorname{prox}_{a^{2} g}(a x+b)-b\right)$ (注意 $a\ne0$ 是标量)</li>
+<li>$f(x)=\lambda g(x / \lambda), \quad \operatorname{prox}_{f}(x)=\lambda \operatorname{prox}_{\lambda^{-1} g}(x / \lambda) \quad(\bigstar)$</li>
+<li>$f(x)=g(x)+a^{T} x, \quad \quad \operatorname{prox}_{f}(x)=\operatorname{prox}_{g}(x-a)$</li>
+<li>$f(x)=g(x)+\frac{\mu}{2}|x-a|_{2}^{2}, \quad \operatorname{prox}_{f}(x)=\operatorname{prox}_{\theta g}(\theta x+(1-\theta) a)$，其中 $\mu&gt;0,\theta=1/(1+\mu)$</li>
+<li>$f(x)=g(Ax+b)$，对于一般的 $A$ 并不能得到比较好的性质，但如果 $AA^T=(1/\alpha)I$，则有 </li>
+</ol>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{f}(x) &=\left(I-\alpha A^{T} A\right) x+\alpha A^{T}\left(\operatorname{prox}_{\alpha^{-1} g}(A x+b)-b\right) \\&=x-\alpha A^{T}\left(A x+b-\operatorname{prox}_{\alpha^{-1} g}(A x+b)\right)\end{aligned}</script><p>前面几条都比较容易证明，最后一条证明可以等价于求解</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\text { minimize } \quad& g(y)+\frac{1}{2}\|u-x\|_{2}^{2}\\\text { subject to } \quad& A u+b=y\end{aligned}</script><p>可以先求解 $x$ 向超平面 $Au+b=y$ 投影来消去 $u$，然后再计算 $\text{prox}_f(y)$。</p>
+</blockquote>
+<p>除此之外，有一个非常重要的等式：</p>
+<blockquote>
+<p><strong>Moreau decomposition</strong>：</p>
+<script type="math/tex; mode=display">
+x=\operatorname{prox}_{f}(x)+\operatorname{prox}_{f^{*}}(x) \quad\text { for all } x</script></blockquote>
+<p><strong>Remarks</strong>：为什么说这个式子重要呢？因为他把原函数和共轭函数的 proximal mapping 联系起来了，如果其中一个比较难计算，那么我们可以通过另一个来计算。这个式子可以怎么理解呢？可以看成是一种正交分解，举个栗子，如果我们取一个子空间 $L$，他的正交空间为 $L^\perp$，令函数 $f$ 为子空间 $L$ 的指示函数也即 $f=\delta_L$，那么很容易验证共轭函数 $f^\star=\delta_{L^\perp}$。而根据定义也可以得到 $\text{prox}_f(x)$ 恰好就是 $x$ 在子空间 $L$ 上的投影，记为 $P_L(x)=\text{prox}_f(x)$，同样的 $P_{L^\perp}(x)=\text{prox}_{f^\star}(x)$，因此上面的 Moreau decomposition 就可以写为 $x=P_L(x)+P_{L^\perp}(x)$，这正好就是一个正交分解。可以根据下图理解</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-moreau.PNG" alt="moreau decomposition"></p>
+<p>如果对原始的 Moreau decomposition 做简单的代数变换，就可以得到 $\lambda&gt;0$</p>
+<script type="math/tex; mode=display">
+x=\operatorname{prox}_{\lambda f}(x)+\lambda \operatorname{prox}_{\lambda^{-1} f^{*}}(x / \lambda) \quad \text { for all } x</script><p>证明过程用到了共轭函数的性质 $(\lambda f)^{\star}(y)=\lambda f^{\star}(y / \lambda)$。</p>
+<p>后面两个小节则主要是近似点算子的应用，一个是计算投影，另一个是与支撑函数、距离相关的内容。</p>
+<h2 id="4-投影"><a href="#4-投影" class="headerlink" title="4. 投影"></a>4. 投影</h2><p>为什么突然讲到投影呢？因为对指示函数应用近似点算子，实质上就是在计算投影。举个栗子就明白了：对于集合 $C$ 与集合外一点 $x$，$x$ 向集合 $C$ 的投影可以表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\text { minimize } \quad& \frac{1}{2}\|y-x\|_{2}^{2}\\\text { subject to } \quad& y\in C\end{aligned}</script><p>若投影点为 $y^\star$，则这可以等价表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}y^\star &= \arg\min_y \frac{1}{2}\|y-x\|_{2}^{2}+\delta_C(y) \\&= \text{prox}_{\delta}(x)\end{aligned}</script><p>因此 $\text{prox}_{\delta}(x)$ 就是 $x$ 向集合 $C$ 的投影点(对于 $x\in C$ 同样成立)。那么只要我们取不同的 $C$，就能得到各种类型集合的投影表达式，下面举一些例子。</p>
+<p><strong>超平面</strong>：$C=\{x|a^Tx=b\}$ with $a\ne0$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=x+\frac{b-a^{T} x}{\|a\|_{2}^{2}} a</script><p><strong>仿射集</strong>：$C=\{x | A x=b\}\left(\text { with } A \in \mathbf{R}^{p \times n} \text { and } \operatorname{rank}(A)=p\right)$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=x+A^{T}\left(A A^{T}\right)^{-1}(b-A x)</script><p><strong>半空间</strong>：$C=\{x|a^Tx\le b\}$ with $a\ne0$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=\begin{cases}x+\frac{b-a^{T} x}{\|a\|_{2}^{2}} a & \text {if } a^{T} x>b \\ x & \text {if } a^{T} x \leq b\end{cases}</script><p><strong>矩形</strong>：$C=[l, u]=\left\{x \in \mathbf{R}^{n} | l \leq x \leq u\right\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)_{k}=\left\{\begin{array}{ll}l_{k} & x_{k} \leq l_{k} \\x_{k} & l_{k} \leq x_{k} \leq u_{k} \\u_{k} & x_{k} \geq u_{k}\end{array}\right.</script><p><strong>非负象限</strong>：$C=R_+^n$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=x_{+}=\left(\max \left\{0, x_{1}\right\}, \max \left\{0, x_{2}\right\}, \ldots, \max \left\{0, x_{n}\right\}\right)</script><p><strong>概率单形</strong>：$C=\left\{x | \mathbf{1}^{T} x=1, x \geq 0\right\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=(x-\lambda \mathbf{1})_{+}</script><p>其中 $\lambda$ 由以下方程解出</p>
+<script type="math/tex; mode=display">
+\mathbf{1}^{T}(x-\lambda \mathbf{1})_{+}=\sum_{i=1}^{n} \max \left\{0, x_{k}-\lambda\right\}=1</script><p>这个的证明有一点难度，关键是首先要把约束条件 $x\ge0$ 转换为指示函数表示</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\text { minimize } \quad& \frac{1}{2}\|y-x\|_{2}^{2} + \delta_{R_+^n}(y) \\\text { subject to } \quad& \mathbf{1}^{T} y=1\end{aligned}</script><p>然后将拉格朗日函数分解成求和的形式</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}\frac{1}{2}\|y-x\|_{2}^{2}+\delta_{\mathbf{R}_{+}^{n}}(y)+\lambda\left(\mathbf{1}^{T} y-1\right) \\\quad=\quad \sum_{k=1}^{n}\left(\frac{1}{2}\left(y_{k}-x_{k}\right)^{2}+\delta_{\mathbf{R}_{+}}\left(y_{k}\right)+\lambda y_{k}\right)-\lambda\end{array}</script><p>对上面这个求和项进行分情况讨论就能得到解析表达式了，不过真的很繁琐。</p>
+<p><strong>超平面与矩形交集</strong>：$C=\{x|a^Tx=b,l\preceq x\preceq u\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=P_{[l,u]}(x-\lambda a)</script><p>其中 $\lambda$ 由以下方程解出</p>
+<script type="math/tex; mode=display">
+a^{T} P_{[l, u]}(x-\lambda a)=b</script><p>证明跟上面的概率单形是类似的，也需要拆写成多项求和的形式分别求解。</p>
+<p><strong>欧几里得球</strong>：$C=\{x| \Vert x\Vert_2\le1\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=\begin{cases}\frac{x}{\|x\|_{2}} & \text {if } \Vert x\Vert_2>1 \\ x & \text {if } \Vert x\Vert_2\le1\end{cases}</script><p><strong>1 范数球</strong>：$C=\{x| \Vert x\Vert_1\le1\}$</p>
+<p>若 $\Vert x\Vert_1\le1$ 则 $P_C(x)=x$；否则</p>
+<script type="math/tex; mode=display">
+P_{C}(x)_{k}=\operatorname{sign}\left(x_{k}\right) \max \left\{\left|x_{k}\right|-\lambda, 0\right\}=\left\{\begin{array}{ll}x_{k}-\lambda & x_{k}>\lambda \\0 & -\lambda \leq x_{k} \leq \lambda \\x_{k}+\lambda & x_{k}<-\lambda\end{array}\right.</script><p>其中 $\lambda$ 由以下等式获得</p>
+<script type="math/tex; mode=display">
+\sum_{k=1}^n \max \{\vert x\vert_k-\lambda, 0\}=1</script><p>证明业与前面的类似，需要写成求和项的形式，然后对每一项求解。</p>
+<p><strong>二阶锥</strong>：$C=\{(x,t)\in R^{n\times 1}| \Vert x\Vert_2 \le t \}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x,t)=\begin{cases}(x,t) & \text {if } \Vert x\Vert_2\le t \\ (0,0) & \text {if } \Vert x\Vert_2\le -t \\\frac{t+\|x\|_{2}}{2\|x\|_{2}}\left[\begin{array}{c} x \\ \|x\|_{2} \end{array}\right] & \text {if } \Vert x\Vert_2> \vert t\vert \end{cases}</script><p><strong>正定锥</strong>：$C=S^n_+$</p>
+<script type="math/tex; mode=display">
+P_{C}(X)=\sum_{i=1}^{n} \max \left\{0, \lambda_{i}\right\} q_{i} q_{i}^{T}</script><p>其中 $X=\sum_i \lambda_i q_iq_i^T$</p>
+<h2 id="5-支撑函数、范数与距离"><a href="#5-支撑函数、范数与距离" class="headerlink" title="5. 支撑函数、范数与距离"></a>5. 支撑函数、范数与距离</h2><p>这一小节标题看起来很复杂，牵涉到了支撑函数、范数、到集合的距离，但<strong>实际上都还是在计算投影</strong>，为什么这么说呢？回忆一下，支撑函数的共轭函数是不是 $\delta$ 函数？范数的共轭函数是不是 $\delta$ 函数？到集合的距离是不是就等于到投影点的距离？所以这一小节是上一小节“投影”的自然延伸，其中为了把原函数与共轭函数联系在一起，用到了 Moreau decomposition。我们一个一个来看。</p>
+<script type="math/tex; mode=display">
+x=\operatorname{prox}_{f}(x)+\operatorname{prox}_{f^{*}}(x) \quad\text { for all } x</script><p><strong>支撑函数</strong>：$f(x)=\sup_{y\in C}x^Ty,f^\star(y)=\delta_C(y)$，因此近似点算子为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{t f}(x) &=x-t \operatorname{prox}_{t^{-1} f^{*}}(x / t) \\&=x-t P_{C}(x / t)\end{aligned}</script><p><strong>范数</strong>：$f(x)=\Vert x\Vert,f^\star(y)=\delta_B(y)$，其中 $B=\{y| \Vert y\Vert_\star \le 1\}$，近似点算子为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{t f}(x) &=x-t \operatorname{prox}_{t^{-1} f^{*}}(x / t) \\&=x-t P_{B}(x / t) \\&=x- P_{tB}(x)\end{aligned}</script><p>其中 $tB=\{y| \Vert y\Vert_\star \le t\}$</p>
+<p><strong>与一点的距离</strong>：$f(x)=\Vert x-a\Vert$，可以取 $g(x)=\Vert x\Vert$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{t f}(x) &=a + \operatorname{prox}_{tg}(x-a) \\&=a+x-a-tP_B(\frac{x-a}{t}) \\&=x- P_{tB}(x-a)\end{aligned}</script><p><strong>到集合的距离</strong>：到闭凸集 $C$ 的距离定义为 $d(x)=\inf_{y\in C}\Vert x-y\Vert_2$</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t d}(x)=\left\{\begin{array}{ll}x+\frac{t}{d(x)}\left(P_{C}(x)-x\right) & d(x) \geq t \\P_{C}(x) & \text { otherwise }\end{array}\right.</script><p>如果是距离取平方 $f(x)=d(x)^2/2$，则有</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t f}(x)=\frac{1}{1+t} x+\frac{t}{1+t} P_{C}(x)</script><p>这个证明贴在下面</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-distance-proof1.PNG" alt="proof 1"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-distance-proof2.PNG" alt="proof 2"></p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/optimization/ch19-proximal-gradient/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    凸优化笔记19：近似点梯度下降
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/optimization/ch17-subgradient-descent/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">凸优化笔记17：次梯度下降</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

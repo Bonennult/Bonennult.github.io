@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>PID 控制器 | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="PID" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="在过程控制中，按偏差的比例（P）、积分（I）和微分（D）进行控制的PID控制器（亦称PID调节器）是应用最为广泛的一种自动控制器。它具有原理简单，易于实现，适用面广，控制参数相互独立，参数的选定比较简单等优点.">
+<meta name="keywords" content="PID">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PID 控制器">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;system&#x2F;pid&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="在过程控制中，按偏差的比例（P）、积分（I）和微分（D）进行控制的PID控制器（亦称PID调节器）是应用最为广泛的一种自动控制器。它具有原理简单，易于实现，适用面广，控制参数相互独立，参数的选定比较简单等优点.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;PID_varyingP.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;Change_with_Ki.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;Change_with_Kd.png">
+<meta property="og:updated_time" content="2020-06-25T12:01:54.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;PID_varyingP.jpg">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file active"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-system/pid" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Control/">Control</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/PID/" rel="tag">PID</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/system/pid/">
+            <time datetime="2020-02-21T08:53:27.000Z" itemprop="datePublished">2020-02-21</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/system/pid.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/system/pid.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/system/pid.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            PID 控制器
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>在过程控制中，按偏差的比例（P）、积分（I）和微分（D）进行控制的PID控制器（亦称PID调节器）是应用最为广泛的一种自动控制器。它具有原理简单，易于实现，适用面广，控制参数相互独立，参数的选定比较简单等优点.</p>
+<a id="more"></a>
+<h2 id="1-基本原理"><a href="#1-基本原理" class="headerlink" title="1. 基本原理"></a>1. 基本原理</h2><p><strong>PID控制器</strong>（比例-积分-微分控制器），由比例单元（P）、积分单元（I）和微分单元（D）组成。可以透过调整这三个单元的增益 $K_p$，$K_i$ 和 $K_d$ 来调定其特性。PID控制器主要适用于基本上线性，且动态特性不随时间变化的系统。</p>
+<p>PID控制器的比例单元(P)、积分单元(I)和微分单元(D)分别对应目前误差、过去累计误差及未来误差。若是不知道受控系统的特性，一般认为PID控制器是最适用的控制器。</p>
+<h2 id="2-控制算法"><a href="#2-控制算法" class="headerlink" title="2. 控制算法"></a>2. 控制算法</h2><p>若定义 $u(t)$ 为控制输出，PID算法可以用下式表示</p>
+<script type="math/tex; mode=display">
+\mathrm{u}(t)=\mathrm{MV}(t)=K_{p} e(t)+K_{i} \int_{0}^{t} e(\tau) d \tau+K_{d} \frac{d}{d t} e(t)</script><p>其中 $e(t)$ 表示误差。</p>
+<h3 id="2-1-比例控件"><a href="#2-1-比例控件" class="headerlink" title="2.1 比例控件"></a>2.1 比例控件</h3><p>比例控制考虑当前误差，误差值和一个正值的常数 $K_p$（表示比例）相乘。$K_p$ 只是在控制器的输出和系统的误差成比例的时候成立。</p>
+<script type="math/tex; mode=display">
+P_{\text{out}} = K_p e(t)</script><p>若比例增益大，在相同误差量下，会有较大的输出，但若比例增益太大，会使系统不稳定。相反的，若比例增益小，若在相同误差量下，其输出较小，因此控制器会较不敏感的。若比例增益太小，当有干扰出现时，其控制信号可能不够大，无法修正干扰的影响。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/PID_varyingP.jpg" alt="Change K_p"></p>
+<p>上图即为改变 $K_p$ 对应的控制器。</p>
+<h3 id="2-2-积分控件"><a href="#2-2-积分控件" class="headerlink" title="2.2 积分控件"></a>2.2 积分控件</h3><p>积分控制考虑过去误差，将误差值过去一段时间和（误差和）乘以一个正值的常数 $K_i$。</p>
+<script type="math/tex; mode=display">
+I_{\mathrm{out}}=K_{i} \int_{0}^{t} e(\tau) d \tau</script><p>积分控制会<strong>加速</strong>系统趋近设定值的过程，并且消除纯比例控制器会出现的稳态误差。积分增益越大，趋近设定值的速度越快，不过因为积分控制会累计过去所有的误差，可能会使回授值出现<strong>过冲</strong>的情形。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/Change_with_Ki.png" alt="Change K_i"></p>
+<p>上图即为改变 $K_i$ 对应的控制器。</p>
+<h3 id="2-3-微分控件"><a href="#2-3-微分控件" class="headerlink" title="2.3 微分控件"></a>2.3 微分控件</h3><p>微分控制考虑将来误差，计算误差的一阶导，并和一个正值的常数 $K_d$ 相乘。这个导数的控制会对系统的改变作出反应。导数的结果越大，那么控制系统就对输出结果作出更快速的反应。这个 $K_d$ 参数也是PID被称为可预测的控制器的原因。$K_d$ 参数对减少控制器短期的改变很有帮助。一些实际中的速度缓慢的系统可以不需要 $K_d$ 参数。</p>
+<script type="math/tex; mode=display">
+D_{\mathrm{out}}=K_{d} \frac{d}{d t} e(t)</script><p>微分控制可以提升整定时间及系统<strong>稳定性</strong>。不过因为纯微分器不是因果系统，因此在PID系统实现时，一般会为微分控制加上一个低通滤波器以限制高频增益及噪声。实际上较少用到微分控制，估计PID控制器中只有约20%有用到微分控制。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/Change_with_Kd.png" alt="Change K_d"></p>
+<p>上图即为改变 $K_d$ 对应的控制器。</p>
+<h2 id="3-位置式和增量式PID算法"><a href="#3-位置式和增量式PID算法" class="headerlink" title="3. 位置式和增量式PID算法"></a>3. 位置式和增量式PID算法</h2><p>PID 一般有两种：<strong>位置式 PID</strong> 和<strong>增量式 PID</strong>。在小车里一般用增量式，因为位置式 PID 的输出与过去的所有状态有关，计算时要对历史上每一次的控制误差进行累加，这个计算量非常大，而且没有必要。增量式则子需要计算每次控制量的变化量。</p>
+<p>将 PID 公式离散化，可以推导出位置式 PID 公式</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+u(k)&=K_p\left[e_{k}+\frac{1}{T_i} \sum_{j=0}^{k} e_{j}+T_d \frac{e_{k}-e_{k-1}}{T}\right] \\
+&=K_p \cdot e_{k}+\frac{K_p}{T_i} \sum_{j=0}^{k} e_{j}+K_p \cdot T_d \frac{e_{k}-e_{k-1}}{T} \\
+&=A e_{k}+B\left(\sum_{j=0}^{k-1} e_{j}+e_{k}\right)+C\left(e_{k}-e_{k-1}\right)
+\end{aligned}</script><p>其中把 $K_i,K_d$ 表示为 $K_p/T_i,K_p\cdot T_d$。</p>
+<p>在此基础上可以推导出增量式 PID 公式</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\Delta u_{k}&=u_{k}-u_{k-1}=K_p\left[e_{k}-e_{k-1}+\frac{T}{T_i} e_{k}+T_d \frac{e_{k}-2 e_{k-1}+e_{k-2}}{T}\right] \\
+&=K_p\left(1+\frac{T}{T_i}+\frac{T_d}{T}\right) e_{k}-K_p\left(1+\frac{2 T_d}{T}\right) e_{k-1}+K_p \frac{T_d}{T} e_{k-2} \\
+&=A e_{k}+B e_{k-1}+C e_{k-2}
+\end{aligned}</script><p>其中误差 $e_k = y_0(kT) - y(kT)$，$y_0$ 表示目标值，$y(kT)$ 表示第 $k$ 个时刻的值。</p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/optimization/ch0-intro/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    凸优化笔记 0：绪论
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/system/lasalle/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">LaSalle&#39;s invariance principle 拉萨尔不变性原理</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

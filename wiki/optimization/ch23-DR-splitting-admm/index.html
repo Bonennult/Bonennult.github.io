@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>凸优化笔记23：算子分裂法 &amp; ADMM | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="近似点算子,算子分裂法,ADMM" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前面章节中，针对 $\min f(x)+g(Ax)$ 形式的优化问题，我们介绍了如 PG、dual PG、ALM、PPA 等方法。但是比如 PG 方法为   x_{k+1}=\text{prox}_{th}(x_k-t_k\nabla g(x_k))ALM 的第一步要解一个联合优化问题   (x^{k+1},y^{k+1}) = \arg\min_{x,y} L_t(x,y,z^k)他们都把 $f">
+<meta name="keywords" content="近似点算子,算子分裂法,ADMM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记23：算子分裂法 &amp; ADMM">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;optimization&#x2F;ch23-DR-splitting-admm&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面章节中，针对 $\min f(x)+g(Ax)$ 形式的优化问题，我们介绍了如 PG、dual PG、ALM、PPA 等方法。但是比如 PG 方法为   x_{k+1}=\text{prox}_{th}(x_k-t_k\nabla g(x_k))ALM 的第一步要解一个联合优化问题   (x^{k+1},y^{k+1}) = \arg\min_{x,y} L_t(x,y,z^k)他们都把 $f">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-05-10T02:13:34.368Z">
+<meta name="twitter:card" content="summary">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file active"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-optimization/ch23-DR-splitting-admm" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/ADMM/" rel="tag">ADMM</a>, <a class="tag-link" href="/tags/%E7%AE%97%E5%AD%90%E5%88%86%E8%A3%82%E6%B3%95/" rel="tag">算子分裂法</a>, <a class="tag-link" href="/tags/%E8%BF%91%E4%BC%BC%E7%82%B9%E7%AE%97%E5%AD%90/" rel="tag">近似点算子</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch23-DR-splitting-admm/">
+            <time datetime="2020-05-10T01:52:41.000Z" itemprop="datePublished">2020-05-10</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch23-DR-splitting-admm.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch23-DR-splitting-admm.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch23-DR-splitting-admm.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            凸优化笔记23：算子分裂法 &amp; ADMM
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>前面章节中，针对 $\min f(x)+g(Ax)$ 形式的优化问题，我们介绍了如 PG、dual PG、ALM、PPA 等方法。但是比如 PG 方法为 </p>
+<script type="math/tex; mode=display">
+x_{k+1}=\text{prox}_{th}(x_k-t_k\nabla g(x_k))</script><p>ALM 的第一步要解一个联合优化问题 </p>
+<script type="math/tex; mode=display">
+(x^{k+1},y^{k+1}) = \arg\min_{x,y} L_t(x,y,z^k)</script><p>他们都把 $f,g$ 耦合在一起了。如果我们看原始问题 $\min f(x)+g(Ax)$ 实际上就是要找 $x^\star$ 使得 $0\in\partial f(x^\star)+A^T\partial g(x^\star)$，这一节要介绍的 Douglas-Rachford splitting method 实际上就是要 decoupling。</p>
+<a id="more"></a>
+<h2 id="1-Douglas-Rachford-splitting-Algorithm"><a href="#1-Douglas-Rachford-splitting-Algorithm" class="headerlink" title="1.Douglas-Rachford splitting Algorithm"></a>1.Douglas-Rachford splitting Algorithm</h2><p>针对如下优化问题，其中 $f,g$ 都是闭凸函数</p>
+<script type="math/tex; mode=display">
+\min f(x)+g(x)</script><blockquote>
+<p>先给出 DR-splitting 方法的迭代方程</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{f}\left(y_{k}\right) \\
+y_{k+1}=y_{k}+\operatorname{prox}_{g}\left(2 x_{k+1}-y_{k}\right)-x_{k+1}
+\end{array}</script></blockquote>
+<p>为什么叫做 splitting 呢？回忆 PPA 是不是需要求解 $x^+ = \text{prox}_{t(f+g)}(x)$，而这里则可以分开依次求 $\text{prox}_f$ 和 $\text{prox}_g$，所以被称为 splitting。这个迭代方程看起来没有规律，那么他能不能收敛呢？答案当然是可以的，$x_k$ 最终会收敛到 $0\in \partial f(x)+\partial g(x)$，这个证明放到后面，先来从别的方面认识一下这个方法。</p>
+<p>首先 $f,g$ 并没有区分，因此可以交换两者的位置，那么迭代方程也可以写为</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{g}\left(y_{k}\right) \\
+y_{k+1}=y_{k}+\operatorname{prox}_{f}\left(2 x_{k+1}-y_{k}\right)-x_{k+1}
+\end{array}</script><p>但需要注意的是这两种不同的迭代方程产生的序列是不一样的，也可能会影响收敛的速度，因此这个方法关于 $f,g$ 是不对称的。</p>
+<p>如果把 $x_{k+1}$ 带入到第二步，整个过程实际上可以用一个迭代方程表示</p>
+<script type="math/tex; mode=display">
+y_{k+1} = F(y) \notag\\
+F(y)=y+\operatorname{prox}_{g}\left(2 \operatorname{prox}_{f}(y)-y\right)-\operatorname{prox}_{f}(y)</script><p>这是个什么式子呢？<strong>不动点迭代</strong>(fixed-point iteration)！就是在找函数 $F(y)$ 的不动点。这个函数 $F(y)$ 是连续的吗？是的，这是因为上一节中我们证明了 $\text{prox}_{h}(x)$ 满足firmly nonexpansive(co-coercivite) 性质</p>
+<script type="math/tex; mode=display">
+\left(\operatorname{prox}_{h}(x)-\operatorname{prox}_{h}(y)\right)^{T}(x-y) \geq\left\|\operatorname{prox}_{h}(x)-\operatorname{prox}_{h}(y)\right\|_{2}^{2}</script><p>因此近似点算子是 Lipschitz continuous 的，所以 $F(y)$ 也是连续的。那么假如最终找到了不动点 $y$，他有什么性质呢？</p>
+<script type="math/tex; mode=display">
+y=F(y) \notag\\
+\iff 0 \in \partial f\left(\operatorname{prox}_{f}(y)\right)+\partial g\left(\operatorname{prox}_{f}(y)\right)</script><p><strong>证明</strong>：对于不动点 $y=F(y)$，取 $x=\text{prox}_f(y)$，我们有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x=\text{prox}_f(y),&\quad F(y)=y \notag\\
+\iff x=\text{prox}_f(y),&\quad x=\text{prox}_g(2x-y) \\
+\iff y-x\in \partial f(x),&\quad x-y\in\partial g(x)
+\end{aligned}</script><p>其中第一个等价性只需要把 $x$ 带入到 $F(y)$ 中，由此我们就可以得到</p>
+<script type="math/tex; mode=display">
+0=(y-x)+(x-y)\in\partial f(x)+\partial g(x)</script><p>自然而然地我们证明了一开始提到的 $x_{k}$ 的收敛性。</p>
+<p><strong>等价形式</strong>：下面这部分则主要是对原始形式做了一些<strong>变量代换</strong>，使其看起来更简洁，并没有新的内容。首先交换 $x,y$ 的迭代次序</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+y_{k+1}=y_{k}+\operatorname{prox}_{g}\left(2 x_{k}-y_{k}\right)-x_{k} \\
+x_{k+1}=\operatorname{prox}_{f}\left(y_{k+1}\right)
+\end{array}</script><p>引入新变量 $u_{k+1}=\text{prox}_g(2x_k-y_k),w_k=x_k-y_k$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+u_{k+1} &=\operatorname{prox}_{g}\left(x_{k}+w_{k}\right) \\
+x_{k+1} &=\operatorname{prox}_{f}\left(u_{k+1}-w_{k}\right) \\
+w_{k+1} &=w_{k}+x_{k+1}-u_{k+1}
+\end{aligned}</script><p><strong>放缩</strong>：除此之外，我们还可以对原始问题做一个放缩变为 $\min tf(x)+tg(x)$，那么迭代方程就变为如下形式，并没有本质的变化</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+u_{k+1} &=\operatorname{prox}_{tg}\left(x_{k}+w_{k}\right) \\
+x_{k+1} &=\operatorname{prox}_{tf}\left(u_{k+1}-w_{k}\right) \\
+w_{k+1} &=w_{k}+x_{k+1}-u_{k+1}
+\end{aligned}</script><p><strong>松弛</strong>：前面降到了实际上是在对 $y$ 做不动点迭代，那么我们可以改为</p>
+<script type="math/tex; mode=display">
+y_{k+1}=y_{k}+\rho_{k}\left(F\left(y_{k}\right)-y_{k}\right)</script><p>如果 $1&lt;\rho_k&lt;2$ 就是超松弛，如果 $0&lt;\rho_k&lt;1$ 就是低松弛。这个时候迭代方程稍微复杂了一点点</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+u_{k+1} &=\operatorname{prox}_{g}\left(x_{k}+w_{k}\right) \\
+x_{k+1} &=\operatorname{prox}_{f}\left(x_{k}+\rho_{k}\left(u_{k+1}-x_{k}\right)-w_{k}\right) \\
+w_{k+1} &=w_{k}+x_{k+1}-x_{k}+\rho_{k}\left(x_{k}-u_{k+1}\right)
+\end{aligned}</script><p><strong>共轭函数</strong>：根据 Moreau decomposition $\text{prox}_g(x)+\text{prox}_{g^\star}(x)=x$，如果 $\text{prox}_g$ 比较难计算，我们就可以换到共轭函数上去计算</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{f}\left(y_{k}\right) \\
+y_{k+1}=x_{k+1}-\operatorname{prox}_{g^{*}}\left(2 x_{k+1}-y_{k}\right)
+\end{array}</script><p>下面举几个例子，主要就是练习近似点算子的计算，因为 DR-splitting 方法主要就是在计算 $f,g$ 的近似点。</p>
+<p><strong><em>例子 1</em></strong>：变量 $X\in S^n$，参数 $C\in S_+^n,\gamma&gt;0$</p>
+<script type="math/tex; mode=display">
+\text { minimize } \quad \operatorname{tr}(C X)-\log \operatorname{det} X+\gamma \sum_{i>j}\left|X_{i j}\right|</script><p>我们取 $f(X)=\operatorname{tr}(C X)-\log \operatorname{det} X,\quad g(X)=\gamma \sum_{i&gt;j}\left|X_{i j}\right|$</p>
+<p>$X=\text{prox}_{tf}(\hat{X}) \iff C-X^{-1}+(1/t)(X-\hat{X})$，这个方程可以通过对 $\hat{X}-tC$ 进行特征值分解求解</p>
+<p>$X=\text{prox}_{tg}(\hat{X})$ 可以通过软阈值(soft-thresholding)求解</p>
+<p><strong><em>例子 2</em></strong>：考虑等式约束的优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min \quad& f(x)\\
+\text{s.t.} \quad& x\in V
+\end{aligned}</script><p>等价于 $g=\delta_V$</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+x_{k+1}=\operatorname{prox}_{g}\left(y_{k}\right) \\
+y_{k+1}=y_{k}+P_V\left(2 x_{k+1}-y_{k}\right)-x_{k+1}
+\end{array}</script><p><strong><em>例子 3</em></strong>：考虑这种复合形式 $\min f_1(x)+f_2(Ax)$，可以引入等式约束</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min \quad& f_1(x)+f_2(y) \\
+\text{s.t.} \quad& Ax=y
+\end{aligned}</script><p>取 $f(x_1,x_2)=f_1(x_1)+f_2(x_2)$，他的近似点算子是可分的</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t f}\left(x_{1}, x_{2}\right)=\left(\operatorname{prox}_{t f_{1}}\left(x_{1}\right), \operatorname{prox}_{t f_{2}}\left(x_{2}\right)\right)</script><p>然后像例子 2 一样，向超平面 $[A,-I][x_1,x_2]^T=0$ 做个投影。</p>
+<h2 id="2-ADMM"><a href="#2-ADMM" class="headerlink" title="2. ADMM"></a>2. ADMM</h2><p>交替方向乘子法(Alternating Direction Method of Multipliers)也是一个很重要而且很受欢迎的算法，下一节还会详细讲，这里主要是看看他与 DR-splitting 的联系。</p>
+<p>这里还是先给出结论：<strong>DR-splitting 中取 $\rho_k=1$，应用在对偶问题上，就等价于原问题的 ADMM 算法</strong>。我们先推导对偶问题上的 DR-splitting 迭代形式，然后再引出 ADMM 方法。</p>
+<p>对可分离的凸优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(P)\min \quad& f_1(x_1)+f_2(x_2) \\
+\text{s.t.} \quad& A_1x_1+A_2x_2=b \\
+(D)\max \quad& -b^{T} z-f_{1}^{*}\left(-A_{1}^{T} z\right)-f_{2}^{*}\left(-A_{2}^{T} z\right)
+\end{aligned}</script><p>取 $g(z)=b^{T} z+f_{1}^{\star}\left(-A_{1}^{T} z\right), f(z)=f_{2}^{\star}\left(-A_{2}^{T} z\right)$，DR 方法为</p>
+<script type="math/tex; mode=display">
+u^{+}=\operatorname{prox}_{t g}(z+w), \quad z^{+}=\operatorname{prox}_{t f}\left(u^{+}-w\right), \quad w^{+}=w+z^{+}-u^{+}</script><p><strong>第一步</strong>：他等价于计算</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{x}_{1} &=\underset{x_{1}}{\operatorname{argmin}}\left(f_{1}\left(x_{1}\right)+z^{T}\left(A_{1} x_{1}-b\right)+\frac{t}{2}\left\|A_{1} x_{1}-b+w / t\right\|_{2}^{2}\right) \\
+u^{+} &=z+w+t\left(A_{1} \hat{x}_{1}-b\right)
+\end{aligned}</script><p>这个证明很不直观，上一节分析 PPA 与 ALM 的关系的时候，证明了一个很不直观的结论：对 $h(z)=g^{\star}(z)+f^{\star}\left(-A^{T} z\right)$，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+z^+&=\text{prox}_{th}(z) = z+t(A\hat{x}-\hat{y}) \\
+(\hat{x}, \hat{y})&=\underset{x, y}{\operatorname{argmin}}\left(f(x)+g(y)+z^{T}(A x-y)+\frac{t}{2}\|A x-y\|_{2}^{2}\right)
+\end{aligned}</script><p><strong>第二步</strong>：与第一个式子是类似的，等价于</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+\hat{x}_{2}=\underset{x_{2}}{\operatorname{argmin}}\left(f_{2}\left(x_{2}\right)+z^{T} A_{2} x_{2}+\frac{t}{2}\left\|A_{1} \hat{x}_{1}+A_{2} x_{2}-b\right\|_{2}^{2}\right. \\
+z^{+}=z+t\left(A_{1} \hat{x}_{1}+A_{2} \hat{x}_{2}-b\right)
+\end{array}</script><p><strong>第三步</strong>：$w^+=tA_2\hat{x}_2$</p>
+<p>现在我们就可以引出 ADMM 方法了，他包括三个步骤</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x_{k+1,1}&=\underset{\tilde{x}_{1}}{\operatorname{argmin}}\left(f_{1}\left(\tilde{x}_{1}\right)+z_{k}^{T} A_{1} \tilde{x}_{1}+\frac{t}{2}\left\|A_{1} \tilde{x}_{1}+A_{2} x_{k, 2}-b\right\|_{2}^{2}\right) \\
+x_{k+1,2}&=\underset{\tilde{x}_{2}}{\operatorname{argmin}}\left(f_{2}\left(\tilde{x}_{2}\right)+z_{k}^{T} A_{2} \tilde{x}_{2}+\frac{t}{2}\left\|A_{1} x_{k+1,1}+A_{2} \tilde{x}_{2}-b\right\|_{2}^{2}\right) \\
+z_{k+1}&=z_{k}+t\left(A_{1} x_{k+1,1}+A_{2} x_{k+1,2}-b\right)
+\end{aligned}</script><p>前两步分别对应了增广拉格朗日函数的两部分，分别对 $x_1,x_2$ 进行优化。与原本的 ALM 算法相比，ALM 是每次对 $(x_1,x_2)$ 进行联合优化，即 </p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(x_{k+1,1},x_{k+1,2}) = \arg\min_{x_1,x_2} L_t(x_1,x_2,z_k) \\
+z_{k+1} = z_k + t\left(A_{1} x_{k+1,1}+A_{2} x_{k+1,2}-b\right)
+\end{aligned}</script><p>另外我们前面还讲到了 dual PG 方法跟 ALM 也很像，也是增广拉格朗日函数先对 $x_1$ 优化再对 $x_2$ 优化，但注意他跟 ADMM 不同的地方在于：前者对 $x_1$ 优化的时候不包含后面的二次正则项，而 ADMM 则包含，写出来对比一下就知道了</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(dual\ PG)\hat{x} &=\underset{x}{\operatorname{argmin}}\left(f(x)+z^{T} A x\right) \\
+\hat{y} &=\underset{y}{\operatorname{argmin}}\left(g(y)-z^{T} y+\frac{t}{2}\|A \hat{x}-y\|_{2}^{2}\right) \\
+(ADMM) x_{k+1,1}&=\underset{\tilde{x}_{1}}{\operatorname{argmin}}\left(f_{1}\left(\tilde{x}_{1}\right)+z_{k}^{T} A_{1} \tilde{x}_{1}+\frac{t}{2}\left\|A_{1} \tilde{x}_{1}+A_{2} x_{k, 2}-b\right\|_{2}^{2}\right) \\
+x_{k+1,2}&=\underset{\tilde{x}_{2}}{\operatorname{argmin}}\left(f_{2}\left(\tilde{x}_{2}\right)+z_{k}^{T} A_{2} \tilde{x}_{2}+\frac{t}{2}\left\|A_{1} x_{k+1,1}+A_{2} \tilde{x}_{2}-b\right\|_{2}^{2}\right)
+\end{aligned}</script><h2 id="3-收敛性分析"><a href="#3-收敛性分析" class="headerlink" title="3. 收敛性分析"></a>3. 收敛性分析</h2><p>DR 方法可以看成是一个不动点迭代，因此要证明收敛性，我们需要证明以下两个结论：</p>
+<ol>
+<li>$y_k$ 收敛到 $F(y)$ 的不动点 $y^\star$</li>
+<li>$x_{k+1}=\text{prox}_f(y_k)$ 收敛到 $x^\star=\text{prox}_f(y^\star)$</li>
+</ol>
+<p>在证明收敛性之前，需要先定义两个函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}F(y) &=y+\operatorname{prox}_{g}\left(2 \operatorname{prox}_{f}(y)-y\right)-\operatorname{prox}_{f}(y) \\G(y) &=y-F(y) \\&=\operatorname{prox}_{f}(y)-\operatorname{prox}_{g}\left(2 \operatorname{prox}_{f}(y)-y\right)\end{aligned}</script><p>需要用到的是这两个函数的 firmly nonexpansive(co-coercive with parameter 1) 的性质</p>
+<script type="math/tex; mode=display">
+\begin{aligned}(F(y)-F(\hat{y}))^{T}(y-\hat{y}) &\geq\|F(y)-F(\hat{y})\|_{2}^{2} \quad \text { for all } y, \hat{y} \\(G(y)-G(\hat{y}))^{T}(y-\hat{y}) &\geq\|G(y)-G(\hat{y})\|_{2}^{2}\end{aligned}</script><p><strong>证明</strong>：令 $x=\text{prox}_f(y),\hat{x}=\text{prox}_f(\hat{y})$，$v=\operatorname{prox}_{g}(2 x-y), \quad \hat{v}=\operatorname{prox}_{g}(2 \hat{x}-\hat{y})$</p>
+<p>根据 $F(y)=y+v-x,F(\hat{y})=\hat{y}+\hat{v}-\hat{x}$ 有</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}(F(y)-F(\hat{y}))^{T}(y-\hat{y}) \\\quad \geq \quad(y+v-x-\hat{y}-\hat{v}+\hat{x})^{T}(y-\hat{y})-(x-\hat{x})^{T}(y-\hat{y})+\|x-\hat{x}\|_{2}^{2} \\\quad=(v-\hat{v})^{T}(y-\hat{y})+\|y-x-\hat{y}+\hat{x}\|_{2}^{2} \\\quad=(v-\hat{v})^{T}(2 x-y-2 \hat{x}+\hat{y})-\|v-\hat{v}\|_{2}^{2}+\|F(y)-F(\hat{y})\|_{2}^{2} \\\quad \geq\|F(y)-F(\hat{y})\|_{2}^{2}\end{array}</script><p>其中用到了 $\text{prox}$ 算子的firm nonexpansiveness 性质</p>
+<script type="math/tex; mode=display">
+(x-\hat{x})^{T}(y-\hat{y}) \geq\|x-\hat{x}\|_{2}^{2}, \quad(2 x-y-2 \hat{x}+\hat{y})^{T}(v-\hat{v}) \geq\|v-\hat{v}\|_{2}^{2}</script><p>证毕。</p>
+<p>然后我们就可以根据以下的不动点迭代方程证明前面提到的收敛性</p>
+<script type="math/tex; mode=display">
+\begin{aligned}y_{k+1} &=\left(1-\rho_{k}\right) y_{k}+\rho_{k} F\left(y_{k}\right) \\&=y_{k}-\rho_{k} G\left(y_{k}\right)\end{aligned}</script><p>其中需要假设 $F$ 的不动点存在，且满足 $0\in\partial f(x)+\partial g(x)$，以及松弛变量 $\rho_k\in [\rho_{\min},\rho_{\max}],0&lt;\rho_{\min}&lt;\rho_{\max}&lt;2$。</p>
+<p><strong>证明</strong>：设 $y^\star$ 为 $F(y)$ 的不动点（也即 $G(y)$ 的零点），考虑第 $k$ 步迭代</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\left\|y^{+}-y^{\star}\right\|_{2}^{2}-\left\|y-y^{\star}\right\|_{2}^{2} &=2\left(y^{+}-y\right)^{T}\left(y-y^{\star}\right)+\left\|y^{+}-y\right\|_{2}^{2} \\&=-2 \rho G(y)^{T}\left(y-y^{\star}\right)+\rho^{2}\|G(y)\|_{2}^{2} \\&\leq-\rho(2-\rho) \| G(y)) \|_{2}^{2} \\&\leq-M \| G(y)) \|_{2}^{2}\end{aligned}</script><p>其中 $M=\rho_{\min}(2-\rho_{\max})$。上式表明</p>
+<script type="math/tex; mode=display">
+M \sum_{k=0}^{\infty}\left\|G\left(y_{k}\right)\right\|_{2}^{2} \leq\left\|y_{0}-y^{\star}\right\|_{2}^{2}, \quad \| G(y)\|_2\to 0</script><p>还可以得到 $| y_k-y^\star|_2$ 是单调不增的，因此 $y_k$ 有界。</p>
+<p>由于 $| y_k-y^\star|_2$ 单调不增，故极限 $\lim_{k\to \infty} | y_k-y^\star|_2$ 存在；又由于 $y_k$ 有界，故存在收敛子序列。</p>
+<p>记 $\bar{y}_k$ 为一个收敛子序列，收敛值为 $\bar{y}$，根据 $G$ 的连续性有 $0=\lim _{k \rightarrow \infty} G\left(\bar{y}_{k}\right)=G(\bar{y})$，因此 $\bar{y}$ 是 $G$ 的l零点，且极限 $\lim_{k\to \infty} | y_k-\bar{y}|_2$ 存在。</p>
+<p>接着需要证明唯一性，假设 $\bar{u},\bar{v}$ 是两个不同的极限点，收敛极限 $\lim_{k\to \infty} | y_k-\bar{u}|_2,\lim_{k\to \infty} | y_k-\bar{v}|_2$ 存在，因此</p>
+<script type="math/tex; mode=display">
+\|\bar{u}-\bar{v}\|_{2}=\lim _{k \rightarrow \infty}\left\|y_{k}-\bar{u}\right\|_{2}=\lim _{k \rightarrow \infty}\left\|y_{k}-\bar{v}\right\|_{2}=0</script><p>证毕。</p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/optimization/ch24-ADMM/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    凸优化笔记24：ADMM
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/optimization/ch22-ppa/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">凸优化笔记22：近似点算法</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Particle Filter | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="滤波算法,粒子滤波" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。">
+<meta name="keywords" content="滤波算法,粒子滤波">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Particle Filter">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;statistic&#x2F;particle%20filter&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2019&#x2F;pf_hmm.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2019&#x2F;pf_particle.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2019&#x2F;pf_resample.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2019&#x2F;pf_sir.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2019&#x2F;pf_sis.PNG">
+<meta property="og:updated_time" content="2020-03-27T10:04:03.134Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2019&#x2F;pf_hmm.PNG">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file active"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-statistic/particle filter" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/">统计推断</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/%E6%BB%A4%E6%B3%A2%E7%AE%97%E6%B3%95/" rel="tag">滤波算法</a>, <a class="tag-link" href="/tags/%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2/" rel="tag">粒子滤波</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/statistic/particle%20filter/">
+            <time datetime="2019-12-10T11:37:01.000Z" itemprop="datePublished">2019-12-10</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/statistic/particle filter.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/statistic/particle filter.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/statistic/particle filter.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Particle Filter
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。</p>
+<a id="more"></a>
+<p>[TOC]</p>
+<h2 id="1-贝叶斯滤波"><a href="#1-贝叶斯滤波" class="headerlink" title="1. 贝叶斯滤波"></a>1. 贝叶斯滤波</h2><p>贝叶斯滤波是我们理解粒子滤波的基础。假设我们有如下图的隐马尔科夫模型(Hidden Markov Model)，并且有如下的系统方程与观测方程，我们只有观测值 $\boldsymbol{y}_{1:T}$，但是现在想要根据观测值估计隐变量 $\boldsymbol{x}_{1:T}$，也就是<strong>滤波</strong>所要做的事情。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\text{System Model}&: x_{k}=f_{k}\left(x_{k-1}, v_{k-1}\right) \\
+\text{Observation Model}&: \mathrm{y}_{k}=h_{k}\left(\mathrm{x}_{k}, \mathrm{n}_{k}\right)
+\end{align}</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_hmm.PNG" alt="hmm"></p>
+<p>假设我们现在已经处于 $t_{k-1}$，且已经获得了 $p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$，这个概率分布的含义是什么呢？我们现在已经有了前 $k-1$ 个时刻的观测值 $\boldsymbol{y}_{1:k-1}$，并且根据这些观测值估计了 $k-1$ 时刻隐变量 $x_{k-1}$ 的<strong>后验概率</strong>分布，也即 $p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$。那么接下来到 $k$ 时刻，我们又获得了一个观测 $y_k$，要怎么估计新的后验概率分布 $p({x}_{k}|\boldsymbol{y}_{1:k})$ 呢？我们通过<strong>预测</strong>和<strong>更新</strong>两个阶段来估计，下面我就解释一下这两个阶段的含义。</p>
+<h3 id="1-1-预测"><a href="#1-1-预测" class="headerlink" title="1.1 预测"></a>1.1 预测</h3><p>前面说了我们有系统模型和观测模型，首先根据系统模型，我们有了 $k-1$ 时刻的后验，就可以根据 $x_{k-1}$ 到 $x_k$ 的转移模型得到 $x_k$ 对应的概率分布，这个过程就叫做<strong>预测(Update)</strong>。通过预测阶段，我们可以获得<strong>先验概率</strong>分布(注意这里我们将 $p({x}_k|\boldsymbol{y}_{1:k-1})$ 称为先验概率分布)</p>
+<script type="math/tex; mode=display">
+\begin{align}p({x}_k|\boldsymbol{y}_{1:k-1})=\int p({x}_k|x_{k-1})p(x_{k-1}|\boldsymbol{y}_{1:k-1})dx_{k-1}\end{align}</script><p>也就是说，我们即使没有观测值，也能对 $x_k$ 的分布进行估计，但是由于没有利用观测值 $y_k$ 带来的信息，因此这个估计是不准确的，下面我们就需要用观测值对这个先验概率分布进行纠正，也就是 <strong>更新</strong>阶段。</p>
+<h3 id="1-2-更新"><a href="#1-2-更新" class="headerlink" title="1.2 更新"></a>1.2 更新</h3><p>有了<strong>先验</strong>，又有了观测，根据贝叶斯公式，我们可以很容易得到<strong>后验概率</strong>分布 $p\left(x_{k} | \boldsymbol{y}_{1: k}\right)$。怎么理解下面一个式子呢？我们有似然函数 $p\left(y_{k} | x_{k}\right)$，现在有了观测 $y_k$，那么似然值越大，表明对应的 $x_k$ 的概率应该也越大， 就是用<strong>似然函数</strong>对<strong>先验概率</strong>进行<strong>加权</strong>就得到了<strong>后验概率</strong>。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+p\left(x_{k} | \boldsymbol{y}_{1: k}\right)&=\frac{p\left(y_{k} | x_{k},\boldsymbol{y}_{1: k-1}\right) p\left(x_{k} | \boldsymbol{y}_{1: k-1}\right)}{p\left(y_{k} | \boldsymbol{y}_{1: k-1}\right)} \\
+&\propto p\left(y_{k} | x_{k},\boldsymbol{y}_{1: k-1}\right) p\left(x_{k} | \boldsymbol{y}_{1: k-1}\right) \\
+&= p\left(y_{k} | x_{k}\right) p\left(x_{k} | \boldsymbol{y}_{1: k-1}\right)
+\end{align}</script><blockquote>
+<p>怎么理解这个加权呢？举个栗子</p>
+<p>比如</p>
+</blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结起来，我们滤波分为两个阶段</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\text{Prediction}&: p({x}_k|\boldsymbol{y}_{1:k-1})=\int p({x}_k|x_{k-1})p(x_{k-1}|\boldsymbol{y}_{1:k-1})dx_{k-1} \\
+\text{Update}&: p\left(x_{k} | \boldsymbol{y}_{1: k}\right)\propto p\left(y_{k} | x_{k}\right) p\left(x_{k} | \boldsymbol{y}_{1: k-1}\right)
+\end{align}</script><p>可以看到，上面的预测阶段含有<strong>积分</strong>，这在实际当中往往是很难计算的，而对于那些非常规的PDF，甚至不能给出解析解。解决这种问题一般有两种思路：</p>
+<ul>
+<li>建立简单的模型，获得解析解，如卡尔曼滤波(Kalman Filter)及EKF、UKF等；</li>
+<li>建立复杂的模型，获得近似解，如粒子滤波(Particle Filter)等。</li>
+</ul>
+<h2 id="2-卡尔曼滤波"><a href="#2-卡尔曼滤波" class="headerlink" title="2. 卡尔曼滤波"></a>2. 卡尔曼滤波</h2><p>卡尔曼滤波的思路就是将系统建模<strong>线性模型</strong>，隐变量、控制变量、控制噪声与观测噪声均为高斯分布，那么观测变量也是随机变量，整个模型中所有的随机变量都是<strong>高斯</strong>的！高斯分布是我们最喜欢的分布，因为在前面贝叶斯滤波的<strong>预测阶段</strong>我们可以不用积分了，只需要计算均值和协方差就可以了！根据系统模型和观测模型，我们可以获得滤波的闭式解，这就是卡尔曼滤波的思想。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\text{System Model}&: \mathrm{x}_{k}=A\mathrm{x}_{k-1} + B\mathrm{u}_{k-1} + v_{k-1} \\
+\text{Observation Model}&: \mathrm{y}_{k}=C\mathrm{x}_{k}+ \mathrm{n}_{k}
+\end{align}</script><p>但实际中要求线性系统模型往往是很困难的，对于非线性模型，如果我们还想应用卡尔曼滤波该怎么办呢？线性近似，也就是求一个雅可比矩阵(Jacobi)，这就是扩展卡尔曼滤波(EKF)。</p>
+<h2 id="3-大数定律"><a href="#3-大数定律" class="headerlink" title="3. 大数定律"></a>3. 大数定律</h2><p>粒子滤波是什么是意思呢？我们可以用大量的采样值来描述一个概率分布，当我们按照一个概率分布进行采样的时候，某个点的概率密度越高，这个点被采到的概率越大，当采样数目足够大(趋于无穷)的时候，粒子出现的频率就可以用来表示对应的分布，实际中我们可以理解一个粒子就是一个采样。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_particle.png" alt="particle"></p>
+<p>但是对于<strong>离散型</strong>的随机变量还好，可以很容易的求出来状态空间中每个状态的频率。但如果对于<strong>连续分布</strong>，其实是很不方便的，所幸实际中我们也不需要获得概率分布的全部信息，一般只需要求出<strong>期望</strong>就可以了。</p>
+<p>下面为了公式书写和推导方便，以离散型随机变量为例，假设状态空间为 $\mathcal{Z}=\{1,2,…,K\}$，有 $N$ 个采样样本 $z_i \in \mathcal{Z}$，服从概率分布 $q(\mathbf{z})$。我们将根据 $N$ 个采样样本 $\boldsymbol{z}_{1:N}$ 得到的分布记为<strong>经验分布</strong> $\hat{p}(b|\boldsymbol{z}_{1:N}) = \frac{1}{N}\sum_i \mathbb{I}(b-z_i)$，其中 $\mathbb{I}(\cdot)$ 为指示函数，那么当 $N$ 足够大的时候，经验分布 $\hat{p}(b|\boldsymbol{z}_{1:N})$ 就足够接近真实分布 $q(\mathbf{z})$。现在我们想估计随机变量 $\mathsf{t}=g(\mathsf{z})$ 的期望，即</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\mathbb{E}[\mathsf{t}] &= \mathbb{E}[g(\mathsf{z})]=\sum_{b\in\mathcal{Z}}g(b)q(b) \notag\\
+&\approx \sum_b g(b)\hat{p}(b|\boldsymbol{z}_{1:N}) \notag\\
+&= \sum_b g(b)\frac{1}{N}\sum_i \mathbb{I}(b-z_i) \notag\\
+&= \frac{1}{N}\sum_i g(z_i)
+\end{align}</script><p>也就是说，我们只需要对样本进行<strong>简单求和</strong>就可以了！连续型随机变量也是类似的，所以在后面的粒子滤波中，我们利用粒子估计了概率密度分布，要想求期望就只需要进行求和平均就可以了。</p>
+<h2 id="4-粒子滤波简单实例"><a href="#4-粒子滤波简单实例" class="headerlink" title="4. 粒子滤波简单实例"></a>4. 粒子滤波简单实例</h2><p>好了，有了前面的预备知识，我们可以先看一个粒子滤波的简单例子。</p>
+<p>假设我们现在有采样好的 $N$ 个粒子 $\{x_{k-1}^i\}_{i=1}^N$，他们服从分布 $p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$，那么我们现在如何进行贝叶斯滤波中的<strong>预测</strong>和<strong>更新</strong>阶段呢？</p>
+<h3 id="4-1-预测"><a href="#4-1-预测" class="headerlink" title="4.1 预测"></a>4.1 预测</h3><p>回顾一下预测的公式</p>
+<script type="math/tex; mode=display">
+\text{Prediction}: p({x}_k|\boldsymbol{y}_{1:k-1})=\int p({x}_k|x_{k-1})p(x_{k-1}|\boldsymbol{y}_{1:k-1})dx_{k-1} \\</script><p>想一下：只要我们让每个粒子 $x_{k-1}^i$ “<strong>进化</strong>”一步，也就是说按照分布 $p(x_k|x_{k-1})$ 进行采样，使得 $x_k^i \sim p(x_k|x_{k-1}^i)$，这样我们就获得了 $N$ 个新的粒子 $\{x_k^i\}_{i=1}^N$。很容易验证，如果 $\{x_{k-1}^i\}_{i=1}^N$ 能够很好的表示 $p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$ 的话，那么 $\{x_k^i\}_{i=1}^N$ 也能很好的表示 $p({x}_k|\boldsymbol{y}_{1:k-1})$(这一部分可以凭直观感觉来理解，这是一个很自然的事情，也可以用前面的经验分布的思路进行公式推导)。</p>
+<p>这样做的好处是什么呢？我们<strong>避免了积分</strong>！只需要对一个已知的分布 $p(x_k|x_{k-1}^i)$ 进行采样，而这个分布是我们假设的系统模型，可以是很简单的，因此采样也很方便。</p>
+<h3 id="4-2-更新"><a href="#4-2-更新" class="headerlink" title="4.2 更新"></a>4.2 更新</h3><p>通过预测我们获得了 $x_k^i \sim p(x_k|x_{k-1}^i)$，这 $N$ 个粒子就描述了<strong>先验概率</strong>分布。接下来就是更新，再回顾一下更新的公式</p>
+<script type="math/tex; mode=display">
+\text{Update}: p\left(x_{k} | \boldsymbol{y}_{1: k}\right)\propto p\left(y_{k} | x_{k}\right) p\left(x_{k} | \boldsymbol{y}_{1: k-1}\right)</script><p>更新是什么呢？前面提到了：更新就是用<strong>似然函数</strong>对<strong>先验概率</strong>进行<strong>加权</strong>就得到了<strong>后验概率</strong>。如果简单的把 $x_k^i$ 带入到上面的公式里，就可以得到下面的式子</p>
+<script type="math/tex; mode=display">
+p\left(x_{k}^i | \boldsymbol{y}_{1: k}\right)\propto p\left(y_{k} | x_{k}^i\right) p\left(x_{k}^i | \boldsymbol{y}_{1: k-1}\right)</script><p>实际上就表示每个<strong>粒子</strong>有不同的<strong>权重</strong>。</p>
+<blockquote>
+<p>这里怎么理解呢？想一下前面提到的<strong>经验分布</strong>，我们只需要用粒子出现的<strong>频率</strong>来表示对应的概率，实际上就是在统计频率的时候每个粒子的权重都是相同的，出现一次计数就加一。</p>
+<p>而这里的区别是什么呢？由于我们有一个观测值 $y_k$，根据 $y_k$ 来反推，某一个粒子 $i_1$ 的导致 $y_k$ 出现的概率更大，那么我们在统计频率的时候，就给这个粒子加一个更大的权重，以表示我们更相信/重视这个粒子。</p>
+</blockquote>
+<p>那么问题来了，前面我们说了滤波过程中要想求期望，只需要简单求和就可以了</p>
+<script type="math/tex; mode=display">
+\mathbb{E}[\mathsf{t}] = \frac{1}{N}\sum_i g(z_i)</script><p>现在粒子有了权重怎么办呢，同理，加个权就好了(推导也很简单，相信大家都会)，下面的式子里对权重进行了归一化</p>
+<script type="math/tex; mode=display">
+\mathbb{E}[\mathsf{t}] = \sum_i \frac{w_i}{\sum_j w_j}g(z_i)</script><h3 id="4-3-递推"><a href="#4-3-递推" class="headerlink" title="4.3 递推"></a>4.3 递推</h3><p>前面只讲了一次预测和一次更新的过程，注意到我们前面只是从 $k-1$ 到 $k$ 时刻的滤波过程，但每一轮循环原理都是相同的。</p>
+<p>不过细心的朋友们可能会觉得不太对劲，前面一个阶段的例子里，预测之前我们有采样 $\{x_{k-1}^i\}_{i=1}^N$，推导过程中我们是默认这些粒子的权重都是相同的，然后我们进行了预测和更新，但是更新之后我们给每个粒子加权了呀，到下一个阶段怎么办？！！！也很简单，预测阶段不必要求每个粒子的权重都相同，也加上一个权重就好了。也就是说我们时时刻刻都保存有每个粒子的权重信息。</p>
+<p>这样我们就可以得到一个完整的粒子滤波算法了！但是还有问题！</p>
+<h3 id="重采样"><a href="#重采样" class="headerlink" title="重采样"></a>重采样</h3><p>但是呢，有人发现了上面的算法不好啊！不是因为麻烦，而是滤波到最后会发现只有少数一部分粒子有很大的权重，而其他绝大部分粒子的权重几乎为 0，这就意味着对于那些“不重要”的粒子，他们在我们求期望的时候贡献并不大，但是我们却花费了大量的计算精力来维护这些粒子，这样不好不好！于是就有人提出了<strong>重采样</strong>。</p>
+<p>重采样什么意思呢？你们粒子的权重不是不同吗，那我就采取手段给你们整相同了！简单理解，有两个粒子，粒子 $a$ 的权重是 8，粒子 $b$ 权重是 2，那我就把粒子 $a$ 复制 8 份，粒子 $b$ 复制 2 份，这样得到的 10 个粒子权重就都是 1 了。但是另一个问题是一开始我们只有 2 个粒子，这样弄完我们就有 10 个粒子了，如果一直这么做我们的粒子数会越来越多，算力跟不上。那就从这 10 个粒子里均匀分布地随机抽 2 个！那么粒子 $a$ 的概率就是 $0.8$，这就成了。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_resample.png" alt="resample"></p>
+<p>至此，加上重采样我们就获得了一个完整的比较好用的粒子滤波算法</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sir.PNG" alt="sir"></p>
+<h2 id="5-粒子滤波原理推导"><a href="#5-粒子滤波原理推导" class="headerlink" title="5. 粒子滤波原理推导"></a>5. 粒子滤波原理推导</h2><p>但是还有一个问题，就是前面我们直接说有 $N$ 个粒子 $x_{k-1}^i \sim p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$，但是第 1 步(刚开始)的时候我们怎么获得这些粒子来描述 $p(x_1|y_1)$ 啊？如果是高斯分布还好，我们可以很方便的对高斯分布进行采样，但是如果是一个特别特别特别复杂的分布呢？我们甚至不能写出解析表达式，更没办法按照这个分布进行随机采样，那我们是不是就凉了？不！我们前面不是讲了粒子可以有权重嘛。</p>
+<p>假如我们现在有另一个分布 $q(\mathbf{x}_{1:k}|\mathbf{y}_{1:k})$，这个分布是我们自己指定的，可以很简单，而且我们可以按照这个分布来进行采样，那么我们就有 $x_{k-1}^i \sim q(\mathbf{x}_{1:k}|\mathbf{y}_{1:k})$，那么我们怎么用这些粒子来表示我们想要得到的真正的分布 $p(\mathbf{x}_{0:k}|\mathbf{y}_{1:k})$ 呢？再加个权就行了，就像前面用似然函数进行加权。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+p(\mathbf{x}_{0:k}|\mathbf{y}_{1:k})&\approx \sum_{i=1}^{N}w_k^i\delta(\mathbf{x}_{0:k}-\mathbf{x}_{0:k}^i) \notag \\
+w_{k}^{i} &\propto \frac{p\left(\mathbf{x}_{0: k}^{i} | \mathbf{y}_{1: k}\right)}{q\left(\mathbf{x}_{0: k}^{i} | \mathbf{y}_{1: k}\right)}
+\notag\end{align}</script><p>再考虑前面提到的的<strong>预测</strong>和<strong>更新</strong>两个递推进行的阶段，就有</p>
+<script type="math/tex; mode=display">
+\begin{align}q\left(\mathbf{x}_{0: k} | \mathbf{y}_{1: k}\right)&=q\left(\mathbf{x}_{k} | \mathbf{x}_{0: k-1}, \mathbf{y}_{1: k}\right) q\left(\mathbf{x}_{0: k-1} | \mathbf{y}_{1: k-1}\right) \notag\\ 
+            &= q\left(\mathbf{x}_{k} | \mathbf{x}_{k-1}, \mathbf{y}_{ k}\right) q\left(\mathbf{x}_{0: k-1} | \mathbf{y}_{1: k-1}\right) \notag \\
+            w_{k}^{i} &\propto w_{k-1}^{i} \frac{p\left(\mathbf{y}_{k} | \mathbf{x}_{k}^{i}\right) p\left(\mathbf{x}_{k}^{i} | \mathbf{x}_{k-1}^{i}\right)}{q\left(\mathbf{x}_{k}^{i} | \mathbf{x}_{k-1}^{i}, \mathbf{y}_{k}\right)} \label{eq_sis}
+            \end{align}</script><p>然后我们就得到了一个更加 universal/generic 的粒子滤波算法(下面图片所示算法中没加重采样步骤)。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sis.PNG" alt="sis"></p>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><p>这篇文章主要是自己学习粒子滤波之后的一些理解，主要参考了文章 <a href="https://ieeexplore.ieee.org/document/978374" target="_blank" rel="noopener">A Tutorial on Particle Filters for Online Nonlinear/Non-Gaussian Bayesian Tracking</a>，但是这篇文章中是从 general 的情况开始讲，然后举了一些常用的特例，个人感觉不利于初学者理解，因此本文写作过程中的思路是从简单的特例开始再到更一般的情况。</p>
+<p>最后一部分 <a href="## 粒子滤波原理推导">粒子滤波原理推导</a> 其实写的并没有很清楚，主要是因为自己太懒，到最后懒得一个个手敲公式了，如果想更清楚地了解其中的细节，可以阅读上面那篇论文。</p>
+<h2 id="7-Reference"><a href="#7-Reference" class="headerlink" title="7. Reference"></a>7. Reference</h2><ol>
+<li>M. S. Arulampalam, S. Maskell, N. Gordon and T. Clapp, “A tutorial on particle filters for online nonlinear/non-Gaussian Bayesian tracking,” in <em>IEEE Transactions on Signal Processing</em>, vol. 50, no. 2, pp. 174-188, Feb. 2002.</li>
+</ol>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/git/git-principle-1/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    Git 工作原理(一)
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Hello World</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

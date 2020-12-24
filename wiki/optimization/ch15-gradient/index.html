@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>凸优化笔记15：梯度方法 Gradient Method | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="梯度下降,利普希兹连续,co-coercivity,强凸函数,线搜索,BB方法" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的梯度方法。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数">
+<meta name="keywords" content="梯度下降,利普希兹连续,co-coercivity,强凸函数,线搜索,BB方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记15：梯度方法 Gradient Method">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;optimization&#x2F;ch15-gradient&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的梯度方法。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-lipschitz.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-quadra-upper.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-quadra-lower.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-quadra-upper.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-line-search.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-line-search2.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-bb.PNG">
+<meta property="og:updated_time" content="2020-05-09T06:06:39.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-lipschitz.PNG">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file active"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-optimization/ch15-gradient" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/BB%E6%96%B9%E6%B3%95/" rel="tag">BB方法</a>, <a class="tag-link" href="/tags/co-coercivity/" rel="tag">co-coercivity</a>, <a class="tag-link" href="/tags/%E5%88%A9%E6%99%AE%E5%B8%8C%E5%85%B9%E8%BF%9E%E7%BB%AD/" rel="tag">利普希兹连续</a>, <a class="tag-link" href="/tags/%E5%BC%BA%E5%87%B8%E5%87%BD%E6%95%B0/" rel="tag">强凸函数</a>, <a class="tag-link" href="/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/" rel="tag">梯度下降</a>, <a class="tag-link" href="/tags/%E7%BA%BF%E6%90%9C%E7%B4%A2/" rel="tag">线搜索</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch15-gradient/">
+            <time datetime="2020-04-05T10:12:30.000Z" itemprop="datePublished">2020-04-05</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch15-gradient.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch15-gradient.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch15-gradient.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            凸优化笔记15：梯度方法 Gradient Method
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的<strong>梯度方法</strong>。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数值不断减小。</p>
+<script type="math/tex; mode=display">
+x_{k+1}=x_{k}-t_k \nabla f(x_k),\quad k=0,1,...</script><p>上面的式子看起来简单，但是真正应用时你会发现有各种问题：</p>
+<ol>
+<li>下降方向怎么选？$\nabla f(x_k)$ 吗？选择其他方向会不会好一点呢？</li>
+<li>如果 $f(x)$ (在某些点)不可导又怎么办呢？</li>
+<li>步长 $t_k$ 怎么选呢？固定值？变化值？选多大比较好？</li>
+<li>收敛速度怎么样呢？我怎么才能知道是否达到精度要求呢？</li>
+<li>…</li>
+</ol>
+<a id="more"></a>
+<h2 id="1-凸函数"><a href="#1-凸函数" class="headerlink" title="1. 凸函数"></a>1. 凸函数</h2><p>前面讲凸函数的时候我们提到了很多等价定义：Jensen’s 不等式、“降维打击”、一阶条件、二阶条件。这里我们主要关注其中两个：</p>
+<ol>
+<li>Jensen’s 不等式：$f(\theta x+(1-\theta) y) \leq \theta f(x)+(1-\theta) f(y)$</li>
+<li>一阶条件等价于<strong>梯度单调性</strong>：$(\nabla f(x)-\nabla f(y))^{T}(x-y) \geq 0 \quad \text { for all } x, y \in \operatorname{dom} f$</li>
+</ol>
+<p>也就是说凸函数的梯度 $\nabla f: R^n\to R^n$ 是一个<strong>单调映射</strong>。</p>
+<h2 id="2-Lipschitz-continuity"><a href="#2-Lipschitz-continuity" class="headerlink" title="2. Lipschitz continuity"></a>2. Lipschitz continuity</h2><p>函数 $f$ 的梯度满足<strong>利普希茨连续(Lipschitz continuous)</strong>的定义为</p>
+<script type="math/tex; mode=display">
+\|\nabla f(x)-\nabla f(y)\|_{*} \leq L\|x-y\| \quad \text { for all } x, y \in \operatorname{dom} f</script><p>也被称为 <strong>L-smooth</strong>。有了这个条件，我们可以推出很多个等价性质，这里省略了证明过程</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-lipschitz.PNG" alt="lipschitz"></p>
+<blockquote>
+<p>也就是说下面的式子都是等价的</p>
+<script type="math/tex; mode=display">
+\|\nabla f(x)-\nabla f(y)\|_{*} \leq L\|x-y\| \quad \text { for all } x, y \in \operatorname{dom} f</script><script type="math/tex; mode=display">
+(\nabla f(x)-\nabla f(y))^{T}(x-y) \leq L\|x-y\|^{2} \quad \text { for all } x, y \in \operatorname{dom} f</script><script type="math/tex; mode=display">
+f(y) \leq f(x)+\nabla f(x)^{T}(y-x)+\frac{L}{2}\|y-x\|^{2} \quad \text { for all } x, y \in \operatorname{dom} f</script><script type="math/tex; mode=display">
+(\nabla f(x)-\nabla f(y))^{T}(x-y) \geq \frac{1}{L}\|\nabla f(x)-\nabla f(y)\|_{*}^{2} \quad \text { for all } x, y</script><script type="math/tex; mode=display">
+g(x)=\frac{L}{2}\Vert x\Vert_2^2-f(x) \ \text{ is convex}</script><p><strong>Remarks 1</strong>：</p>
+<p>上面的第 3 个式子</p>
+<script type="math/tex; mode=display">
+f(y) \leq f(x)+\nabla f(x)^{T}(y-x)+\frac{L}{2}\Vert y-x\Vert^{2} \quad \text { for all } x, y \in \operatorname{dom} f</script><p>实际上定义了一个<strong>二次曲线</strong>，这个曲线是原始函数的 <strong>Quadratic upper bound</strong></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-quadra-upper.PNG" alt="Quadratic upper bound"></p>
+<p>并且由这个式子可以推导出</p>
+<script type="math/tex; mode=display">
+\frac{1}{2 L}\Vert\nabla f(z)\Vert_{*}^{2} \leq f(z)-f\left(x^{\star}\right) \leq \frac{L}{2}\left\Vert z-x^{\star}\right\Vert^{2} \quad \text { for all } z</script><p>这个式子中的上界 $\frac{L}{2}\left|z-x^{\star}\right|^{2}$ 带有 $x^\star$ 是未知的，而下界只与当前值 $z$ 有关，因此在优化过程中我们可以判断当前的 $f(z)$ 与最优值的距离至少为 $\frac{1}{2 L}|\nabla f(z)|_{*}^{2}$，如果这个值大于0，那么我们一定还没得到最优解。</p>
+<p><strong>Remarks 2</strong>：</p>
+<p>上面的最后一个式子</p>
+<script type="math/tex; mode=display">
+(\nabla f(x)-\nabla f(y))^{T}(x-y) \geq \frac{1}{L}\|\nabla f(x)-\nabla f(y)\|_{*}^{2} \quad \text { for all } x, y</script><p>被称为 $\nabla f$ 的 <strong>co-coercivity</strong> 性质。（这其实有点像 $\nabla f$ 的反函数的 L-smooth 性质，所以它跟 $\nabla f$ 的 L-smooth 性质是等价的）</p>
+</blockquote>
+<h2 id="3-强凸函数"><a href="#3-强凸函数" class="headerlink" title="3. 强凸函数"></a>3. 强凸函数</h2><p>满足如下性质的函数被称为 <strong>m-强凸(m-strongly convex)</strong>的</p>
+<script type="math/tex; mode=display">
+f(\theta x+(1-\theta) y) \leq \theta f(x)+(1-\theta) f(y)-\frac{m}{2} \theta(1-\theta)\|x-y\|^{2} \quad \text { for all } x, y\in\text{dom}f,\theta\in[0,1]</script><p>m-强凸跟前面的 L-smooth 实际上非常像，只不过一个定义了上界，另一个定义了下界。</p>
+<blockquote>
+<p>类似上面的 L-smooth 性质，我们课可以得到下面几个式子是<strong>等价</strong>的</p>
+<script type="math/tex; mode=display">
+f \text{ is m-strongly convex}</script><script type="math/tex; mode=display">
+(\nabla f(x)-\nabla f(y))^{T}(x-y) \geq m\|x-y\|^{2} \quad \text { for all } x, y \in \operatorname{dom} f</script><script type="math/tex; mode=display">
+f(y) \geq f(x)+\nabla f(x)^{T}(y-x)+\frac{m}{2}\|y-x\|^{2} \quad \text { for all } x, y \in \operatorname{dom} f</script><script type="math/tex; mode=display">
+g(x) = f(x)-\frac{m}{2}\Vert x\Vert^2 \ \text{ is convex}</script></blockquote>
+<p>注意上面第3个式子不等号右遍实际上又定义了一个二次曲线，这个二次曲线是原函数的下界。与前面的二次上界类比可以得到</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Quadratic lower bound</th>
+<th>Quadratic upper bound</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-quadra-lower.PNG" alt="Quadratic lower bound"></td>
+<td><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-quadra-upper.PNG" alt="Quadratic upper bound"></td>
+</tr>
+<tr>
+<td>$f(y) \geq f(x)+\nabla f(x)^{T}(y-x)+\frac{m}{2}\Vert y-x\Vert^{2}$</td>
+<td>$f(y) \leq f(x)+\nabla f(x)^{T}(y-x)+\frac{L}{2}\Vert y-x\Vert^{2}$</td>
+</tr>
+<tr>
+<td>$\Longrightarrow \frac{m}{2}\left\Vert z-x^{\star}\right\Vert^{2} \leq f(z)-f\left(x^{\star}\right) \leq \frac{1}{2 m}\Vert\nabla f(z)\Vert_{*}^{2}$</td>
+<td>$\Longrightarrow \frac{1}{2 L}\Vert\nabla f(z)\Vert_{*}^{2} \leq f(z)-f\left(x^{\star}\right) \leq \frac{L}{2}\left\Vert z-x^{\star}\right\Vert^{2}$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong><em>例子</em></strong>：如果函数 $f$ 既是 m-强凸的，又是(关于2范数) L-smooth 的，那么</p>
+<ol>
+<li>函数 $h(x)=f(x)-\frac{m}{2}\Vert x\Vert^2$ 是 <strong>(L-m)-smooth</strong> 的</li>
+<li>函数 $h$ 的 co-coercivity 可以写为</li>
+</ol>
+<script type="math/tex; mode=display">
+(\nabla f(x)-\nabla f(y))^{T}(x-y) \geq \frac{m L}{m+L}\|x-y\|_{2}^{2}+\frac{1}{m+L}\|\nabla f(x)-\nabla f(y)\|_{2}^{2} \quad \text { for all } x, y \in \operatorname{dom} f</script><h2 id="4-梯度方法收敛性分析"><a href="#4-梯度方法收敛性分析" class="headerlink" title="4. 梯度方法收敛性分析"></a>4. 梯度方法收敛性分析</h2><p>下面给出一些常见梯度下降方法的分析。先回顾一下梯度方法的一般表达式</p>
+<script type="math/tex; mode=display">
+x_{k+1}=x_{k}-t_k \nabla f(x_k)</script><p>首先有一些假设</p>
+<ol>
+<li>$f$ convex 且可导，$\text{dom}f=R^n$</li>
+<li>$\nabla f$ 关于2范数 L-Lipschitz continuous</li>
+<li>最优解有限且可取</li>
+</ol>
+<h3 id="4-1-固定步长"><a href="#4-1-固定步长" class="headerlink" title="4.1 固定步长"></a>4.1 固定步长</h3><p>固定步长为 $t$，则 $x^+=x-t\nabla f(x)$，根据 L-smooth 性质有</p>
+<script type="math/tex; mode=display">
+f(x-t \nabla f(x)) \leq f(x)-t\left(1-\frac{L t}{2}\right)\|\nabla f(x)\|_{2}^{2}</script><p>如果 $0 &lt; t \leq 1/L$，则有</p>
+<script type="math/tex; mode=display">
+f\left(x^{+}\right) \leq f(x)-\frac{t}{2}\|\nabla f(x)\|_{2}^{2}</script><p>这表明(只要步长 $t$ 比较小)<strong>函数值总是在不断减小</strong>的。从上面的式子结合凸函数性质我们还可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f\left(x^{+}\right)-f^{\star} & \leq \nabla f(x)^{T}\left(x-x^{\star}\right)-\frac{t}{2}\|\nabla f(x)\|_{2}^{2} \\
+&=\frac{1}{2 t}\left(\left\|x-x^{\star}\right\|_{2}^{2}-\left\|x-x^{\star}-t \nabla f(x)\right\|_{2}^{2}\right) \\
+&=\frac{1}{2 t}\left(\left\|x-x^{\star}\right\|_{2}^{2}-\left\|x^{+}-x^{\star}\right\|_{2}^{2}\right)
+\end{aligned}</script><p>从这个式子可以得到我们<strong>到最优点 $x^\star$ 的距离在不断减小</strong>。那么可以得到下面的式子</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{i=1}^{k}\left(f\left(x_{i}\right)-f^{\star}\right) & \leq \frac{1}{2 t} \sum_{i=1}^{k}\left(\left\|x_{i-1}-x^{\star}\right\|_{2}^{2}-\left\|x_{i}-x^{\star}\right\|_{2}^{2}\right) \\
+&=\frac{1}{2 t}\left(\left\|x_{0}-x^{\star}\right\|_{2}^{2}-\left\|x_{k}-x^{\star}\right\|_{2}^{2}\right) \\
+& \leq \frac{1}{2 t}\left\|x_{0}-x^{\star}\right\|_{2}^{2}
+\end{aligned} \\
+\Longrightarrow f(x_k)-f^\star\leq\frac{1}{k}\sum_{i=1}^{k}\left(f\left(x_{i}\right)-f^{\star}\right) \leq \frac{1}{2 kt}\left\|x_{0}-x^{\star}\right\|_{2}^{2}</script><p>因此普通的固定步长的梯度下降有以下收敛性质</p>
+<ol>
+<li>$f(x_{k+1}) &lt; f(x_k)$</li>
+<li>$\Vert x_{k+1}-x^\star\Vert &lt; \Vert x_{k}-x^\star\Vert$</li>
+<li>$f(x_k)-f^\star\leq \frac{1}{2 kt}\left|x_{0}-x^{\star}\right|_{2}^{2}$，要想满足精度 $f(x_k)-f^\star \leq \epsilon$ 需要的迭代次数为 $O(1/\epsilon)$</li>
+</ol>
+<h3 id="4-2-线搜索"><a href="#4-2-线搜索" class="headerlink" title="4.2 线搜索"></a>4.2 线搜索</h3><p>线搜索就是每步都要计算合适的步长，计算方法为不断地迭代 $t_k:=\beta t_k,0&lt;\beta&lt;1$ 直到 $t_k$ 满足下面的条件</p>
+<script type="math/tex; mode=display">
+f\left(x_{k}-t_{k} \nabla f\left(x_{k}\right)\right)<f\left(x_{k}\right)-\alpha t_{k}\left\|\nabla f\left(x_{k}\right)\right\|_{2}^{2}</script><p>形象理解就是下面这幅图，一开始我们的 $t_k$ 可能很大，表示梯度下降的步长过大，不能使函数值减小，那我们就减小步长 $t_k=\beta t_k$，直到进入绿线与蓝线交点左侧这部分，我们就可以保证一定有 $f(x_{k+1})&lt;f(x_k)$，这时就是我们要取的 $t_k$，这也是线搜索的含义，线搜索实际上就是在搜索合适的步长 $t_k$。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-line-search.PNG" alt="line search"></p>
+<p> 主要到上面的式子中有一个参数 $\alpha$ 会影响我们的搜索结果，比如上图中 $\alpha$ 越大，则绿线的斜率越大，那么最终搜索到的 $t_k$ 应该就越小，表示我们每一步的步长都会更小。实际中往往取 $\alpha=1/2$，此时理想的搜索结果实际上就是 quadratic upper bound 的最小值点。也就是说我们用二次上界曲线来近似待优化的函数，而二次上界的最小值点对应的步长就是 $t=1/L$，但由于我们是线搜索，实际得到的 $t_k$ 一般会比这个值略小一点。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-line-search2.PNG" alt="line search"></p>
+<p>另一方面为了保证线搜索在有限步能够终止，还需要满足 $t_k\ge t_\min =\min\{\hat{t},\beta/L\}$，其中 $\hat{t}$ 是预先指定的一个参数。</p>
+<p>那么线搜索的收敛性怎么样呢？首先根据线搜索的定义一定有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f\left(x_{i+1}\right) & \leq f\left(x_{i}\right)-\frac{t_{i}}{2}\left\|\nabla f\left(x_{i}\right)\right\|_{2}^{2} \\
+& \leq f^{\star}+\nabla f\left(x_{i}\right)^{T}\left(x_{i}-x^{\star}\right)-\frac{t_{i}}{2}\left\|\nabla f\left(x_{i}\right)\right\|_{2}^{2} \\
+&=f^{\star}+\frac{1}{2 t_{i}}\left(\left\|x_{i}-x^{\star}\right\|_{2}^{2}-\left\|x_{i+1}-x^{\star}\right\|_{2}^{2}\right)
+\end{aligned}</script><p>这表明 $f(x_{i+1})<f(x_i),\left\|x_{i}-x^{\star}\right\|_{2}>\left|x_{i+1}-x^{\star}\right|_{2}$，类似前面固定步长的分析，可以得到</p>
+<script type="math/tex; mode=display">
+f(x_k)-f^\star\leq\frac{1}{k}\sum_{i=1}^{k}\left(f\left(x_{i}\right)-f^{\star}\right) \leq \frac{1}{2 kt_\min}\left\|x_{0}-x^{\star}\right\|_{2}^{2}</script><p>因此对于线搜索的方法，我们可以得到如下的收敛性质</p>
+<ol>
+<li>$f(x_{i+1})&lt;f(x_i)$</li>
+<li>$\left|x_{i}-x^{\star}\right|_{2}&gt;\left|x_{i+1}-x^{\star}\right|_{2}$</li>
+<li>$f(x_k)-f^\star\leq \frac{1}{2 kt_\min}\left|x_{0}-x^{\star}\right|_{2}^{2}$</li>
+</ol>
+<p>所以线搜索实际上并不能提高收敛速度的阶，他与固定步长的方法都是 $O(1/k)$ 的，为 <strong>sublinear 收敛</strong>。</p>
+<h3 id="4-3-一阶方法的收敛极限"><a href="#4-3-一阶方法的收敛极限" class="headerlink" title="4.3 一阶方法的收敛极限"></a>4.3 一阶方法的收敛极限</h3><p>不管是固定步长还是线搜索，前面的方法都是一阶方法，即</p>
+<script type="math/tex; mode=display">
+x_{k+1}\in x_{0}+\operatorname{span}\left\{\nabla f\left(x_{0}\right), \nabla f\left(x_{1}\right), \ldots, \nabla f\left(x_{k}\right)\right\}</script><p>而理论上也证明一阶方法的收敛速度存在极限。</p>
+<p><strong>定理(Nesterov)</strong>： for every integer $k ≤ (n−1)/2$ and every $x_0$, there exist functions in the problem class such that for any ﬁrst-order method</p>
+<script type="math/tex; mode=display">
+f\left(x_{k}\right)-f^{\star} \geq \frac{3}{32} \frac{L\left\|x_{0}-x^{\star}\right\|_{2}^{2}}{(k+1)^{2}}</script><p>也就是说收敛速度最多也就是 $O(1/k^2)$。</p>
+<h3 id="4-4-强凸函数的梯度方法"><a href="#4-4-强凸函数的梯度方法" class="headerlink" title="4.4 强凸函数的梯度方法"></a>4.4 强凸函数的梯度方法</h3><p>对于强凸函数，即使采用固定步长的梯度方法，也可以得到<strong>线性收敛速度</strong>！这就是强凸性带来的好处。</p>
+<p>考虑 $0&lt;t&lt;2/(m+L)$，我们有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\left\|x^{+}-x^{\star}\right\|_{2}^{2} &=\left\|x-t \nabla f(x)-x^{\star}\right\|_{2}^{2} \\
+&=\left\|x-x^{\star}\right\|_{2}^{2}-2 t \nabla f(x)^{T}\left(x-x^{\star}\right)+t^{2}\|\nabla f(x)\|_{2}^{2} \\
+& \leq\left(1-t \frac{2 m L}{m+L}\right)\left\|x-x^{\star}\right\|_{2}^{2}+t\left(t-\frac{2}{m+L}\right)\|\nabla f(x)\|_{2}^{2} \\
+& \leq\left(1-t \frac{2 m L}{m+L}\right)\left\|x-x^{\star}\right\|_{2}^{2}
+\end{aligned}</script><p>也就是说可以得到</p>
+<script type="math/tex; mode=display">
+\left\|x_{k}-x^{\star}\right\|_{2}^{2} \leq c^{k}\left\|x_{0}-x^{\star}\right\|_{2}^{2}, \quad c=1-t \frac{2 m L}{m+L} \\
+f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}^{2} \leq \frac{c^{k} L}{2}\left\|x_{0}-x^{\star}\right\|_{2}^{2}</script><p>注意到前面是反比例下降，这里变成了指数下降。如果要打到精度 $f(x_k)-f^\star \leq \epsilon$ 需要的迭代次数为 $O(\log(1/\epsilon))$</p>
+<h2 id="5-BB-方法"><a href="#5-BB-方法" class="headerlink" title="5. BB 方法"></a>5. BB 方法</h2><p><strong>Barzilai-Borwein (BB) method</strong> 也是梯度下降方法的一种，他主要是通过近似牛顿方法来实现更快的收敛速度，同时避免计算二阶导数带来的计算复杂度。</p>
+<p>如果我们记 $\boldsymbol{g}^{(k)}=\nabla f\left(\boldsymbol{x}^{(k)}\right) \text { and } \boldsymbol{F}^{(k)}=\nabla^{2} f\left(\boldsymbol{x}^{(k)}\right)$，那么<strong>一阶方法</strong>就是 $\boldsymbol{x}^{(k+1)}=\boldsymbol{x}^{(k)}-\alpha_{k} \boldsymbol{g}^{(k)}$，其中步长 $\alpha_k$ 可以是固定的，也可以是线搜索获得的，一阶方法简单但是收敛速度慢。<strong>牛顿方法</strong>就是 $\boldsymbol{x}^{(k+1)}=\boldsymbol{x}^{(k)}-\left(\boldsymbol{F}^{(k)}\right)^{-1} \boldsymbol{g}^{(k)}$，其收敛速度更快，但是海森矩阵计算代价较大。而 <strong>BB方法</strong>就是用 $\alpha_{k} \boldsymbol{g}^{(k)}$ 来近似 $\left(\boldsymbol{F}^{(k)}\right)^{-1} \boldsymbol{g}^{(k)}$。</p>
+<p>怎么近似呢？假如定义 $s^{(k-1)}:=x^{(k)}-x^{(k-1)} \text { and } y^{(k-1)}:=g^{(k)}-g^{(k-1)}$，那么海森矩阵实际上就是</p>
+<script type="math/tex; mode=display">
+\boldsymbol{F}^{(k)}s^{(k-1)}=y^{(k-1)}</script><p>现在的想法就是用 $(\alpha_k I)^{-1}$ 来近似 $\boldsymbol{F}^{(k)}$，那么应该有</p>
+<script type="math/tex; mode=display">
+(\alpha_k I)^{-1}s^{(k-1)}=y^{(k-1)}</script><p>这个问题用最小二乘就可以解决了，下面两种选择都可以</p>
+<script type="math/tex; mode=display">
+\alpha_{k}^{-1}=\underset{\beta}{\arg \min } \frac{1}{2}\left\|s^{(k-1)} \beta-\boldsymbol{y}^{(k-1)}\right\|^{2} \Longrightarrow \alpha_{k}^{1}=\frac{\left(s^{(k-1)}\right)^{T} s^{(k-1)}}{\left(s^{(k-1)}\right)^{T} \boldsymbol{y}^{(k-1)}} \\\alpha_{k}=\underset{\alpha}{\arg \min } \frac{1}{2}\left\|s^{(k-1)}-\boldsymbol{y}^{(k-1)} \alpha\right\|^{2} \Longrightarrow \alpha_{k}^{2}=\frac{\left(\boldsymbol{s}^{(k-1)}\right)^{T} \boldsymbol{y}^{(k-1)}}{\left(\boldsymbol{y}^{(k-1)}\right)^{T} \boldsymbol{y}^{(k-1)}}</script><p>这两个解有一个微妙的不同点在于 $\alpha_k^1$ 的分母 $\left(s^{(k-1)}\right)^{T} \boldsymbol{y}^{(k-1)}$ 有可能等于 0，这会给计算带来麻烦，而 $\alpha_k^2$ 则不会。</p>
+<p>BB方法主要有以下几个特点：</p>
+<ol>
+<li>几乎不需要额外的计算量，但是往往会带来极大的性能增益；</li>
+<li>实际应用中这两个表达式用哪个都可以，甚至还可以交换使用，用哪个更好一般与具体的问题有关；</li>
+<li>收敛性很难证明，没有收敛性的保证。比如下面的例子，他甚至不是单调下降的。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-bb.PNG" alt="BB method"></p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/tools/matlab-parpool/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    MATLAB R2016a 无法启动并行池
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/optimization/ch14-sdp-rep/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">凸优化笔记14：SDP Representablity</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

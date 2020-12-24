@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>JY901串口数据接收与处理(Python) | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="IMU" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。 这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。">
+<meta name="keywords" content="IMU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JY901串口数据接收与处理(Python)">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;hardware&#x2F;jy901&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。 这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-07-09T00:17:11.062Z">
+<meta name="twitter:card" content="summary">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file active"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-hardware/jy901" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Hardware/">Hardware</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/IMU/" rel="tag">IMU</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/hardware/jy901/">
+            <time datetime="2020-07-08T23:40:23.000Z" itemprop="datePublished">2020-07-09</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/hardware/jy901.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/hardware/jy901.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/hardware/jy901.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            JY901串口数据接收与处理(Python)
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。</p>
+<p>这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。</p>
+<a id="more"></a>
+<h2 id="1-串口通信"><a href="#1-串口通信" class="headerlink" title="1. 串口通信"></a>1. 串口通信</h2><p>python实现串口通信可以用 <code>pySerial</code> 库。我们首先选择串口对应的设备端口：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取串口设备对应的端口</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_serial_port</span><span class="params">()</span>:</span></span><br><span class="line">    ports = list(serial.tools.list_ports.comports())</span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> ports:</span><br><span class="line">        print(ports.index(port), port)</span><br><span class="line">    selected = <span class="number">-1</span></span><br><span class="line">    <span class="keyword">while</span> selected &lt; <span class="number">0</span> <span class="keyword">or</span> selected &gt;= len(ports):</span><br><span class="line">        print(<span class="string">"please input serial to use [start from 0]:"</span>)</span><br><span class="line">        selected = int(input())</span><br><span class="line">        print(<span class="string">"selected: "</span>, selected)</span><br><span class="line"></span><br><span class="line">    port = ports[selected]</span><br><span class="line">    print(<span class="string">"use "</span>, port)</span><br><span class="line">    port = list(port)</span><br><span class="line">    <span class="keyword">return</span> port[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>然后打开串口并持续接收数据，在收到的数据中提取IMU数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">serial_readers</span><span class="params">(self, port = None, size = <span class="number">22</span>)</span>:</span></span><br><span class="line">    <span class="comment"># port   : 串口端口</span></span><br><span class="line">    <span class="comment"># size   : 默认一次读取数据长度(bytes)</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> port:</span><br><span class="line">        port = get_serial_port()</span><br><span class="line">    total = bytearray()</span><br><span class="line">    ser = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ser:</span><br><span class="line">                ser = serial.Serial(port, <span class="number">115200</span>, timeout=<span class="number">60</span>)</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ser.is_open:</span><br><span class="line">                ser.open()</span><br><span class="line">            tmp = ser.read(size)</span><br><span class="line">            total.extend(tmp)</span><br><span class="line">            total, ext_omega, ext_angle = self.extract_raw_data(total)   <span class="comment">#提取IMU数据</span></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(<span class="string">"exception "</span>, e)</span><br><span class="line">            <span class="keyword">if</span> ser:</span><br><span class="line">                ser.close()</span><br><span class="line">            time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> self.record_omega, self.record_angle</span><br></pre></td></tr></table></figure>
+<h2 id="2-IMU数据提取"><a href="#2-IMU数据提取" class="headerlink" title="2. IMU数据提取"></a>2. IMU数据提取</h2><p>首先我们来看JY901串口数据的帧结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">加速度：0x55 0x51 AxL AxH AyL AyH AzL AzH TL TH SUM </span><br><span class="line">角速度：0x55 0x52 wxL wxH wyL wyH wzL wzH TL TH SUM </span><br><span class="line">角度：  0x55 0x53 RollL RollH PitchL PitchH YawL YawH TL TH SUM</span><br></pre></td></tr></table></figure>
+<p>这三种数据帧长度都是 11 Bytes，最后一位为校验位，我们从串口数据中提取IMU数据也是根据这个帧结构，先检测帧头，然后读取整个帧（代码里偷了懒，并没有核对校验位）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">extract_raw_data</span><span class="params">(self, data)</span>:</span></span><br><span class="line">    <span class="comment"># 根据报文格式读取角速度数据</span></span><br><span class="line">    <span class="comment"># 0x55 0x52 + data + CRC(8bits)</span></span><br><span class="line">    length = <span class="number">9</span></span><br><span class="line">    ext_omega = <span class="literal">None</span></span><br><span class="line">    ext_angle = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        st = data.index(<span class="string">b'\x55'</span>)                <span class="comment"># 寻找报文引导字</span></span><br><span class="line">        <span class="keyword">if</span> st &gt;= <span class="number">0</span>:</span><br><span class="line">            reserved = data[st+<span class="number">1</span>]               <span class="comment"># 数据类型</span></span><br><span class="line">            <span class="keyword">if</span> reserved == <span class="number">82</span>:                  <span class="comment"># 0x52，提取角速度消息</span></span><br><span class="line">                <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; len(data):</span><br><span class="line">                    <span class="keyword">if</span> self.count_omega==<span class="number">0</span>:</span><br><span class="line">                        self.time_now = self.time_last = time.time()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        self.time_last = self.time_now</span><br><span class="line">                        self.time_now = time.time()</span><br><span class="line"></span><br><span class="line">                    ext_omega = data[st:st+length+<span class="number">2</span>]</span><br><span class="line">                    temp = int.from_bytes(ext_omega[<span class="number">6</span>:<span class="number">8</span>], byteorder=<span class="string">'little'</span>, signed=<span class="literal">True</span>)</span><br><span class="line">                    self.omega = temp/<span class="number">32768</span>*<span class="number">2000</span></span><br><span class="line">                    self.record_omega.append(self.omega)   <span class="comment">#deg/s</span></span><br><span class="line">                    data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                    self.count_omega += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                    self.omega_inte += self.omega*(self.time_now - self.time_last)</span><br><span class="line">                    self.omega_inte = (self.omega_inte+<span class="number">180</span>)%<span class="number">360</span> - <span class="number">180</span></span><br><span class="line">                    self.record_inte.append(self.omega_inte)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> reserved == <span class="number">83</span>:                <span class="comment"># 0x53，提取角度消息</span></span><br><span class="line">                <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; len(data):</span><br><span class="line">                    ext_angle = data[st:st+length+<span class="number">2</span>]</span><br><span class="line">                    temp = int.from_bytes(ext_angle[<span class="number">6</span>:<span class="number">8</span>], byteorder=<span class="string">'little'</span>, signed=<span class="literal">True</span>)</span><br><span class="line">                    self.yaw = temp/<span class="number">32768</span>*<span class="number">180</span></span><br><span class="line">                    <span class="keyword">if</span> self.count_yaw==<span class="number">0</span>:                   <span class="comment">#记录初始相位</span></span><br><span class="line">                        self.yaw_init = self.yaw</span><br><span class="line">                    self.record_angle.append(self.yaw - self.yaw_init)      <span class="comment">#deg</span></span><br><span class="line">                    data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                    self.count_yaw += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> reserved == <span class="number">81</span>:                <span class="comment"># 0x51, 丢弃加速度消息</span></span><br><span class="line">                <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; len(data):</span><br><span class="line">                    ext_data = <span class="literal">None</span></span><br><span class="line">                    data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                data = data[st+<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> data, ext_omega, ext_angle</span><br><span class="line">    <span class="keyword">if</span> self.count_yaw%<span class="number">100</span> == <span class="number">0</span> <span class="keyword">and</span> self.count_yaw&gt;<span class="number">0</span>:</span><br><span class="line">        self.save_data()</span><br><span class="line">        print(len(self.record_omega),<span class="string">' extract omega  '</span>,ext_omega,self.omega_inte)</span><br><span class="line">        print(len(self.record_angle),<span class="string">' extract angle  '</span>,ext_angle,self.yaw - self.yaw_init)</span><br><span class="line">        print(<span class="string">'*'</span>*<span class="number">30</span>)</span><br><span class="line">    <span class="keyword">return</span> data, ext_omega, ext_angle</span><br></pre></td></tr></table></figure>
+<h2 id="3-绘图显示"><a href="#3-绘图显示" class="headerlink" title="3. 绘图显示"></a>3. 绘图显示</h2><p>我把历史接收数据都存在一个 <code>list</code> 里面了，每过 0.1s 就重新绘图，看起来就像是在实时更新一样。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot</span><span class="params">(self)</span>:</span></span><br><span class="line">    plt.ion()</span><br><span class="line">    plt.figure()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> len(self.record_angle)&gt;<span class="number">0</span> <span class="keyword">and</span> len(self.record_inte)&gt;<span class="number">0</span> :</span><br><span class="line">                plt.clf()</span><br><span class="line">                plt.plot(list(range(len(self.record_angle))),self.record_angle,<span class="string">'r'</span>)</span><br><span class="line">                plt.plot(list(range(len(self.record_inte))),self.record_inte,<span class="string">'b'</span>)</span><br><span class="line">                plt.xlim(max(<span class="number">0</span>,self.count_yaw<span class="number">-3000</span>),self.count_yaw+<span class="number">200</span>)</span><br><span class="line">                plt.legend(labels=[<span class="string">'angle'</span>,<span class="string">'integration'</span>])</span><br><span class="line">                plt.pause(<span class="number">0.1</span>)</span><br><span class="line">                plt.ioff()</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(<span class="string">"exception "</span>, e)</span><br></pre></td></tr></table></figure>
+<h2 id="4-运行效果"><a href="#4-运行效果" class="headerlink" title="4. 运行效果"></a>4. 运行效果</h2><h2 id="5-完整代码"><a href="#5-完整代码" class="headerlink" title="5. 完整代码"></a>5. 完整代码</h2><p>为了便于共享数据，定义了一个类 <code>JY901</code>，将上面的各个函数放在这个类里面，输出的数据也都记录在 <code>JY901</code> 的成员变量里。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"><span class="keyword">import</span> serial.tools.list_ports</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JY901</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.time_last = <span class="number">0</span></span><br><span class="line">        self.time_now = <span class="number">0</span></span><br><span class="line">        self.record_angle = []</span><br><span class="line">        self.record_omega = []</span><br><span class="line">        self.record_inte = []</span><br><span class="line">        self.count_yaw = <span class="number">0</span></span><br><span class="line">        self.count_omega = <span class="number">0</span></span><br><span class="line">        self.omega_inte = <span class="number">0</span>         <span class="comment">#角速度积分</span></span><br><span class="line">        self.yaw_init = <span class="number">0</span></span><br><span class="line">        self.yaw = <span class="number">0</span></span><br><span class="line">        self.omega = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">extract_raw_data</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        <span class="comment"># 根据报文格式读取角速度数据</span></span><br><span class="line">        <span class="comment"># 0x55 0x52 + data + CRC(8bits)</span></span><br><span class="line">        length = <span class="number">9</span></span><br><span class="line">        ext_omega = <span class="literal">None</span></span><br><span class="line">        ext_angle = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            st = data.index(<span class="string">b'\x55'</span>)                <span class="comment"># 寻找报文引导字</span></span><br><span class="line">            <span class="keyword">if</span> st &gt;= <span class="number">0</span>:</span><br><span class="line">                reserved = data[st+<span class="number">1</span>]               <span class="comment"># 数据类型</span></span><br><span class="line">                <span class="keyword">if</span> reserved == <span class="number">82</span>:                  <span class="comment"># 0x52，提取角速度消息</span></span><br><span class="line">                    <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; len(data):</span><br><span class="line">                        <span class="keyword">if</span> self.count_omega==<span class="number">0</span>:</span><br><span class="line">                            self.time_now = self.time_last = time.time()</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            self.time_last = self.time_now</span><br><span class="line">                            self.time_now = time.time()</span><br><span class="line"></span><br><span class="line">                        ext_omega = data[st:st+length+<span class="number">2</span>]</span><br><span class="line">                        temp = int.from_bytes(ext_omega[<span class="number">6</span>:<span class="number">8</span>], byteorder=<span class="string">'little'</span>, signed=<span class="literal">True</span>)</span><br><span class="line">                        self.omega = temp/<span class="number">32768</span>*<span class="number">2000</span></span><br><span class="line">                        self.record_omega.append(self.omega)   <span class="comment">#deg/s</span></span><br><span class="line">                        data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                        self.count_omega += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                        self.omega_inte += self.omega*(self.time_now - self.time_last)</span><br><span class="line">                        self.omega_inte = (self.omega_inte+<span class="number">180</span>)%<span class="number">360</span> - <span class="number">180</span></span><br><span class="line">                        self.record_inte.append(self.omega_inte)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">elif</span> reserved == <span class="number">83</span>:                <span class="comment"># 0x53，提取角度消息</span></span><br><span class="line">                    <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; len(data):</span><br><span class="line">                        ext_angle = data[st:st+length+<span class="number">2</span>]</span><br><span class="line">                        temp = int.from_bytes(ext_angle[<span class="number">6</span>:<span class="number">8</span>], byteorder=<span class="string">'little'</span>, signed=<span class="literal">True</span>)</span><br><span class="line">                        self.yaw = temp/<span class="number">32768</span>*<span class="number">180</span></span><br><span class="line">                        <span class="keyword">if</span> self.count_yaw==<span class="number">0</span>:                   <span class="comment">#记录初始相位</span></span><br><span class="line">                            self.yaw_init = self.yaw</span><br><span class="line">                        self.record_angle.append(self.yaw - self.yaw_init)      <span class="comment">#deg</span></span><br><span class="line">                        data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                        self.count_yaw += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">elif</span> reserved == <span class="number">81</span>:                <span class="comment"># 0x51, 丢弃加速度消息</span></span><br><span class="line">                    <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; len(data):</span><br><span class="line">                        ext_data = <span class="literal">None</span></span><br><span class="line">                        data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    data = data[st+<span class="number">2</span>:]</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">return</span> data, ext_omega, ext_angle</span><br><span class="line">        <span class="keyword">if</span> self.count_yaw%<span class="number">100</span> == <span class="number">0</span> <span class="keyword">and</span> self.count_yaw&gt;<span class="number">0</span>:</span><br><span class="line">            self.save_data()</span><br><span class="line">            print(len(self.record_omega),<span class="string">' extract omega  '</span>,ext_omega,self.omega_inte)</span><br><span class="line">            print(len(self.record_angle),<span class="string">' extract angle  '</span>,ext_angle,self.yaw - self.yaw_init)</span><br><span class="line">            print(<span class="string">'*'</span>*<span class="number">30</span>)</span><br><span class="line">        <span class="keyword">return</span> data, ext_omega, ext_angle</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">serial_readers</span><span class="params">(self, port = None, size = <span class="number">22</span>)</span>:</span></span><br><span class="line">        <span class="comment"># port   : 串口端口</span></span><br><span class="line">        <span class="comment"># size   : 默认一次读取数据长度(bytes)</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> port:</span><br><span class="line">            port = get_serial_port()</span><br><span class="line">        total = bytearray()</span><br><span class="line">        ser = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> ser:</span><br><span class="line">                    ser = serial.Serial(port, <span class="number">115200</span>, timeout=<span class="number">60</span>)</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> ser.is_open:</span><br><span class="line">                    ser.open()</span><br><span class="line">                tmp = ser.read(size)</span><br><span class="line">                total.extend(tmp)</span><br><span class="line">                total, ext_omega, ext_angle = self.extract_raw_data(total)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                print(<span class="string">"exception "</span>, e)</span><br><span class="line">                <span class="keyword">if</span> ser:</span><br><span class="line">                    ser.close()</span><br><span class="line">                time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> self.record_omega, self.record_angle</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">save_data</span><span class="params">(self)</span>:</span></span><br><span class="line">        np.savez(<span class="string">'record.npz'</span>,record_omega=self.record_omega, record_angle=self.record_angle)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">plot</span><span class="params">(self)</span>:</span></span><br><span class="line">        plt.ion()</span><br><span class="line">        plt.figure()</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> len(self.record_angle)&gt;<span class="number">0</span> <span class="keyword">and</span> len(self.record_inte)&gt;<span class="number">0</span> :</span><br><span class="line">                    plt.clf()</span><br><span class="line">                    plt.plot(list(range(len(self.record_angle))),self.record_angle,<span class="string">'r'</span>)</span><br><span class="line">                    plt.plot(list(range(len(self.record_inte))),self.record_inte,<span class="string">'b'</span>)</span><br><span class="line">                    plt.xlim(max(<span class="number">0</span>,self.count_yaw<span class="number">-3000</span>),self.count_yaw+<span class="number">200</span>)</span><br><span class="line">                    plt.legend(labels=[<span class="string">'angle'</span>,<span class="string">'integration'</span>])</span><br><span class="line">                    plt.pause(<span class="number">0.1</span>)</span><br><span class="line">                    plt.ioff()</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                print(<span class="string">"exception "</span>, e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_serial_port</span><span class="params">()</span>:</span></span><br><span class="line">    ports = list(serial.tools.list_ports.comports())</span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> ports:</span><br><span class="line">        print(ports.index(port), port)</span><br><span class="line">    selected = <span class="number">-1</span></span><br><span class="line">    <span class="keyword">while</span> selected &lt; <span class="number">0</span> <span class="keyword">or</span> selected &gt;= len(ports):</span><br><span class="line">        print(<span class="string">"please input serial to use [start from 0]:"</span>)</span><br><span class="line">        selected = int(input())</span><br><span class="line">        print(<span class="string">"selected: "</span>, selected)</span><br><span class="line"></span><br><span class="line">    port = ports[selected]</span><br><span class="line">    print(<span class="string">"use "</span>, port)</span><br><span class="line">    port = list(port)</span><br><span class="line">    <span class="keyword">return</span> port[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    imu = JY901()</span><br><span class="line">    thread_rcv = threading.Thread(target=imu.serial_readers)</span><br><span class="line">    thread_plt = threading.Thread(target=imu.plot)</span><br><span class="line">    thread_plt.start()</span><br><span class="line">    thread_rcv.start()</span><br></pre></td></tr></table></figure>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/hardware/raspberrypi-autostart/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    树莓派设置开机自启动程序
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/music/WhyBabyWhy/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Why Baby Why</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

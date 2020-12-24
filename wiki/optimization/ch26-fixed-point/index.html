@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>凸优化笔记26：不动点迭代 | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="PG 算法,利普希兹连续,强凸函数,近似点算子,PPA,算子分裂法,不动点迭代" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前面讲了很多具体的算法，比如梯度、次梯度、近似点梯度、加速近似点梯度、PPA、DR方法、ADMM、ALM等，对这些方法的迭代过程有了一些了解。这一节则主要是针对算法的收敛性进行分析，试图从一个更加抽象的层面，利用不动点迭代的思想，把上面的算法综合起来，给一个比较 general 的收敛性分析方法。 1. 什么是不动点？对于希尔伯特空间(Hilbert space) $\mathcal{H}$，定义">
+<meta name="keywords" content="PG 算法,利普希兹连续,强凸函数,近似点算子,PPA,算子分裂法,不动点迭代">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记26：不动点迭代">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;optimization&#x2F;ch26-fixed-point&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面讲了很多具体的算法，比如梯度、次梯度、近似点梯度、加速近似点梯度、PPA、DR方法、ADMM、ALM等，对这些方法的迭代过程有了一些了解。这一节则主要是针对算法的收敛性进行分析，试图从一个更加抽象的层面，利用不动点迭代的思想，把上面的算法综合起来，给一个比较 general 的收敛性分析方法。 1. 什么是不动点？对于希尔伯特空间(Hilbert space) $\mathcal{H}$，定义">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;26-contractive.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;26-rotation.PNG">
+<meta property="og:updated_time" content="2020-05-27T09:36:45.781Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;26-contractive.PNG">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file active"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-optimization/ch26-fixed-point" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/PG-%E7%AE%97%E6%B3%95/" rel="tag">PG 算法</a>, <a class="tag-link" href="/tags/PPA/" rel="tag">PPA</a>, <a class="tag-link" href="/tags/%E4%B8%8D%E5%8A%A8%E7%82%B9%E8%BF%AD%E4%BB%A3/" rel="tag">不动点迭代</a>, <a class="tag-link" href="/tags/%E5%88%A9%E6%99%AE%E5%B8%8C%E5%85%B9%E8%BF%9E%E7%BB%AD/" rel="tag">利普希兹连续</a>, <a class="tag-link" href="/tags/%E5%BC%BA%E5%87%B8%E5%87%BD%E6%95%B0/" rel="tag">强凸函数</a>, <a class="tag-link" href="/tags/%E7%AE%97%E5%AD%90%E5%88%86%E8%A3%82%E6%B3%95/" rel="tag">算子分裂法</a>, <a class="tag-link" href="/tags/%E8%BF%91%E4%BC%BC%E7%82%B9%E7%AE%97%E5%AD%90/" rel="tag">近似点算子</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch26-fixed-point/">
+            <time datetime="2020-05-27T09:26:45.000Z" itemprop="datePublished">2020-05-27</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch26-fixed-point.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch26-fixed-point.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch26-fixed-point.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            凸优化笔记26：不动点迭代
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>前面讲了很多具体的算法，比如梯度、次梯度、近似点梯度、加速近似点梯度、PPA、DR方法、ADMM、ALM等，对这些方法的迭代过程有了一些了解。这一节则主要是针对算法的<strong>收敛性</strong>进行分析，试图从一个更加抽象的层面，利用<strong>不动点迭代</strong>的思想，把上面的算法综合起来，给一个比较 general 的收敛性分析方法。</p>
+<h2 id="1-什么是不动点？"><a href="#1-什么是不动点？" class="headerlink" title="1. 什么是不动点？"></a>1. 什么是不动点？</h2><p>对于希尔伯特空间(Hilbert space) $\mathcal{H}$，定义了内积 $\left&lt;\cdot,\cdot\right&gt;$ 和 范数 $|\cdot|$（可以借助于 $\mathbb{R}^2$ 来想象）。算子 $T:\mathcal{H}\to\mathcal{H}$（或者是 $C\to C$，$C$ 为 $\mathcal{H}$ 的闭子集）。那么算子 $T$ 的不动点集合就定为</p>
+<script type="math/tex; mode=display">
+\mathrm{Fix} T:=\{x \in \mathcal{H}: x=T(x)\}</script><p>如果不动点集合非空，想要研究的是不动点迭代 $x^{k+1}\leftarrow T(x^k)$ 的收敛性。为了简便，常把 $T(x)$ 写为 $Tx$。</p>
+<p>为什么要研究不动点迭代呢？因为前面我们讲的算法里面很多都可以表示为这种形式。</p>
+<a id="more"></a>
+<p><strong><em>例子 1(GD)</em></strong>：对于无约束优化 $\min f(x)$，不假设 $f$ 一定是凸的。如果有 $\nabla f(x^\star)=0$，那么 $x^\star$ 被称为驻点(stationary point)。梯度下降做的什么事呢？$x^{k+1}=x^k-\gamma \nabla f(x^k)$，所以实际上算子 $T$ 为</p>
+<script type="math/tex; mode=display">
+T:=I-\gamma \nabla f</script><p>我们要找的最优解 $x^\star$ 满足 $\nabla f(x^\star)=0\Longrightarrow x^\star=T(x^\star)$，因此我们要找的就是 $T$ 的不动点。</p>
+<p><strong><em>例子 2(PG1)</em></strong>：对于有约束优化 $\min f(x),\text{ s.t. }x\in C$，假设 $f$ 为正常的闭凸函数，$C$ 为非空闭凸集。对于这个带约束的优化问题，我们可以做完一步梯度下降以后再做个投影 $x^{k+1}\leftarrow \operatorname{proj}_{C}(x^k-\gamma \nabla f(x^k))$，所以有</p>
+<script type="math/tex; mode=display">
+T:=\operatorname{proj}_{C}(I-\gamma \nabla f)</script><p>而我们要找的最优解需要满足 $\left\langle\nabla f\left(x^{\star}\right), x-x^{\star}\right\rangle \geq 0 \quad \forall x \in C \iff 0\in \nabla f(x^\star)+\partial \delta_C(x^\star)$，这实际上还是在找 $T$ 的不动点。</p>
+<p><strong><em>例子 3(PG2)</em></strong>：上面向 $C$ 的投影实际上也是在算 $\text{prox}$ 算子。对于优化问题 $\min f(x)+g(x)$ 我们要解的方程是 </p>
+<script type="math/tex; mode=display">
+\begin{array}{c}0\in \nabla f(x)+\partial g(x) \iff 0\in x+\nabla f(x)-x+\partial g(x) \\\iff (I-\nabla f)(x)\in (I+\partial g)(x) \\\iff x=(I+\partial g)^{-1}(I-\nabla f)(x)\end{array}</script><p>上一节讲到了 $(I+\partial g)^{-1}$ 就是 $\text{prox}$ 算子，所以这个不动点迭代就等价于近似点梯度方法。</p>
+<p><strong><em>例子 4(KKT)</em></strong>：对于优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\min\quad& f_0(x) \\\text{s.t.}\quad& g(x)\le0 \\& h(x)=0\end{aligned}</script><p>拉格朗日函数为 $L(x,\lambda,\nu)=f_0(x)+\lambda^T g(x)+\nu^T h(x),\lambda\ge0$，KKT 条件就是要求解方程</p>
+<script type="math/tex; mode=display">
+T(x,\lambda,\nu)=\left[\begin{array}{c}\partial_x L(x,\lambda,\nu) \\-f(x)+\partial \delta_{\{\lambda\ge0\}}(x) \\h(x)\end{array}\right]=0</script><p>也就是要找到 $\tilde{T}=I+T$ 的不动点。</p>
+<p>上面几个例子主要为了说明很多优化算法都可以写成不动点迭代的形式，那么要想分析他们的收敛性，只需要分析不动点迭代的收敛性就可以了，下面要讲的就是这件事情。</p>
+<h2 id="2-收敛性分析"><a href="#2-收敛性分析" class="headerlink" title="2. 收敛性分析"></a>2. 收敛性分析</h2><p>要想分析收敛速度，必须要引入的一个性质就是 Lipschitz 连续。</p>
+<p><strong>定义</strong>：算子 $T$ 是 $L$-Lipschitz 的，$L\in[0,+\infty)$，如果它满足</p>
+<script type="math/tex; mode=display">
+\|T x-T y\| \leq L\|x-y\|, \quad \forall x, y \in \mathcal{H}</script><p><strong>定义</strong>：算子 $T$ 是 $L$-<strong>quasi</strong>-Lipschitz 的，$L\in[0,+\infty)$，如果对任意 $x^\star\in \text{Fix}T$ 它满足</p>
+<script type="math/tex; mode=display">
+\|T x-x^\star\| \leq L\|x-x^\star\|, \quad \forall x \in \mathcal{H}</script><h3 id="2-1-收缩算子收敛性"><a href="#2-1-收缩算子收敛性" class="headerlink" title="2.1 收缩算子收敛性"></a>2.1 收缩算子收敛性</h3><p><strong>定义</strong>：算子 $T$ 是<strong>收缩算子(contractive)</strong>，如果它满足 $L$-Lipschitz，$L\in[0,1)$</p>
+<p><strong>定义</strong>：算子 $T$ 是<strong>准收缩算子(quasi-contractive)</strong>，如果它满足 $L$-quasi-Lipschitz，$L\in[0,1)$</p>
+<p>准收缩算子很形象，它说明每次迭代之后，我们都会距离不动点 $x^\star$ 更近一点。</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/26-contractive.PNG" alt="contractive"></p>
+<p>下面是一个证明收敛性的重要定理！</p>
+<blockquote>
+<p><strong>定理(Banach fixed-point theorem)</strong>：如果 $T$ 是收缩算子，那么</p>
+<ul>
+<li>$T$ 有唯一的不动点 $x^\star$（存在且唯一）</li>
+<li>$x^k\to x^\star$（强收敛）</li>
+<li>$| x^k-x^\star|\le L^k|x^0-x^\star|$（线性收敛速度）</li>
+</ul>
+<p><strong>证明</strong>：略。</p>
+</blockquote>
+<p><strong><em>例子 1(GD)</em></strong>：对于一般的 $\min f(x)$，我们假设 $f$ 为 Lipschitz-diﬀerentiable 并且是 strongly-convex 的（回忆GD的收敛速度证明）那么就有（假设 $f\in C^2$）</p>
+<script type="math/tex; mode=display">
+mI\le \nabla^2 f\le LI</script><p>梯度下降的算子为 $T=I-\gamma \nabla f$，我们需要计算这个算子的 Lipschitz 常数</p>
+<script type="math/tex; mode=display">
+\begin{array}{c}(1-\alpha L)I\le D(I-\alpha\nabla f)=I-\alpha \nabla^2 f(x)\le(I-\alpha m)I \\\| D(I-\alpha\nabla f)\| \le \max(|1-\alpha m|,|1-\alpha L|)\end{array}</script><p>注：$T=I-\gamma \nabla f$ 里面的 $I$ 表示算子，$I-\alpha \nabla^2 f(x)$ 里边的 $I$ 就表示对角元素等于 1 的矩阵，虽然形式一样，但意义不太一样。</p>
+<p>如果要想 $T$ 是收缩算子，则需要 $\alpha\in(0,2/L)$，这也是为什么我们前面章节证明 GD 收敛性的时候需要步长 $t\le 2/L$。</p>
+<p><strong><em>例子 2</em></strong>：如果是对于一般的算子，我们想要求解 $0\in F(x)$，类比梯度下降方法，可以有 $x^{k+1}=x^k-\alpha Fx^k$，$T=I-\alpha F$。类似的，我们也假设 $F$ 为 $m$ strongly monotone，$L$-Lipschitz 的，那么有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\| Tx-Ty\|^2_2 &=\| (I-\alpha F)(x)-(I-\alpha F)(y)\|^2_2 \\&= \|x-y\|_2^2 - 2\alpha(Fx-Fy)^T(x-y)+\alpha^2\|Fx-Fy\|^2_2 \\&\le (1-2\alpha m+\alpha^2L^2)\|x-y\|^2\end{aligned}</script><p>所以当 $\alpha\in\left(0,\frac{2m}{L^2}\right)$ 的时候 $T$ 是收缩算子，可以证明收敛性。</p>
+<p>跟前面梯度下降对比，前面只要求 $\alpha &lt;2/L$，所以梯度下降的要求更宽松。即使不满足强凸性质，梯度下降也能保证收敛，但是这里就必须要有 $m$ strongly monotone，这是因为梯度算子提供了更多的信息。</p>
+<h3 id="2-2-非扩张算子收敛性"><a href="#2-2-非扩张算子收敛性" class="headerlink" title="2.2 非扩张算子收敛性"></a>2.2 非扩张算子收敛性</h3><p>前面的收缩算子要求 $L&lt;1$，这个条件还是比较强的，很多时候只能得到 $L=1$，这个时候被称为 <strong>nonexpansive</strong>，也就是非扩张的。这个时候</p>
+<ul>
+<li>$T$ 可能不存在不动点 $x^\star$</li>
+<li>如果 $x^\star$ 存在，不动点迭代 $x^{k+1}=Tx^k$ 有界</li>
+<li>可能会发散（这个发散我个人不太理解，或许不收敛也被认为是发散）</li>
+</ul>
+<p>比如说旋转、反射操作，如图所示</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/26-rotation.PNG" alt="rotation"></p>
+<p>那么对于这种算子怎么证明收敛性呢？如果得不到收缩性质，那么我们可以放松一点要求，比如得到下面的</p>
+<script type="math/tex; mode=display">
+\|T x-T y\|^{2} \leq\|x-y\|^{2}-\eta\|R x-R y\|^{2}, \quad \forall x, y \in \mathcal{H}</script><p>这个算子 $R$ 一会再说，虽然我们还是只能有 $L=1$，但是每次迭代之后都可以减少一点小尾巴，累积起来就能收敛到不动点了。那么就让我们再引入一些定义吧。</p>
+<p>定义不动点残差算子 $R:=I-T$，有 $Rx^\star=0\iff x^\star=Tx^\star$。</p>
+<p><strong>定义</strong>：若 $T$ 对于某些 $\eta&gt;0$ 满足下式，则称其为平均算子(<strong>averaged operator</strong>)</p>
+<script type="math/tex; mode=display">
+\|T x-T y\|^{2} \leq\|x-y\|^{2}-\eta\|R x-R y\|^{2}, \quad \forall x, y \in \mathcal{H}</script><p><strong>定义</strong>：若 $T$ 对于某些 $\eta&gt;0$ 满足下式，则称其为准平均算子(<strong>quasi-averaged operator</strong>)</p>
+<script type="math/tex; mode=display">
+\left\|T x-x^{*}\right\|^{2} \leq\left\|x-x^{*}\right\|^{2}-\eta\|R x\|^{2}, \quad \forall x \in \mathcal{H}</script><p>我们也可以表示为 $\eta:=\frac{1-\alpha}{\alpha}$，从而将上面平均算子称为 $\alpha$-<strong>averaged operator</strong>。如果 $\alpha=1/2$，称 $T$ 为 <strong>firmly nonexpansive</strong>；如果 $\alpha=1$，称 $T$ 为 <strong>nonexpansive</strong>。</p>
+<p><strong>引理</strong>：$T$ 是 $\alpha$-averaged operator，当且仅当存在一个 nonexpansive $T’$ 使得</p>
+<script type="math/tex; mode=display">
+T=(1-\alpha)I+\alpha T'</script><p>或者等价的有算子</p>
+<script type="math/tex; mode=display">
+T^{\prime}:=\left(\left(1-\frac{1}{\alpha}\right) I+\frac{1}{\alpha} T\right)</script><p>是 nonexpansive。</p>
+<p><strong>证明</strong>：通过代数运算可以得到</p>
+<script type="math/tex; mode=display">
+\alpha\left(\|x-y\|^{2}-\left\|T^{\prime} x-T^{\prime} y\right\|^{2}\right)=\|x-y\|^{2}-\|T x-T y\|^{2}-\frac{1-\alpha}{\alpha}\|R x-R y\|^{2}</script><p>因此 $T’$ nonexpansive $\iff$ T $\alpha$-averaged。证毕。</p>
+<p>有了 $\alpha$-averaged 性质，我们也可以得到一个收敛性的定理。</p>
+<blockquote>
+<p><strong>定理(Krasnosel’skii)</strong>：$T$ 为 <strong>$\alpha$-averaged</strong> 算子，且不动点存在，则迭代方法</p>
+<script type="math/tex; mode=display">
+x^{k+1}\leftarrow Tx^k</script><p>弱收敛至 $T$ 的不动点。</p>
+<p><strong>证明</strong>：略。</p>
+<p><strong>定理(Mann’s version)</strong>：$T$ 为 <strong>nonexpansive</strong> 算子，且不动点存在，则迭代方法</p>
+<script type="math/tex; mode=display">
+x^{k+1} \leftarrow\left(1-\lambda_{k}\right) x^{k}+\lambda_{k} T x^{k}</script><p>弱收敛至 $T$ 的不动点，只要满足</p>
+<script type="math/tex; mode=display">
+\lambda_{k}>0, \quad \sum_{k} \lambda_{k}\left(1-\lambda_{k}\right)=\infty</script><p><strong>证明</strong>：略。</p>
+</blockquote>
+<p>Mann’s version 相当于是对 Krasnosel’skii 的一个推广，每一步都取一个不同的 $\alpha$。</p>
+<p><strong><em>例子 1(PPA)</em></strong>：对于 $\min f(x)$，近似点算子 </p>
+<script type="math/tex; mode=display">
+T:=\operatorname{prox}_{\lambda f}</script><p>就是 <strong>ﬁrmly-nonexpansive</strong>，因此可以弱收敛。</p>
+<h3 id="2-3-复合算子"><a href="#2-3-复合算子" class="headerlink" title="2.3 复合算子"></a>2.3 复合算子</h3><p>对于多个算子复合，有以下性质：</p>
+<ul>
+<li>$T_{1}, \ldots, T_{m}: \mathcal{H} \rightarrow \mathcal{H}$ contractive $\Longrightarrow T_{1} \circ \cdots \circ T_{m}$ contractive</li>
+<li>$T_{1}, \ldots, T_{m}: \mathcal{H} \rightarrow \mathcal{H}$ nonexpansive $\Longrightarrow T_{1} \circ \cdots \circ T_{m}$ nonexpansive</li>
+<li>$T_{1}, \ldots, T_{m}: \mathcal{H} \rightarrow \mathcal{H}$ averaged $\Longrightarrow T_{1} \circ \cdots \circ T_{m}$ averaged</li>
+<li>$T_i$ 是 $\alpha_i$-averaged(允许 $\alpha_i=1$) $\Longrightarrow T_{1} \circ \cdots \circ T_{m}$ 是 $\alpha$-averaged，其中</li>
+</ul>
+<script type="math/tex; mode=display">
+\alpha=\frac{m}{m-1+\frac{1}{\max _{i} \alpha_{i}}}</script><p><strong>例子</strong>：如第一小节的投影梯度、PG。</p>
+<h2 id="3-更一般的情况"><a href="#3-更一般的情况" class="headerlink" title="3. 更一般的情况"></a>3. 更一般的情况</h2><p>我们的优化问题可以概括为求解方程</p>
+<script type="math/tex; mode=display">
+0\in(A+B)(x)</script><p>其中 $A,B$ 为算子，那么对这个式子做变形就能得到很多方法。</p>
+<p><strong>Forward-backward</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}0\in(A+B)(x) &\iff 0\in(I+\alpha B)(x)-(I-\alpha A)(x) \\&\iff (I-\alpha A)(x)\in(I+\alpha B)(x) \\&\iff x=(I+\alpha B)^{-1}(I-\alpha A)(x)\end{aligned}</script><p><strong>Forward-backward-forward</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}0\in(A+B)(x) &\iff x=(I+\alpha B)^{-1}(I-\alpha A)(x) \\&\iff (I-\alpha A)(x)= (I-\alpha A)(I+\alpha B)^{-1}(I-\alpha A)(x) \\&\iff x=\left((I-\alpha A)(I+\alpha B)^{-1}(I-\alpha A)+\alpha A\right)(x)\end{aligned}</script><p><strong>Combetts-Pesquest</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}0\in(A+B+C)(x) &\iff \begin{cases}0\in Ax+u+Cx \\ u\in Bx \end{cases} \\&\iff 0\in \left[\begin{array}{c}Ax \\ B^{-1}u\end{array}\right] + \left[\begin{array}{c}u+Cx \\ -x\end{array}\right]\end{aligned}</script><p><strong>DR splitting</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}0\in(A+B)(x) \iff (\frac{1}{2}I+\frac{1}{2}C_A R_B)(z)=z,\quad x=R_B(z)\\\end{aligned}</script><p>其中</p>
+<p>$C_A$：Cayley operator，$C_A=2R_A-I=2\text{prox}_f-I$</p>
+<p>$R_B$：resolvent operator，$R_B=(z)=(I+B)^{-1}(z)$</p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/statistic/law%20of%20large%20numbers/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    强大数定律与弱大数定律
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/optimization/ch25-PDHG/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">凸优化笔记25：原始对偶问题 PDHG</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

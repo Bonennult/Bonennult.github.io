@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>凸优化笔记 11：对偶原理 &amp; 拉格朗日函数 | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="对偶原理,拉格朗日函数,SCQ" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前面讲了凸优化问题的定义，以及一些常见的凸优化问题类型，这一章就要引入著名的拉格朗日函数和对偶问题了。通过对偶问题，我们可以将一些非凸问题转化为凸优化问题，还可以求出原问题的非平凡下界，这对复杂优化问题是很有用的。">
+<meta name="keywords" content="对偶原理,拉格朗日函数,SCQ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记 11：对偶原理 &amp; 拉格朗日函数">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;optimization&#x2F;ch11-dual&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面讲了凸优化问题的定义，以及一些常见的凸优化问题类型，这一章就要引入著名的拉格朗日函数和对偶问题了。通过对偶问题，我们可以将一些非凸问题转化为凸优化问题，还可以求出原问题的非平凡下界，这对复杂优化问题是很有用的。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-geo.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-geo2.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-counter0.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-counter1.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-counter2.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-counter3.PNG">
+<meta property="og:updated_time" content="2020-04-05T10:41:04.763Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;11-dual-geo.PNG">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file active"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-optimization/ch11-dual" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/SCQ/" rel="tag">SCQ</a>, <a class="tag-link" href="/tags/%E5%AF%B9%E5%81%B6%E5%8E%9F%E7%90%86/" rel="tag">对偶原理</a>, <a class="tag-link" href="/tags/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%87%BD%E6%95%B0/" rel="tag">拉格朗日函数</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch11-dual/">
+            <time datetime="2020-03-18T14:46:26.000Z" itemprop="datePublished">2020-03-18</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch11-dual.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch11-dual.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch11-dual.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            凸优化笔记 11：对偶原理 &amp; 拉格朗日函数
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+        
+        
+            <p>前面讲了凸优化问题的定义，以及一些常见的凸优化问题类型，这一章就要引入著名的拉格朗日函数和对偶问题了。通过对偶问题，我们可以将一些非凸问题转化为凸优化问题，还可以求出原问题的非平凡下界，这对复杂优化问题是很有用的。</p>
+<a id="more"></a>
+<h2 id="1-拉格朗日函数"><a href="#1-拉格朗日函数" class="headerlink" title="1. 拉格朗日函数"></a>1. 拉格朗日函数</h2><p>考虑凸优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { minimize } \quad& f_{0}(x)\\
+\text { subject to } \quad& f_{i}(x) \leq 0, \quad i=1, \ldots, m\\
+&h_{i}(x)=0, \quad i=1, \ldots, p
+\end{aligned}</script><p>假设 $x\in R^n$，定义域为 $\mathcal{D}$，最优解为 $p^\star$。</p>
+<p>我们定义<strong>拉格朗日函数(Lagrangian)</strong>为 $L:R^n\times R^m\times R^p\to R$，$\text{dom}L=\mathcal{D}\times R^m\times R^p$</p>
+<script type="math/tex; mode=display">
+L(x,\lambda,\nu)=f_0(x)+\lambda^Tf(x)+\nu^Th(x)</script><p>再取下确界得到<strong>拉格朗日对偶函数(Lagrange dual function)</strong> $g:R^m\times R^p\to R$</p>
+<script type="math/tex; mode=display">
+g(\lambda,\nu)=\inf_{x\in\mathcal{D}}\left(f_0(x)+\lambda^Tf(x)+\nu^Th(x)\right)</script><p>这个拉格朗日对偶函数可不得了啦！他有两个很重要的性质：</p>
+<blockquote>
+<ol>
+<li>$g(\lambda,\nu)$ 是<strong>凹函数</strong>（不论原问题是否为凸问题）</li>
+<li>如果 $\lambda\succeq 0$，那么 $g(\lambda,\nu)\le p^\star$（对任意 $\lambda\succeq0,\nu$ 都成立）</li>
+</ol>
+</blockquote>
+<p><strong>Remarks</strong>：上面两个性质为什么重要呢？首先由于 $g(\lambda,\nu)\le p^\star$，这可以给出原问题最优解的一个<strong>不平凡下界</strong>，这意味着如果原问题很难求解的时候，我们可以转变思路，求解一个新的优化问题：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& g(\lambda,\nu)\\
+\text { subject to } \quad& \lambda\succeq0
+\end{aligned}</script><p>另一方面，由于不论原函数是否为凸优化问题，新的问题都是凸的，因此可以方便求解。下面举几个例子。</p>
+<p><strong><em>例子 1</em></strong>：原问题为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& x^Tx\\
+\text { subject to } \quad& Ax=b
+\end{aligned}</script><p>那么可以很容易得到拉格朗日函数为 $L(x,\nu)=x^Tx+\nu^T(Ax-b)$，对偶函数为 $g(\nu)=-(1/4)\nu^TAA^T\nu-b^T\nu$，也即</p>
+<p>$p^\star\ge g(\nu)$。</p>
+<p><strong><em>例子 2</em></strong>：标准形式的线性规划(LP)</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& c^Tx\\
+\text { subject to } \quad& Ax=b,\quad x\succeq0
+\end{aligned}</script><p>按照定义容易得到对偶问题为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& -b^T\nu\\
+\text { subject to } \quad& A^T\nu+c\succeq0
+\end{aligned}</script><p><strong><em>例子 3</em></strong>：原问题为最小化范数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& \Vert x\Vert\\
+\text { subject to } \quad& Ax=b
+\end{aligned}</script><p>对偶函数为</p>
+<script type="math/tex; mode=display">
+g(\nu)=\inf_{x} (\Vert x\Vert+\nu^T(b-Ax))
+=\begin{cases}b^T\nu & \Vert A^T\nu\Vert_* \le1 \\ -\infty & o.w.\end{cases}</script><p>这个推导过程中用到了<strong>共轭函数</strong>的知识。实际上上面三个例子都是线性等式约束，这种情况下，我们应用定义推导过程中可以很容易联想到共轭函数。（实际上加上线性不等式约束也可以）</p>
+<p><strong><em>例子 4</em></strong>：(原问题非凸)考虑 Two-way partitioning (不知道怎么翻译了…)</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& x^TWx\\
+\text { subject to } \quad& x_i^2=1,\quad i=1,...,n
+\end{aligned}</script><p>对偶函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+g(\nu)&=\inf_{x}\left( x^{T}(W+\operatorname{diag}(\nu)) x \right)-\mathbf{1}^{T} \nu \\
+&=\left\{\begin{array}{ll}
+-\mathbf{1}^{T} \nu & W+\operatorname{diag}(\nu) \succeq 0 \\
+-\infty & \text { otherwise }
+\end{array}\right.
+\end{aligned}</script><p>于是可以给出原问题最优解的下界为 $p^\star\ge-\mathbf{1}^{T} \nu$ if $W+\operatorname{diag}(\nu) \succeq 0$。这个下界是不平凡的，比如可以取 $\nu=-\lambda_{\min}(W)\mathbf{1}$，可以给出 $p^\star\ge n\lambda_{\min}(W)$。</p>
+<h2 id="2-对偶问题"><a href="#2-对偶问题" class="headerlink" title="2. 对偶问题"></a>2. 对偶问题</h2><p>上面已经多次提到<strong>对偶问题(Lagrange dual problem)</strong>了</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { maximize } \quad& g(\lambda,\nu)\\
+\text { subject to } \quad& \lambda\succeq0
+\end{aligned}</script><p>假如对偶问题的最优解为 $d^\star=\max g(\lambda,\nu)$，那么我们有 $p^\star \ge d^\star$。</p>
+<p>现在我们当然想知道什么情况下可以取等号，也即 $p^\star = d^\star$，此时我们只需要求解对偶问题就可以获得原问题的最优解了。在此之前，我们先引入两个概念：强对偶和弱对偶。</p>
+<p><strong>弱对偶(weak duality)</strong>：满足 $p^\star \ge d^\star$，原问题不论是否为凸，弱对偶总是成立；</p>
+<p><strong>强对偶(strong duality)</strong>：满足 $p^\star = d^\star$，强对偶并不总是成立，如果原问题为凸优化问题，一般情况下都成立。在凸优化问题中，保证强对偶成立的条件为被称为 <strong>constraint qualiﬁcations</strong>。</p>
+<p>有很多种不同的 constraint qualiﬁcations，常用到的一种为 <strong>Slater’s constraint qualiﬁcation(SCQ)</strong>，其表述为</p>
+<blockquote>
+<p><strong>SCQ</strong>：对于凸优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { minimize } \quad& f_{0}(x)\\
+\text { subject to } \quad& f_{i}(x) \leq 0, \quad i=1, \ldots, m\\
+&Ax=b
+\end{aligned}</script><p>如果存在可行解 $x\in\text{int}\mathcal{D}$，使得</p>
+<script type="math/tex; mode=display">
+Ax=b,\quad f_i(x)<0,\quad,i=1,...,m</script><p>那么就能保证强对偶性。</p>
+<p><strong>Remarks</strong>：</p>
+<ul>
+<li>由于存在线性等式约束，因此实际定义域可能不存在内点，可以将这一条件放松为相对内点 $x\in\text{relint}\mathcal{D}$；</li>
+<li>如果不等式约束中存在线性不等式，那么他也不必严格小于0。也即如果 $f_i(x)=C^Tx+d$，则只需要满足 $f_i(x)\le0$ 即可。</li>
+</ul>
+</blockquote>
+<p>下面再举几个例子，看一看他们的 SCQ 条件是什么。</p>
+<p><strong><em>例子 1</em></strong>：还是考虑线性规划(LP) 或者二次规划(QP)</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { minimize } \quad& c^Tx \quad(\text{ or }x^TPx)\\
+\text { subject to } \quad& Ax\preceq b
+\end{aligned}</script><p>那么根据 SCQ 可以得到，如果想得到强对偶性，应该有 $\exist x, \text{ s.t. } Ax\preceq b$。</p>
+<p><strong><em>例子 2</em></strong>：(原问题非凸) Trust Region Methods</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { minimize } \quad& x^TAx+2b^Tx\\
+\text { subject to } \quad& x^Tx\le1
+\end{aligned}</script><p>其中 $A\nsucceq 0$，因此原问题不是凸的。他的对偶函数就是</p>
+<script type="math/tex; mode=display">
+g(\lambda)=\inf_x\left(x^T\left(A+\lambda I\right)x+2b^Tx-\lambda\right)
+=\begin{cases}-b^T(A+\lambda I)^\dagger b-\lambda & A+\lambda I\succeq0,b\in \mathcal{R}(A+\lambda I) \\ -\infty & o.w. \end{cases}</script><p>注意如果不满足 $A+\lambda I\succeq0$ 或 $b\in \mathcal{R}(A+\lambda I)$，则 $g(\lambda)\to-\infty$。那么就可以得到对偶问题为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text {maximize} \quad& -b^{T}(A+\lambda I)^{\dagger} b -\lambda\\
+\text {subject to} \quad& A+\lambda I \succeq 0\\
+&b \in \mathcal{R}(A+\lambda I)
+\end{aligned}</script><p>也可以等价转换为 SDP</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text {maximize} \quad& -t-\lambda\\
+\text {subject to}\quad& \left[\begin{array}{cc}A+\lambda I & b \\ b^{T} & t\end{array}\right] \succeq 0
+\end{aligned}</script><blockquote>
+<p><strong>Remarks</strong>：这里用到了舒尔补(Schur complement)的知识。考虑矩阵</p>
+<script type="math/tex; mode=display">
+X = \left[\begin{array}{cc}A & B \\ B^{T} & C\end{array}\right]</script><p>其中 $\det A\ne0,S=C-B^TA^{-1}B$。那么有以下及条性质：</p>
+<ul>
+<li>$X\succ0 \iff A\succ0,S\succ0$</li>
+<li>若 $A\succ0$，则 $X\succeq0 \iff S\succeq 0$</li>
+<li>$X\succeq0 \iff A\succeq0,(I-AA^\dagger)B=0,S=C-B^TA^{\dagger}B\succeq0$</li>
+</ul>
+<p>关于第 3 条中的第二个要求 $(I-AA^\dagger)B=0$，对 $A$ 进行奇异值分解，有 $A=U\Sigma V$，那么我们对任意 $v$，有 $(I-AA^\dagger)Bv=(I-UU^T)Bv=0$，而 $UU^T$ 实际上就是向 $\mathcal{R}(A)$ 的投影矩阵，因此就要求 $Bv\in\mathcal{R}(A)$。</p>
+</blockquote>
+<h2 id="3-SCQ-几何解释"><a href="#3-SCQ-几何解释" class="headerlink" title="3. SCQ 几何解释"></a>3. SCQ 几何解释</h2><p>前面给出的是 SCQ 的代数描述，那么如何证明呢？另外如何从几何角度直观理解呢？</p>
+<p>首先我们可以考虑最简单的优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { minimize } \quad& f_0(x)\\
+\text { subject to } \quad& f_1(x)
+\end{aligned}</script><p>定义集合 $\mathcal{G}=\{(f_1(x),f_0(x))|x\in\mathcal{D}\}$，那么对偶函数为</p>
+<script type="math/tex; mode=display">
+g(\lambda)=\inf_{(u,t)\in\mathcal{G}}(t+\lambda u)</script><p>如果我们画出下面这张图，阴影部分就是可行区域 $\mathcal{G}$，而 $(\lambda,1)^T$ 则正好定义了一个支撑超平面，$g(\lambda)$ 就等于 $t$ 轴的交点。通过取不同的 $\lambda$ 我们就可以得到不同的支撑超平面，也可以得到不同的 $g(\lambda)$，最终会有某一个 $\lambda^\star$ 对应的是 $d^\star=g(\lambda^\star)$。还需要注意这里的支撑超平面永远不可能是竖直的。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/11-dual-geo.PNG" alt="dual geometry"></th>
+<th><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/11-dual-geo2.PNG" alt="dual geometry"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$(\lambda,1)^T$ 正好定义了一个支撑超平面</td>
+<td>每个 $\lambda$ 对应一个支撑超平面</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>那么 $p^\star$ 体现在哪个点呢？由于对于原优化问题，我们有 $f_1(x)\le0$，因此体现在这个图里面就是 $u\le0$，也就是上面左图当中的红色区域，而 $p^\star=\min f_0(x)=\min t$。</p>
+<p>理解了这张图，我们现在开始证明两件事：</p>
+<ol>
+<li>证明弱对偶性，也即 $p^\star \ge d^\star$；</li>
+<li>证明强对偶性条件 SCQ。</li>
+</ol>
+<p>注：在此之前，我们不妨加入等式约束，也即 $g(\lambda,\mu)=\inf_{(u,v,t)\in\mathcal{G}}(t+\lambda^T u+\mu^T v)$。</p>
+<p><strong>弱对偶性的证明</strong>：我们有 $\lambda\ge0$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p^\star &= \inf\{t|(u,v,t)\in\mathcal{G},u\le0,v=0\} \\
+&\ge \inf\{t+\lambda^Tu+\mu^Tv|(u,v,t)\in\mathcal{G},u\le0,v=0\} \\
+&\ge \inf\{t+\lambda^Tu+\mu^Tv|(u,v,t)\in\mathcal{G}\} \\
+&= g(\lambda,\mu)
+\end{aligned}</script><p><strong>强对偶性条件 SCQ 的证明</strong>：由 $g(\lambda,\mu)=\inf_{(u,v,t)\in\mathcal{G}}(t+\lambda^T u+\mu^Tv)$ 可以得到</p>
+<script type="math/tex; mode=display">
+(\lambda,\mu,1)^T(u,v,t)\ge g(\lambda,\mu),\quad \forall (u,v,t)\in\mathcal{G}</script><p>这实际上定义了 $\mathcal{G}$ 的一个超平面。特别的有 $(0,0,p^\star)\in\text{bd}\mathcal{G}$，因此也有</p>
+<script type="math/tex; mode=display">
+(\lambda,\mu,1)^T(0,0,p^\star)\ge g(\lambda,\mu)</script><p>这个不等式可以自然地导出弱对偶性，当“=”成立时则可以导出强对偶性。那么什么时候取等号呢？点 $(0,0,p^\star)$ 为<strong>支撑点</strong>的时候！也就是说</p>
+<blockquote>
+<p>如果在边界点 $(0,0,p^\star)$ 处存在一个<strong>非竖直的支撑超平面</strong>，那么我们就可以找到 $\lambda,\mu$ 使得上面的等号成立，也就是得到了强对偶性。</p>
+</blockquote>
+<p>注意前面的分析中我们并没有提到 SCQ，那么 SCQ 是如何保证强对偶性的呢？注意 SCQ 要求存在 $x\in\mathcal{D}$ 使得 $f(x)&lt;0$，这也就意味着 $\mathcal{G}$ 在 $u&lt; 0$ 半平面上有点，因此如果支撑超平面存在的话，就一定不是垂直的。</p>
+<p>但这又引出另一个问题，那就是支撑超平面一定存在吗？答案是一定存在，这是由原问题的凸性质决定的。为了证明这一点，我们可以引入一个类似于 epigraph 的概念：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal{A} &= \mathcal{G} + (R^m_+\times \{0\}\times R_+) \\
+&= \left\{(u,v,t) |\ \exist x\in\mathcal{D},s.t. f(x)\le u,h(x)=v,f_0(x)\le t\right\}
+\end{aligned}</script><p>由于原优化问题为凸的，可以应用定义证明集合 $\mathcal{A}$ 也是凸的，同时 $(0,0,p^\star)\in\text{bd}\mathcal{A}$，那么集合 $\mathcal{A}$ 在 $(0,0,p^\star)$ 点就一定存在一个支撑超平面。又由 SCQ 可知这个支撑超平面一定不是竖直的，因此就可以得到强对偶性了。</p>
+<p>注：$(\lambda,\mu,1)^T(u,v,t)\ge g(\lambda,\mu),\quad \forall (u,v,t)\in\mathcal{A}$ 也成立。</p>
+<h2 id="4-广义不等式约束与SDP"><a href="#4-广义不等式约束与SDP" class="headerlink" title="4. 广义不等式约束与SDP"></a>4. 广义不等式约束与SDP</h2><p>前面讨论拉格朗日函数的时候都只考虑了标量函数，如果约束函数为<strong>广义不等式</strong>，也即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text { minimize } \quad& f_{0}(x)\\
+\text { subject to } \quad& f_{i}(x) \preceq_{K_i} 0, \quad i=1, \ldots, m\\
+&h_{i}(x)=0, \quad i=1, \ldots, p
+\end{aligned}</script><p>那么他的拉格朗日函数就是</p>
+<script type="math/tex; mode=display">
+L\left(x, \lambda_{1}, \cdots, \lambda_{m}, \nu\right)=f_{0}(x)+\sum_{i=1}^{m} \lambda_{i}^{T} f_{i}(x)+\sum_{i=1}^{p} \nu_{i} h_{i}(x)</script><p>对偶函数就是</p>
+<script type="math/tex; mode=display">
+g\left(\lambda_{1}, \ldots, \lambda_{m}, \nu\right)=\inf _{x \in \mathcal{D}} L\left(x, \lambda_{1}, \cdots, \lambda_{m}, \nu\right)</script><p>其同样满足 $p^\star\ge g\left(\lambda_{1}, \ldots, \lambda_{m}, \nu\right)$。对偶问题为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text {maximize} \quad& g\left(\lambda_{1}, \ldots, \lambda_{m}, \nu\right) \\
+\text {subject to}\quad& \lambda_i\succeq_{K_i^*}0,i=1,...,m
+\end{aligned}</script><p>强对偶性以及 Slater’s Condition 是类似的。</p>
+<p>对于 <strong>SDP 问题</strong></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text {maximize} \quad& c^Tx \\
+\text {subject to}\quad& x_1F_1+\cdots +x_nF_n\preceq G
+\end{aligned}</script><p>拉格朗日函数就是</p>
+<script type="math/tex; mode=display">
+L(x, Z)=c^{T} x+\operatorname{tr}\left(Z\left(x_{1} F_{1}+\cdots+x_{n} F_{n}-G\right)\right)</script><p>对偶函数为</p>
+<script type="math/tex; mode=display">
+g(Z)=\inf _{x} L(x, Z)=\left\{\begin{array}{ll}
+-\operatorname{tr}(G Z) & \operatorname{tr}\left(F_{i} Z\right)+c_{i}=0, \quad i=1, \ldots, n \\
+-\infty & \text { otherwise }
+\end{array}\right.</script><p>对偶问题就是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text {maximize} \quad& -\operatorname{tr}(G Z)\\
+\text {subject to} \quad& Z \succeq 0, \quad \operatorname{tr}\left(F_{i} Z\right)+c_{i}=0, \quad i=1, \ldots, n
+\end{aligned}</script><p>强对偶性以及 Slater’s Condition 是类似的。</p>
+<h2 id="5-对偶问题的强对偶性与可行性"><a href="#5-对偶问题的强对偶性与可行性" class="headerlink" title="5. 对偶问题的强对偶性与可行性"></a>5. 对偶问题的强对偶性与可行性</h2><p>注意我们说<strong>强对偶性</strong>需要<strong>严格满足</strong>不等式约束(也即最优解需要满足 $h(x^\star)&lt;0$ 而不能是 $h(x^\star)\le0$)，但如果存在线性不等式约束，则可以取到等号(也即 $Ax^\star+b\le0$)。这就会出现下面的现象：</p>
+<ol>
+<li>对于 <strong>LP</strong> 问题，由于约束是线性的，因此强对偶性只要求有可行解，而不要求 <strong>strictly feasible</strong>；</li>
+<li>对于其他问题，若存在非线性约束，比如 <strong>SOCP/SDP</strong> 问题，如果想要满足强对偶性，就需要满足 <strong>strictly feasible</strong>，这就会出现两种情况：1）问题本身的可行域不可能满足 <strong>strictly feasible</strong>，那么就达不到强对偶性，于是 $p^\star\ned^\star$；2）问题可行域满足 <strong>strictly feasible</strong>，但是由于最优解达不到(比如 $\min 1/x$)，那么此时原问题和对偶问题仍满足强队偶性，但是原问题最优解达不到，而对偶问题则可以达到。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/11-dual-counter0.PNG" alt="LP duality"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/11-dual-counter1.PNG" alt="SDP/SOCP duality"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/11-dual-counter2.PNG" alt="SOCP duality"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/11-dual-counter3.PNG" alt="SDP duality"></p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/optimization/ch12-kkt/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    凸优化笔记12：KKT 条件
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/fuzzy/ch7-ahp/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">模糊数学笔记 7：层次分析法</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
