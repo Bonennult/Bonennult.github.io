@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做近似点算子(Proximal mapping)，也是为了处理非光滑问题。">
+<meta name="keywords" content="共轭函数,近似点算子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记18：近似点算子 Proximal Mapping">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;optimization&#x2F;ch18-proximal-mapping&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做近似点算子(Proximal mapping)，也是为了处理非光滑问题。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-closed-set.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-closed-set2.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-moreau.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-distance-proof1.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-distance-proof2.PNG">
+<meta property="og:updated_time" content="2020-05-09T06:06:23.931Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;18-closed-set.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/04/16/optimization/ch18-proximal-mapping/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>凸优化笔记18：近似点算子 Proximal Mapping | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/optimization/ch18-proximal-mapping/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          凸优化笔记18：近似点算子 Proximal Mapping
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-16 20:39:17" itemprop="dateCreated datePublished" datetime="2020-04-16T20:39:17+08:00">2020-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-09 14:06:23" itemprop="dateModified" datetime="2020-05-09T14:06:23+08:00">2020-05-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Convex-Optimization/" itemprop="url" rel="index"><span itemprop="name">Convex Optimization</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/04/16/optimization/ch18-proximal-mapping/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/16/optimization/ch18-proximal-mapping/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做<strong>近似点算子(Proximal mapping)</strong>，也是为了处理非光滑问题。</p>
+<a id="more"></a>
+<h2 id="1-闭函数"><a href="#1-闭函数" class="headerlink" title="1. 闭函数"></a>1. 闭函数</h2><p>在引入<strong>闭函数(closed function)</strong>的概念之前，我们先回顾一下<strong>闭集</strong>的概念：集合 $\mathcal{C}$ 是闭的，如果它包含边界，也即</p>
+<script type="math/tex; mode=display">
+x^{k} \in \mathcal{C}, \quad x^{k} \rightarrow \bar{x} \quad \Rightarrow \quad \bar{x} \in \mathcal{C}</script><p>并且有以下几个简单的原则可以保持集合闭的性质：</p>
+<ol>
+<li>闭集的<strong>交集</strong>还是闭集；</li>
+<li><strong>有限个</strong>闭集的<strong>并集</strong>还是闭集；</li>
+<li>如果 $\mathcal{C}$ 是闭集，则<strong>线性映射</strong>的<strong>原象</strong>也是闭集，也即 $\{x|Ax\in\mathcal{C}\}$ 是闭集。</li>
+</ol>
+<p>第 3 条原则反过来则不一定成立，也即如果 $x\in\mathcal{C}$ 是闭集，那么 $\{Ax|x\in\mathcal{C}\}$ 则不一定是闭集，比如我们可以取函数 $f(x)=1/x$ 的 epigraph 为闭集 $\mathcal{C}$，然而 $(x,y)$ 向 $x$ 轴的投影则是一个开集，严格表示与图示如下</p>
+<script type="math/tex; mode=display">
+\mathcal{C}=\left\{\left(x_{1}, x_{2}\right) \in \mathbb{R}_{+}^{2} | x_{1} x_{2} \geq 1\right\}, \quad A=[1,0], A \mathcal{C}=\mathbb{R}_{++}</script><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>第3条逆原则反例</th>
+<th>第3条逆原则充分条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-closed-set.png" alt="counter example"></td>
+<td><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-closed-set2.PNG" alt="sufficient condition"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>当然，如果加一些其他的约束条件，则可以保证第 3 条反过来也成立：$A\mathcal{C}$ 是闭的，如果</p>
+<ol>
+<li>$\mathcal{C}$ 是闭的且为凸集；</li>
+<li>并且 $\mathcal{C}$ 不存在一个可以无穷延伸的方向(recession direction)属于 $A$ 的零空间，也即 $A y=0, \hat{x} \in \mathcal{C}, \hat{x}+\alpha y \in \mathcal{C}, \forall \alpha&gt;0 \Rightarrow y=0$，图示即如上。</li>
+</ol>
+<p>然后我们就可以定义<strong>闭函数(closed function)</strong>了，函数 $f$ 为闭的，如果他的 epigraph 为闭集或者他的所有下水平集为闭集。有以下两种简单的特殊情况：</p>
+<ol>
+<li>如果 $f$ 连续且定义域 $\text{dom}f$ 为闭的，则 $f$ 为闭函数；</li>
+<li>如果 $f$ 连续且定义域 $\text{dom}f$ 为开的，则 $f$ 为闭函数<strong>当且仅当</strong>其在 $\text{dom}f$ 边界处收敛至 $\infty$。</li>
+</ol>
+<p><strong><em>例子 1</em></strong>：$f(x)=x\log x,\quad\text{dom}f=R_+,f(0)=0$</p>
+<p><strong><em>例子 2</em></strong>：闭集的指示函数 $\delta_C(x)=\begin{cases}0&amp;x\in C\\ +\infty &amp; o.w.\end{cases}$</p>
+<p><strong><em>反例 3</em></strong>：$f(x)=x\log x,\quad\text{dom}f=R_{++}$ 或者 $f(x)=x\log x,\quad\text{dom}f=R_+,f(0)=1$ 不是闭函数</p>
+<p><strong><em>反例 4</em></strong>：开集的指示函数不是闭函数</p>
+<p>闭函数有一些有用的性质，比如：</p>
+<ol>
+<li>$f$ 为闭函数<strong>当且仅当</strong>他的所有下水平集都是闭集；</li>
+<li>如果 $f$ 为闭函数，且下水平集有界，那么存在<strong>最小值点(minimizer)</strong>。</li>
+</ol>
+<p><strong>Theorem (Weierstrass) </strong>：假设集合 $D\subset \mathcal{E}$ ($R^n$空间中有限维向量子空间) 非空且闭，并且连续函数 $f:D\to R$ 的所有下水平集都有界，则 $f$ 存在<strong>全局最小值点(global minimizer)</strong>。</p>
+<p>对于闭函数来说也有一些原则可以保持闭的性质：</p>
+<ol>
+<li>如果 $f,g$ 均为闭函数，则 $f+g$ 为闭函数</li>
+<li>如果 $f$ 为闭函数，则 $f(Ax+b)$ 为闭函数</li>
+<li>如果任意 $f_\alpha$ 都是闭函数，则 $\sup_\alpha f_\alpha(x)$ 为闭函数</li>
+</ol>
+<h2 id="2-共轭函数"><a href="#2-共轭函数" class="headerlink" title="2. 共轭函数"></a>2. 共轭函数</h2><p><strong>共轭函数(conjugate function)</strong> 前面已经讲过了，这里再简单回顾一遍。函数 $f$ 的共轭函数定义为</p>
+<script type="math/tex; mode=display">
+f^\star(y)=\sup_{x\in\text{dom}f} (y^Tx-f(x))</script><blockquote>
+<p>并且共轭函数有一些重要的性质：</p>
+<ol>
+<li>共轭函数一定是闭函数，且为凸函数，不论 $f$ 是否为凸函数或闭函数（因为 $f^\star$ 的 epigraph 可以看成很多个半空间的交集）；</li>
+<li><strong>(Fenchel’s inequality)</strong> $f(x)+f^{\star}(y) \geq x^{\top} y, \forall x, y$</li>
+<li><strong>(Legendre transform)</strong> 如果 $f$ 为凸函数且为闭函数，则有 $y \in \partial f(x) \Leftrightarrow x \in \partial f^{\star}(y) \Leftrightarrow x^{\top} y=f(x)+f^{\star}(y)$</li>
+<li>如果 $f$ 为凸函数且为闭函数，则 $f^{\star\star}=f$</li>
+</ol>
+<p>除此之外还有一些代数变换的原则，推导也都比较简单：</p>
+<ol>
+<li>$f\left(x_{1}, x_{2}\right)=g\left(x_{1}\right)+h\left(x_{2}\right), \quad f^{\star}\left(y_{1}, y_{2}\right)=g^{\star}\left(y_{1}\right)+h^{\star}\left(y_{2}\right)$</li>
+<li>$f(x)=\alpha g(x), \quad f^{\star}(y) {=} \alpha g^{\star}(y / \alpha) \quad(\bigstar)$</li>
+<li>$f(x)=g(x)+a^{\top} x+b \quad f^{\star}(y)=g^{\star}(y-a)-b$</li>
+<li>$f(x)=\inf _{u+v=x}(g(u)+h(v)) \quad f^{\star}(y)=g^{\star}(y)+h^{\star}(y)$</li>
+</ol>
+</blockquote>
+<p>共轭函数的计算就不多举例子了，这里主要列出来后面用的比较多的而且比较重要的，其他的可以参考前面的笔记 6：</p>
+<p><strong><em>例子 1</em></strong>：$C$ 为凸集，则<strong>指示函数</strong> $f(x)=\delta_C(x)$，其共轭函数为<strong>支撑函数</strong></p>
+<script type="math/tex; mode=display">
+f^\star(y) = \sup\{y^Tx|x\in C\}</script><p>如果求两次共轭函数也很容易得到：支撑函数的共轭函数为指示函数。</p>
+<p><strong><em>例子 2</em></strong>：范数 $f(x)=\Vert x\Vert$ 的共轭函数也是<strong>指示函数</strong></p>
+<script type="math/tex; mode=display">
+f^\star(y) = \left\{\begin{array}{ll}
+0 & \|y\|_{*} \leq 1 \\
+\infty & \text { otherwise }
+\end{array}\right.</script><h2 id="3-近似点算子"><a href="#3-近似点算子" class="headerlink" title="3. 近似点算子"></a>3. 近似点算子</h2><p>首先给出来<strong>近似点算子(Proximal mapping)</strong>的定义：<strong>闭凸函数</strong> $f$ 的近似点算子定义为</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{f}(x)=\underset{u}{\operatorname{argmin}}\left(f(u)+\frac{1}{2}\|u-x\|_{2}^{2}\right)</script><p>根据这个定义，实际上我们是在求解函数 $g(u)=f(u)+\frac{1}{2}|u-x|_{2}^{2}$ 的最小值，由于 $g$ 是闭函数且下水平集有界，因此最小值一定<strong>存在</strong>；同时由于 $g$ 为<strong>强凸函数</strong>，因此最小值点<strong>唯一</strong>。</p>
+<p>那么怎么理解这个算子函数 $\text{prox}_f(x)$ 呢？可以看到这实际上是一个 $\text{prox}_f:R^n\to R^n$ 的映射。如果 $u=\text{prox}_f(x)$，则应该有 $x-u\in \partial f(u)$。下面看一些简单的例子。</p>
+<p><strong><em>例子 1</em></strong>：二次函数 $A\succeq 0$</p>
+<script type="math/tex; mode=display">
+f(x)=\frac{1}{2} x^{T} A x+b^{T} x+c, \quad \operatorname{prox}_{t f}(x)=(I+t A)^{-1}(x-t b)</script><p><strong><em>例子 2</em></strong>：欧几里得范数 $f(x)=\Vert x\Vert_2$</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t f}(x)=\left\{\begin{array}{ll}
+\left(1-t /\|x\|_{2}\right) x & \|x\|_{2} \geq t \\
+0 & \text { otherwise }
+\end{array}\right.</script><p><strong><em>例子 3</em></strong>：Logarithmic barrier</p>
+<script type="math/tex; mode=display">
+f(x)=-\sum_{i=1}^{n} \log x_{i}, \quad \operatorname{prox}_{t f}(x)_{i}=\frac{x_{i}+\sqrt{x_{i}^{2}+4 t}}{2}, \quad i=1, \ldots, n</script><blockquote>
+<p>上面是比较简单的例子，近似点算子也有一些很容易验证的代数运算规律：</p>
+<ol>
+<li>$f\left(\left[\begin{array}{l} x \\ y \end{array}\right]\right)=g(x)+h(y), \quad \operatorname{prox}_{f}\left(\left[\begin{array}{l} x \\ y<br>\end{array}\right]\right)=\left[\begin{array}{l}<br>\operatorname{prox}_{g}(x) \\<br>\operatorname{prox}_{h}(y)<br>\end{array}\right]$</li>
+<li>$f(x)=g(a x+b), \quad \operatorname{prox}_{f}(x)=\frac{1}{a}\left(\operatorname{prox}_{a^{2} g}(a x+b)-b\right)$ (注意 $a\ne0$ 是标量)</li>
+<li>$f(x)=\lambda g(x / \lambda), \quad \operatorname{prox}_{f}(x)=\lambda \operatorname{prox}_{\lambda^{-1} g}(x / \lambda) \quad(\bigstar)$</li>
+<li>$f(x)=g(x)+a^{T} x, \quad \quad \operatorname{prox}_{f}(x)=\operatorname{prox}_{g}(x-a)$</li>
+<li>$f(x)=g(x)+\frac{\mu}{2}|x-a|_{2}^{2}, \quad \operatorname{prox}_{f}(x)=\operatorname{prox}_{\theta g}(\theta x+(1-\theta) a)$，其中 $\mu&gt;0,\theta=1/(1+\mu)$</li>
+<li>$f(x)=g(Ax+b)$，对于一般的 $A$ 并不能得到比较好的性质，但如果 $AA^T=(1/\alpha)I$，则有 </li>
+</ol>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{f}(x) &=\left(I-\alpha A^{T} A\right) x+\alpha A^{T}\left(\operatorname{prox}_{\alpha^{-1} g}(A x+b)-b\right) \\&=x-\alpha A^{T}\left(A x+b-\operatorname{prox}_{\alpha^{-1} g}(A x+b)\right)\end{aligned}</script><p>前面几条都比较容易证明，最后一条证明可以等价于求解</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\text { minimize } \quad& g(y)+\frac{1}{2}\|u-x\|_{2}^{2}\\\text { subject to } \quad& A u+b=y\end{aligned}</script><p>可以先求解 $x$ 向超平面 $Au+b=y$ 投影来消去 $u$，然后再计算 $\text{prox}_f(y)$。</p>
+</blockquote>
+<p>除此之外，有一个非常重要的等式：</p>
+<blockquote>
+<p><strong>Moreau decomposition</strong>：</p>
+<script type="math/tex; mode=display">
+x=\operatorname{prox}_{f}(x)+\operatorname{prox}_{f^{*}}(x) \quad\text { for all } x</script></blockquote>
+<p><strong>Remarks</strong>：为什么说这个式子重要呢？因为他把原函数和共轭函数的 proximal mapping 联系起来了，如果其中一个比较难计算，那么我们可以通过另一个来计算。这个式子可以怎么理解呢？可以看成是一种正交分解，举个栗子，如果我们取一个子空间 $L$，他的正交空间为 $L^\perp$，令函数 $f$ 为子空间 $L$ 的指示函数也即 $f=\delta_L$，那么很容易验证共轭函数 $f^\star=\delta_{L^\perp}$。而根据定义也可以得到 $\text{prox}_f(x)$ 恰好就是 $x$ 在子空间 $L$ 上的投影，记为 $P_L(x)=\text{prox}_f(x)$，同样的 $P_{L^\perp}(x)=\text{prox}_{f^\star}(x)$，因此上面的 Moreau decomposition 就可以写为 $x=P_L(x)+P_{L^\perp}(x)$，这正好就是一个正交分解。可以根据下图理解</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-moreau.PNG" alt="moreau decomposition"></p>
+<p>如果对原始的 Moreau decomposition 做简单的代数变换，就可以得到 $\lambda&gt;0$</p>
+<script type="math/tex; mode=display">
+x=\operatorname{prox}_{\lambda f}(x)+\lambda \operatorname{prox}_{\lambda^{-1} f^{*}}(x / \lambda) \quad \text { for all } x</script><p>证明过程用到了共轭函数的性质 $(\lambda f)^{\star}(y)=\lambda f^{\star}(y / \lambda)$。</p>
+<p>后面两个小节则主要是近似点算子的应用，一个是计算投影，另一个是与支撑函数、距离相关的内容。</p>
+<h2 id="4-投影"><a href="#4-投影" class="headerlink" title="4. 投影"></a>4. 投影</h2><p>为什么突然讲到投影呢？因为对指示函数应用近似点算子，实质上就是在计算投影。举个栗子就明白了：对于集合 $C$ 与集合外一点 $x$，$x$ 向集合 $C$ 的投影可以表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\text { minimize } \quad& \frac{1}{2}\|y-x\|_{2}^{2}\\\text { subject to } \quad& y\in C\end{aligned}</script><p>若投影点为 $y^\star$，则这可以等价表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}y^\star &= \arg\min_y \frac{1}{2}\|y-x\|_{2}^{2}+\delta_C(y) \\&= \text{prox}_{\delta}(x)\end{aligned}</script><p>因此 $\text{prox}_{\delta}(x)$ 就是 $x$ 向集合 $C$ 的投影点(对于 $x\in C$ 同样成立)。那么只要我们取不同的 $C$，就能得到各种类型集合的投影表达式，下面举一些例子。</p>
+<p><strong>超平面</strong>：$C=\{x|a^Tx=b\}$ with $a\ne0$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=x+\frac{b-a^{T} x}{\|a\|_{2}^{2}} a</script><p><strong>仿射集</strong>：$C=\{x | A x=b\}\left(\text { with } A \in \mathbf{R}^{p \times n} \text { and } \operatorname{rank}(A)=p\right)$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=x+A^{T}\left(A A^{T}\right)^{-1}(b-A x)</script><p><strong>半空间</strong>：$C=\{x|a^Tx\le b\}$ with $a\ne0$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=\begin{cases}x+\frac{b-a^{T} x}{\|a\|_{2}^{2}} a & \text {if } a^{T} x>b \\ x & \text {if } a^{T} x \leq b\end{cases}</script><p><strong>矩形</strong>：$C=[l, u]=\left\{x \in \mathbf{R}^{n} | l \leq x \leq u\right\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)_{k}=\left\{\begin{array}{ll}l_{k} & x_{k} \leq l_{k} \\x_{k} & l_{k} \leq x_{k} \leq u_{k} \\u_{k} & x_{k} \geq u_{k}\end{array}\right.</script><p><strong>非负象限</strong>：$C=R_+^n$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=x_{+}=\left(\max \left\{0, x_{1}\right\}, \max \left\{0, x_{2}\right\}, \ldots, \max \left\{0, x_{n}\right\}\right)</script><p><strong>概率单形</strong>：$C=\left\{x | \mathbf{1}^{T} x=1, x \geq 0\right\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=(x-\lambda \mathbf{1})_{+}</script><p>其中 $\lambda$ 由以下方程解出</p>
+<script type="math/tex; mode=display">
+\mathbf{1}^{T}(x-\lambda \mathbf{1})_{+}=\sum_{i=1}^{n} \max \left\{0, x_{k}-\lambda\right\}=1</script><p>这个的证明有一点难度，关键是首先要把约束条件 $x\ge0$ 转换为指示函数表示</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\text { minimize } \quad& \frac{1}{2}\|y-x\|_{2}^{2} + \delta_{R_+^n}(y) \\\text { subject to } \quad& \mathbf{1}^{T} y=1\end{aligned}</script><p>然后将拉格朗日函数分解成求和的形式</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}\frac{1}{2}\|y-x\|_{2}^{2}+\delta_{\mathbf{R}_{+}^{n}}(y)+\lambda\left(\mathbf{1}^{T} y-1\right) \\\quad=\quad \sum_{k=1}^{n}\left(\frac{1}{2}\left(y_{k}-x_{k}\right)^{2}+\delta_{\mathbf{R}_{+}}\left(y_{k}\right)+\lambda y_{k}\right)-\lambda\end{array}</script><p>对上面这个求和项进行分情况讨论就能得到解析表达式了，不过真的很繁琐。</p>
+<p><strong>超平面与矩形交集</strong>：$C=\{x|a^Tx=b,l\preceq x\preceq u\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=P_{[l,u]}(x-\lambda a)</script><p>其中 $\lambda$ 由以下方程解出</p>
+<script type="math/tex; mode=display">
+a^{T} P_{[l, u]}(x-\lambda a)=b</script><p>证明跟上面的概率单形是类似的，也需要拆写成多项求和的形式分别求解。</p>
+<p><strong>欧几里得球</strong>：$C=\{x| \Vert x\Vert_2\le1\}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x)=\begin{cases}\frac{x}{\|x\|_{2}} & \text {if } \Vert x\Vert_2>1 \\ x & \text {if } \Vert x\Vert_2\le1\end{cases}</script><p><strong>1 范数球</strong>：$C=\{x| \Vert x\Vert_1\le1\}$</p>
+<p>若 $\Vert x\Vert_1\le1$ 则 $P_C(x)=x$；否则</p>
+<script type="math/tex; mode=display">
+P_{C}(x)_{k}=\operatorname{sign}\left(x_{k}\right) \max \left\{\left|x_{k}\right|-\lambda, 0\right\}=\left\{\begin{array}{ll}x_{k}-\lambda & x_{k}>\lambda \\0 & -\lambda \leq x_{k} \leq \lambda \\x_{k}+\lambda & x_{k}<-\lambda\end{array}\right.</script><p>其中 $\lambda$ 由以下等式获得</p>
+<script type="math/tex; mode=display">
+\sum_{k=1}^n \max \{\vert x\vert_k-\lambda, 0\}=1</script><p>证明业与前面的类似，需要写成求和项的形式，然后对每一项求解。</p>
+<p><strong>二阶锥</strong>：$C=\{(x,t)\in R^{n\times 1}| \Vert x\Vert_2 \le t \}$</p>
+<script type="math/tex; mode=display">
+P_{C}(x,t)=\begin{cases}(x,t) & \text {if } \Vert x\Vert_2\le t \\ (0,0) & \text {if } \Vert x\Vert_2\le -t \\\frac{t+\|x\|_{2}}{2\|x\|_{2}}\left[\begin{array}{c} x \\ \|x\|_{2} \end{array}\right] & \text {if } \Vert x\Vert_2> \vert t\vert \end{cases}</script><p><strong>正定锥</strong>：$C=S^n_+$</p>
+<script type="math/tex; mode=display">
+P_{C}(X)=\sum_{i=1}^{n} \max \left\{0, \lambda_{i}\right\} q_{i} q_{i}^{T}</script><p>其中 $X=\sum_i \lambda_i q_iq_i^T$</p>
+<h2 id="5-支撑函数、范数与距离"><a href="#5-支撑函数、范数与距离" class="headerlink" title="5. 支撑函数、范数与距离"></a>5. 支撑函数、范数与距离</h2><p>这一小节标题看起来很复杂，牵涉到了支撑函数、范数、到集合的距离，但<strong>实际上都还是在计算投影</strong>，为什么这么说呢？回忆一下，支撑函数的共轭函数是不是 $\delta$ 函数？范数的共轭函数是不是 $\delta$ 函数？到集合的距离是不是就等于到投影点的距离？所以这一小节是上一小节“投影”的自然延伸，其中为了把原函数与共轭函数联系在一起，用到了 Moreau decomposition。我们一个一个来看。</p>
+<script type="math/tex; mode=display">
+x=\operatorname{prox}_{f}(x)+\operatorname{prox}_{f^{*}}(x) \quad\text { for all } x</script><p><strong>支撑函数</strong>：$f(x)=\sup_{y\in C}x^Ty,f^\star(y)=\delta_C(y)$，因此近似点算子为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{t f}(x) &=x-t \operatorname{prox}_{t^{-1} f^{*}}(x / t) \\&=x-t P_{C}(x / t)\end{aligned}</script><p><strong>范数</strong>：$f(x)=\Vert x\Vert,f^\star(y)=\delta_B(y)$，其中 $B=\{y| \Vert y\Vert_\star \le 1\}$，近似点算子为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{t f}(x) &=x-t \operatorname{prox}_{t^{-1} f^{*}}(x / t) \\&=x-t P_{B}(x / t) \\&=x- P_{tB}(x)\end{aligned}</script><p>其中 $tB=\{y| \Vert y\Vert_\star \le t\}$</p>
+<p><strong>与一点的距离</strong>：$f(x)=\Vert x-a\Vert$，可以取 $g(x)=\Vert x\Vert$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\operatorname{prox}_{t f}(x) &=a + \operatorname{prox}_{tg}(x-a) \\&=a+x-a-tP_B(\frac{x-a}{t}) \\&=x- P_{tB}(x-a)\end{aligned}</script><p><strong>到集合的距离</strong>：到闭凸集 $C$ 的距离定义为 $d(x)=\inf_{y\in C}\Vert x-y\Vert_2$</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t d}(x)=\left\{\begin{array}{ll}x+\frac{t}{d(x)}\left(P_{C}(x)-x\right) & d(x) \geq t \\P_{C}(x) & \text { otherwise }\end{array}\right.</script><p>如果是距离取平方 $f(x)=d(x)^2/2$，则有</p>
+<script type="math/tex; mode=display">
+\operatorname{prox}_{t f}(x)=\frac{1}{1+t} x+\frac{t}{1+t} P_{C}(x)</script><p>这个证明贴在下面</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-distance-proof1.PNG" alt="proof 1"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/18-distance-proof2.PNG" alt="proof 2"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%B1%E8%BD%AD%E5%87%BD%E6%95%B0/" rel="tag"># 共轭函数</a>
+              <a href="/tags/%E8%BF%91%E4%BC%BC%E7%82%B9%E7%AE%97%E5%AD%90/" rel="tag"># 近似点算子</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/10/optimization/ch17-subgradient-descent/" rel="prev" title="凸优化笔记17：次梯度下降">
+      <i class="fa fa-chevron-left"></i> 凸优化笔记17：次梯度下降
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/17/optimization/ch19-proximal-gradient/" rel="next" title="凸优化笔记19：近似点梯度下降">
+      凸优化笔记19：近似点梯度下降 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-闭函数"><span class="nav-text">1. 闭函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-共轭函数"><span class="nav-text">2. 共轭函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-近似点算子"><span class="nav-text">3. 近似点算子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-投影"><span class="nav-text">4. 投影</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-支撑函数、范数与距离"><span class="nav-text">5. 支撑函数、范数与距离</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <script type="text/javascript" src="/js/snow1.js"></script>
+  <script type="text/javascript" src="/js/snow2.js"></script>
+
+</body>
+</html>

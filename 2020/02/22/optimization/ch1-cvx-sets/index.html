@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1. 凸集区分两种集合的定义（下面的描述并不是严格的数学语言，领会意思就行了）：  仿射集(Affine set)：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in\mathbb{R}$ 凸集(Convex set)：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in[0,1]$  主要的区别就在于后面 $\thet">
+<meta name="keywords" content="凸集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化笔记 1：Convex Sets">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;22&#x2F;optimization&#x2F;ch1-cvx-sets&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="1. 凸集区分两种集合的定义（下面的描述并不是严格的数学语言，领会意思就行了）：  仿射集(Affine set)：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in\mathbb{R}$ 凸集(Convex set)：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in[0,1]$  主要的区别就在于后面 $\thet">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;cvx_hull.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;cone.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;norm_cone.PNG">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;semidef_cone.PNG">
+<meta property="og:updated_time" content="2020-03-27T09:59:36.379Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;cvx_hull.PNG">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/22/optimization/ch1-cvx-sets/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>凸优化笔记 1：Convex Sets | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/22/optimization/ch1-cvx-sets/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          凸优化笔记 1：Convex Sets
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-22 19:14:03" itemprop="dateCreated datePublished" datetime="2020-02-22T19:14:03+08:00">2020-02-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-27 17:59:36" itemprop="dateModified" datetime="2020-03-27T17:59:36+08:00">2020-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Convex-Optimization/" itemprop="url" rel="index"><span itemprop="name">Convex Optimization</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/02/22/optimization/ch1-cvx-sets/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/22/optimization/ch1-cvx-sets/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-凸集"><a href="#1-凸集" class="headerlink" title="1. 凸集"></a>1. 凸集</h2><p>区分两种集合的定义（下面的描述并不是严格的数学语言，领会意思就行了）：</p>
+<ul>
+<li><strong>仿射集(Affine set)</strong>：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in\mathbb{R}$</li>
+<li><strong>凸集(Convex set)</strong>：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in[0,1]$</li>
+</ul>
+<p>主要的区别就在于后面 $\theta$ 的取值范围，简单理解就是说仿射集类似<strong>直线</strong>，凸集类似<strong>线段</strong>。</p>
+<p>更一般的，仿射集都可以表示为线性方程组的解集，也即 $\{x|Ax=b\}$</p>
+<a id="more"></a>
+<h2 id="2-常见凸集"><a href="#2-常见凸集" class="headerlink" title="2. 常见凸集"></a>2. 常见凸集</h2><h3 id="2-1-凸包-Convec-hull"><a href="#2-1-凸包-Convec-hull" class="headerlink" title="2.1 凸包(Convec hull)"></a>2.1 凸包(Convec hull)</h3><p>假如集合 $S=\{x_1,…,x_k\}$，则其<strong>凸包</strong>可以表示为</p>
+<script type="math/tex; mode=display">
+\left\{\sum_{i=1}^k\theta_i x_i \vert \sum\theta_i=1, \theta_i\ge0\right\}</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/cvx_hull.PNG" alt="cvx hull"></p>
+<h3 id="2-2-超平面-Hyperplanes"><a href="#2-2-超平面-Hyperplanes" class="headerlink" title="2.2 超平面(Hyperplanes)"></a>2.2 超平面(Hyperplanes)</h3><p>类比三维空间中的平面，可以有<strong>超平面</strong>的定义</p>
+<script type="math/tex; mode=display">
+\left\{x\vert a^Tx=b\right\}(a\ne0)</script><p>其中 $a$ 就是该平面的法向量。</p>
+<h3 id="2-3-半空间-Halfspaces"><a href="#2-3-半空间-Halfspaces" class="headerlink" title="2.3 半空间(Halfspaces)"></a>2.3 半空间(Halfspaces)</h3><p>类似的，有<strong>半空间</strong>定义为</p>
+<script type="math/tex; mode=display">
+\left\{x\vert a^Tx\le b\right\}(a\ne0)</script><h3 id="2-4-多面体-Polyhedra"><a href="#2-4-多面体-Polyhedra" class="headerlink" title="2.4 多面体(Polyhedra)"></a>2.4 多面体(Polyhedra)</h3><p>高维空间中的<strong>多面体</strong>定义为</p>
+<script type="math/tex; mode=display">
+\left\{x\vert A x \preceq b, \quad C x=d \right\}</script><p>其中 $\preceq$ 表示对每个元素都作比较。实际上就是求很多个半空间以及半平面的交集，与三维空间是类似的。</p>
+<h3 id="2-5-欧几里得球与椭球-Euclidean-balls-and-ellipsoids"><a href="#2-5-欧几里得球与椭球-Euclidean-balls-and-ellipsoids" class="headerlink" title="2.5 欧几里得球与椭球(Euclidean balls and ellipsoids)"></a>2.5 欧几里得球与椭球(Euclidean balls and ellipsoids)</h3><p>高维空间中的<strong>欧几里得球</strong>的定义为</p>
+<script type="math/tex; mode=display">
+B\left(x_{c}, r\right)=\left\{x |\left\|x-x_{c}\right\|_{2} \leq r\right\}=\left\{x_{c}+r u |\|u\|_{2} \leq 1\right\}</script><p><strong>椭球</strong>的定义为</p>
+<script type="math/tex; mode=display">
+\left\{x |\left(x-x_{c}\right)^{T} P^{-1}\left(x-x_{c}\right) \leq 1\right\} = \left\{x_{c}+A u |\|u\|_{2} \leq 1\right\}</script><p>其中 $P \in \mathbf{S}_{++}^{n}$ (也即 $P$ 为对称正定矩阵)。中间的矩阵 $P$ 的作用就相当于在各个特征向量方向上进行了放缩。</p>
+<blockquote>
+<p><strong>Remarks</strong>：关于矩阵性质，可以参考我的矩阵论学习笔记，这里复习一个知识点。</p>
+<ul>
+<li><strong>正规矩阵</strong>的定义为满足 $A^HA=AA^H$ 的矩阵 $A$ 即为正规矩阵，因此<strong>对称矩阵、Hermit矩阵、酉矩阵</strong>都是正规矩阵。而正规矩阵有什么性质呢？正规矩阵可以<strong>对角化</strong>，且<strong>存在一组正交的特征向量</strong>！</li>
+<li><strong>正定矩阵</strong>的定义为满足 $x^TAx&gt;0$ 的矩阵 $A$，实际上也就是说矩阵 $A$ 的<strong>特征值均大于 0</strong>！</li>
+<li>因此对称正定矩阵的性质有：所有特征向量正交，所有特征值大于 0。</li>
+</ul>
+</blockquote>
+<h3 id="2-6-范数球-norm-balls"><a href="#2-6-范数球-norm-balls" class="headerlink" title="2.6 范数球(norm balls)"></a>2.6 范数球(norm balls)</h3><p><strong>范数</strong> $\Vert\cdot\Vert$ 需要满足以下性质</p>
+<ul>
+<li>$\Vert x \Vert\ge0;\ \Vert x\Vert=0 \iff x=0$</li>
+<li>$|t x|=|t||x|$ for $t \in \mathbf{R}$</li>
+<li>$|x+y| \leq|x|+|y|$</li>
+</ul>
+<p>向量范数如 $\Vert x\Vert_0, \Vert x\Vert_1, \Vert x\Vert_2, \Vert x\Vert_p, \Vert x\Vert_\infty$</p>
+<p>矩阵范数如 $\Vert X\Vert_2, \Vert X\Vert_p$</p>
+<p><strong>范数球</strong>的定义为</p>
+<script type="math/tex; mode=display">
+\left\{x |\left\|x-x_{c}\right\| \leq r\right\}</script><h3 id="2-7-凸锥-Convex-cone"><a href="#2-7-凸锥-Convex-cone" class="headerlink" title="2.7 凸锥(Convex cone)"></a>2.7 凸锥(Convex cone)</h3><p>我们先来看看锥的定义</p>
+<ul>
+<li><strong>锥(cone)</strong>：$x\in C\Rightarrow \theta x\in C, \forall \theta\ge0$</li>
+<li><strong>凸锥(Convex cone)</strong>：$x_1,x_2\in C \Rightarrow x=\theta_1 x_1+\theta_2 x_2 \in C,\forall \theta_1,\theta_2\ge0$</li>
+</ul>
+<p>注意锥一定包含原点 0。锥不一定是凸的，反例如下，这是一个锥，但不是凸锥</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/cone.PNG" alt="cone"></p>
+<h3 id="2-8-范数锥-norm-cone"><a href="#2-8-范数锥-norm-cone" class="headerlink" title="2.8 范数锥(norm cone)"></a>2.8 范数锥(norm cone)</h3><p><strong>范数锥</strong>定义如下</p>
+<script type="math/tex; mode=display">
+\{(x, t) |\|x\| \leq t\}</script><p>也被称为 Ice cream cone。其中欧几里得范数锥被称为<strong>二阶锥</strong>(second-order cone)</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/norm_cone.PNG" alt="norm cone"></p>
+<h3 id="2-9-半正定锥-Positive-semidefinite-cone"><a href="#2-9-半正定锥-Positive-semidefinite-cone" class="headerlink" title="2.9 半正定锥(Positive semidefinite cone)"></a>2.9 半正定锥(Positive semidefinite cone)</h3><p>定义几个符号</p>
+<ul>
+<li>$\mathbf{S}^{n}$ 为 $n$ 阶对称矩阵</li>
+<li>$\mathbf{S}_{+}^{n}=\left\{X \in \mathbf{S}^{n} | X \succeq 0\right\}$ 为对称半正定矩阵，为凸锥</li>
+<li>$\mathbf{S}_{++}^{n}=\left\{X \in \mathbf{S}^{n} | X \succ 0\right\}$ 为对称正定矩阵</li>
+</ul>
+<p>例如给定二阶矩阵</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{ll}
+{x} & {y} \\
+{y} & {z}
+\end{array}\right] \in \mathrm{S}_{+}^{2}</script><p>其坐标满足如下图</p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/semidef_cone.PNG" alt="positive semidefinite cone"></p>
+<h2 id="3-保凸变换"><a href="#3-保凸变换" class="headerlink" title="3. 保凸变换"></a>3. 保凸变换</h2><p>上面是一些常见的凸集，对于更复杂的情况，怎么判断是否为凸集呢？</p>
+<ul>
+<li>根据定义 $x_{1}, x_{2} \in C, \quad 0 \leq \theta \leq 1 \quad \Longrightarrow \quad \theta x_{1}+(1-\theta) x_{2} \in C$</li>
+<li>凸集经过<strong>保凸变换</strong>以后仍然是凸集，如<ul>
+<li>凸集的交集</li>
+<li>仿射变换</li>
+<li>投影变换</li>
+<li>分式线性映射</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-1-凸集的交集"><a href="#3-1-凸集的交集" class="headerlink" title="3.1 凸集的交集"></a>3.1 凸集的交集</h3><p>任意个(可以是无数个)凸集的交集仍然是凸集</p>
+<p><strong><em>例子 1</em></strong>：$S=\left\{x \in \mathbf{R}^{m}|| p(t) | \leq 1 \text { for }|t| \leq \pi / 3\right\}$，其中 $p(t)=x_{1} \cos t+x_{2} \cos 2 t+\cdots+x_{m} \cos m t$</p>
+<h3 id="3-2-仿射变换"><a href="#3-2-仿射变换" class="headerlink" title="3.2 仿射变换"></a>3.2 仿射变换</h3><p>若映射 $f: \mathbf{R}^{n} \rightarrow \mathbf{R}^{m}$ 是仿射变换</p>
+<script type="math/tex; mode=display">
+f(x)=A x+b \text { with } A \in \mathbf{R}^{m \times n}, b \in \mathbf{R}^{m}</script><p>则有</p>
+<ul>
+<li>$S \subseteq \mathbf{R}^{n}$ convex $\Longrightarrow f(S)=\{f(x) | x \in S\}$ convex</li>
+<li>$C \subseteq \mathbf{R}^{m}$ convex $\Longrightarrow f^{-1}(C)=\left\{x \in \mathbf{R}^{n} | f(x) \in C\right\}$ convex</li>
+</ul>
+<p><strong><em>例子 2</em></strong>：双曲锥 $\left\{x | x^{T} P x \leq\left(c^{T} x\right)^{2}, c^{T} x \geq 0\right\}\left(\text { with } P \in \mathbf{S}_{+}^{n}\right)$，因为其可以转化为二阶锥</p>
+<p><strong><em>例子 3</em></strong>：$\left\{x | x_{1} A_{1}+\cdots+x_{m} A_{m} \preceq B\right\}$(with $A_i,P\in S^p$)<strong>？？？</strong></p>
+<h3 id="3-3-投影变换"><a href="#3-3-投影变换" class="headerlink" title="3.3 投影变换"></a>3.3 投影变换</h3><p><strong>投影函数</strong> $P: \mathbf{R}^{n+1} \rightarrow \mathbf{R}^{n}$</p>
+<script type="math/tex; mode=display">
+P(x, t)=x / t, \quad \operatorname{dom} P=\{(x, t) | t>0\}</script><p><strong>Proof</strong>：略。应用凸集定义</p>
+<h3 id="3-4-分式线性函数"><a href="#3-4-分式线性函数" class="headerlink" title="3.4 分式线性函数"></a>3.4 分式线性函数</h3><p>分式线性映射 $f: \mathbf{R}^{n} \rightarrow \mathbf{R}^{m}$ 为</p>
+<script type="math/tex; mode=display">
+f(x)=\frac{A x+b}{c^{T} x+d}, \quad \text { dom } f=\left\{x | c^{T} x+d>0\right\}</script><p>其可以看作先仿射变换再投影变换。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%87%B8%E9%9B%86/" rel="tag"># 凸集</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/22/optimization/ch0-intro/" rel="prev" title="凸优化笔记 0：绪论">
+      <i class="fa fa-chevron-left"></i> 凸优化笔记 0：绪论
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/26/optimization/ch2-separa-hyper/" rel="next" title="凸优化笔记 2：超平面分离定理">
+      凸优化笔记 2：超平面分离定理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-凸集"><span class="nav-text">1. 凸集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-常见凸集"><span class="nav-text">2. 常见凸集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-凸包-Convec-hull"><span class="nav-text">2.1 凸包(Convec hull)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-超平面-Hyperplanes"><span class="nav-text">2.2 超平面(Hyperplanes)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-半空间-Halfspaces"><span class="nav-text">2.3 半空间(Halfspaces)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-多面体-Polyhedra"><span class="nav-text">2.4 多面体(Polyhedra)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-欧几里得球与椭球-Euclidean-balls-and-ellipsoids"><span class="nav-text">2.5 欧几里得球与椭球(Euclidean balls and ellipsoids)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-范数球-norm-balls"><span class="nav-text">2.6 范数球(norm balls)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-凸锥-Convex-cone"><span class="nav-text">2.7 凸锥(Convex cone)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-范数锥-norm-cone"><span class="nav-text">2.8 范数锥(norm cone)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9-半正定锥-Positive-semidefinite-cone"><span class="nav-text">2.9 半正定锥(Positive semidefinite cone)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-保凸变换"><span class="nav-text">3. 保凸变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-凸集的交集"><span class="nav-text">3.1 凸集的交集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-仿射变换"><span class="nav-text">3.2 仿射变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-投影变换"><span class="nav-text">3.3 投影变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-分式线性函数"><span class="nav-text">3.4 分式线性函数</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <script type="text/javascript" src="/js/snow1.js"></script>
+  <script type="text/javascript" src="/js/snow2.js"></script>
+
+</body>
+</html>

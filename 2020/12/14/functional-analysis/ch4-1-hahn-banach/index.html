@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前面三章讲了很多东西，但实际上都只是开胃小菜 &amp;gt;__&amp;lt;，度量空间、赋范空间、内积空间等等都是为了我们接下来要讲的四大定理做铺垫。泛函中的四大定理，即 Hahn-Banach 定理、一致有界性原理、开映射定理和闭图像定理，是整个泛函分析的基石（前面三章的内容是基石的基石）。">
+<meta name="keywords" content="Hilbert空间,Hahn-Banach定理,次线性泛函,半范">
+<meta property="og:type" content="article">
+<meta property="og:title" content="泛函分析笔记4：Hahn-Banach定理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;12&#x2F;14&#x2F;functional-analysis&#x2F;ch4-1-hahn-banach&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="前面三章讲了很多东西，但实际上都只是开胃小菜 &amp;gt;__&amp;lt;，度量空间、赋范空间、内积空间等等都是为了我们接下来要讲的四大定理做铺垫。泛函中的四大定理，即 Hahn-Banach 定理、一致有界性原理、开映射定理和闭图像定理，是整个泛函分析的基石（前面三章的内容是基石的基石）。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-12-14T03:44:32.398Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/12/14/functional-analysis/ch4-1-hahn-banach/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>泛函分析笔记4：Hahn-Banach定理 | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/14/functional-analysis/ch4-1-hahn-banach/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          泛函分析笔记4：Hahn-Banach定理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-12-14 11:38:39 / Modified: 11:44:32" itemprop="dateCreated datePublished" datetime="2020-12-14T11:38:39+08:00">2020-12-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Functional-Analysis/" itemprop="url" rel="index"><span itemprop="name">Functional Analysis</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/12/14/functional-analysis/ch4-1-hahn-banach/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/12/14/functional-analysis/ch4-1-hahn-banach/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前面三章讲了很多东西，但实际上都只是开胃小菜 &gt;__&lt;，度量空间、赋范空间、内积空间等等都是为了我们接下来要讲的四大定理做铺垫。泛函中的四大定理，即 Hahn-Banach 定理、一致有界性原理、开映射定理和闭图像定理，是整个泛函分析的基石（前面三章的内容是基石的基石）。</p>
+<a id="more"></a>
+<h2 id="1-Hahn-Banach-定理"><a href="#1-Hahn-Banach-定理" class="headerlink" title="1. Hahn-Banach 定理"></a>1. Hahn-Banach 定理</h2><p>首先介绍几个要用到的概念。对于定义了序关系 $\preceq$ 的集合 $X$，$N\subset X$，称 $x_0\in X$ 为 $N$ 的<strong>上界</strong>，若 $x\preceq x_0,\forall x\in N$；称 $y_0\in N$ 为<strong>极大元</strong>，若 $y_0\le y,\forall y\in N \Longrightarrow y=y_0.$</p>
+<p><strong>Zorn引理</strong>：非空半序集合 $(X,\preceq)$，若 $X$ 的任意非空全序子集均有上界，则 $X$ 必有极大元。</p>
+<p>Hahn-Banach 定理有很多种不同的形式，在给出第一个 Hahn-Banach 定理之前，我们先引入次线性泛函。对于线性空间 $X$，称 $p:X\to \mathbb{K}$ 为<strong>次线性泛函</strong>，若：</p>
+<ol>
+<li>$\forall x,y\in X, p(x+y)\le p(x)+p(y)$</li>
+<li>$\forall x\in X, a\ge0,p(ax)=ap(x).$</li>
+</ol>
+<blockquote>
+<p><strong>定理(Hahn-Banach) 1</strong>：对于<strong>实线性空间</strong> $X$，$X_0$ 为 $X$ 的线性子空间，$p$ 为 $X$ 上的<strong>次线性泛函</strong>，$f_0\in X_0^\star$ 为线性泛函并且满足 $f_0(x)\le p(x),\forall x\in X_0$，那么存在 $f\in X^\star$ 使得 $f|_{X_0}=f_0$，并且 $f(x)\le p(x),\forall x\in X.$</p>
+</blockquote>
+<p><strong>证明</strong>：要证明 $f$ 的存在性我们就需要找到满足条件的 $f$，但是给出的 $f_0$ 只在 $X_0$ 上有定义，怎么把它扩展到整个 $X$ 上得到我们想要的 $f$ 呢？下面的构造方法非常的“山路十八弯”，我自己是想不到 orz。</p>
+<p>首先定义 $\mathcal{E}=\{(Y,g): Y为X的线性子空间,X_0\subset Y,\quad g\in Y^\star ,g|_{X_0}=f_0, g(x)\le p(x),\forall x\in Y\}$ （这个集合的构造就不是一般人能想到的[狗头]）。由于 $(X_0,f_0)\in \mathcal{E}$，因此 $\mathcal{E}$ 非空，我们可以定义 $\mathcal{E}$ 上的序关系 </p>
+<script type="math/tex; mode=display">
+(Y_1,g_1)\preceq(Y_2,g_2) \iff Y_1\subset Y_2,\ g_2|_{Y_1}=g_1</script><p>那么取 $\mathcal{E}$ 的非空全序子集 $\mathcal{E}_1$，令 $W=\cup_{(Y,g)\in \mathcal{E}_1}Y$，对应的 $\forall x\in W$，我们可以找到 $(Y,g)\in \mathcal{E}_1, x\in Y$，此时定义 $h(x)=g(x)$。容易验证 $W$ 为 $X$ 的线性子空间，另外由于 $\mathcal{E}_1$ 是全序的，也可以验证 $h(x),\forall x\in W$ 的定义是唯一的（与 $(Y,g)$ 的选取无关），并且 $h(x)$ 为 $W$ 上的线性泛函。因此我们有 $(W,h)\in\mathcal{E}.$</p>
+<p>由于任意 $(Y,g)\in\mathcal{E}_1$，都有 $(Y,g)\preceq(W,h)$，即 $(W,h)$ 为 $\mathcal{E}_1$ 的上界，$\mathcal{E}$ 中任意非空全序子集都有上界，根据 Zorn 引理，$\mathcal{E}$ 有极大元 $(Y_0,g_0).$</p>
+<p>到这里我们就把 $(X_0,f_0)$ 扩展到了一个更大的空间 $(Y_0,g_0)$ 上面，但是 $Y_0$ 是否就是 $X$ 呢？感觉应该是，但是需要证明一下。</p>
+<p>假如 $Y_0\subsetneq X$，可以取 $y\in Y_0^c$，考虑 $V=\text{span}(Y_0\cup \{y\})$，那么 $\forall x\in V$ 都可以唯一的表示为 $x=w+\lambda y,w\in Y_0,\lambda\in\mathbb{R}$，此时定义</p>
+<script type="math/tex; mode=display">
+h(x)=g_0(w)+\lambda a</script><p>容易验证 $h$ 为 $V$ 上的线性泛函，并且有 $h_{Y_0}=g_0$，因此我们就对 $g_0$ 又进行了扩展，只需要证明 $(V,h)\in\mathcal{E}$ 就能导出矛盾（因为已经证明 $(Y_0,g_0)$ 为极大元）从而说明 $Y_0=X$。这就需要满足 $h(x)\le p(x),\forall x\in V$。考虑 $\lambda&gt;0$，这等价于 $h(x/\lambda)=g_0(w/\lambda)+a\le p(w/\lambda+y)$，也等价于 $\forall w\in Y_0, g_0(w)+a\le p(w+y)$。类似得取 $x=w-\lambda y,\lambda&gt;0$ 就可以得到 $g_0(w)-a\le p(w-y)$。因此 $a$ 需要满足以下条件：</p>
+<script type="math/tex; mode=display">
+g_0(w)-p(w-y) \le a \le p(w+y) - g_0(w)</script><p>因此就需要满足 $2g_0(w) \le p(w-y)+p(w+y)$，由于 $2g_0(w)\le p(2w) \le p(w+y+w-y)\le p(w+y)+p(w-y)$，因此上式一定可以满足，即能找到合适的 $a$ 使得 $(V,h)\in\mathcal{E}$，因为 $Y_0\subsetneq V$，这就说明 $(Y_0,g_0)$ 不是 $\mathcal{E}$ 的极大元，导出矛盾，因此有 $Y_0=X$。至此我们就找到了 $g_0$ 满足定理要求的全部条件。</p>
+<p>证毕。</p>
+<p>上面的定理只研究了实线性空间的情况，对于复线性空间有相似的结论，不过我们需要对条件稍加修改。</p>
+<p>首先将上面 $p$ 的次线性泛函假设改为更强的假设——半范。对于线性空间 $X$，$p:X\to\mathbb{R}$ 称为 $X$ 上的<strong>半范</strong>，若满足：</p>
+<ol>
+<li>$p(x)\ge0, \forall x\in X$</li>
+<li>$p(x+y)\le p(x)+p(y),\forall x,y\in X$</li>
+<li>$p(ax)=|a|p(x),\forall x\in X,a\in\mathbb{K}$</li>
+</ol>
+<p>半范与范数的概念相比，少了一个条件即 $p(x)=0\iff x=0$，因此说明可能存在 $x\ne0,p(x)=0$。另外半范可以导出次线性。</p>
+<blockquote>
+<p><strong>定理(Hahn-Banach) 2</strong>：$X$ 为 $\mathbb{K}$ 上的线性空间，$X_0$ 为 $X$ 的线性子空间，$p:X\to \mathbb{R}$ 为半范，$f_0\in X_0^\star$ 并且有 $|f_0(x)|\le p(x),\forall x\in X_0$，那么存在 $f\in X^\star$ 使得 $f|_{X_0}=f_0$，并且 $f(x)\le p(x),\forall x\in X.$</p>
+</blockquote>
+<p><strong>证明</strong>： 要想把原来的结论从实线性空间扩展到复线性空间，首先要考虑复线性空间有什么特殊的性质。如果用两个实线性泛函来表示 $f(x)=f_1(x)+if_2(x)$，我们可以想一下复线性空间可以粗略的看成两个实线性空间的组合，$\forall a\in\mathbb{R},f(ax)=af_1(x)+iaf_2(x)$。但是实际上并没有这么简单，因为 $a$ 还可以取自复空间，那么我们令 $a=i$ 就可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+if(x)&=f(ix) \\
+if_1(x)-f_2(x)&=f_1(ix)+if_2(x)
+\end{aligned}</script><p>由于 $x\in X$ 任取，实部虚部需要分别相等，因此 $f_2(x)=-f_1(ix),\forall x\in X$，即<strong>复线性泛函 $f$ 的实部和虚部是相互约束的</strong>！另一方面，实部和虚部只需要知道其中一个，另一个也就确定了。那么也就是说给定一个复线性泛函 $f$ 我们可以唯一的用某个实线性泛函 $f_1$ 来表示 $f$。</p>
+<blockquote>
+<p><strong>NOTE</strong>：读者如果了解信号的相干解调的话，这里可以联想到 Hilbert 变换。实际上。</p>
+</blockquote>
+<p>对于定理中的 $f_0$ 我们可以将其表示为 $f_0(x)=f_1(x)+if_2(x)$。容易验证 $f_1(x)\le p(x)$，根据上一个 Hahn-Banach 定理，就能找到一个实线性泛函 $g_1$，使得 $g_1|_{X_0}=f_1, g_1(x)\le p(x)$。那么我们再定义 $g(x)=g_1(x)-ig_1(ix)$，容易验证 $g\in X^\star,g|_{X_0}=f_0$，接下来验证 $|g(x)|\le p(x)$ 的方法也有一点巧妙：</p>
+<script type="math/tex; mode=display">
+|g(x)|=g(x)e^{-i\theta} = g(e^{-i\theta}x)=g_1(e^{-i\theta}x)\le p(e^{-i\theta}x)=p(x)</script><p>证毕。</p>
+<p>接下来再把 $X$ 限制在赋范空间上，就能得到有界线性泛函的保范延拓定理，这也是 Hahn-Banach 定理最重要的应用。我们这里讲前面两个定理基本上也是为下面一个定理做铺垫。他们的基本含义都是将一个线性泛函从较小的线性子空间延拓到整个空间。</p>
+<blockquote>
+<p><strong>定理(Hahn-Banach/保范延拓定理) 3</strong>：$(X,\Vert\cdot\Vert)$，$X_0$ 为 $X$ 的线性子空间，$\forall f_0\in X_0’$，则 $\exists f\in X’$，$f|_{X_0}=f_0$ 且 $\Vert f\Vert = \Vert f_0\Vert.$</p>
+</blockquote>
+<p><strong>证明</strong>：我们还是要对 $f_0$ 进行延拓，那么怎么样才能应用上面两个定理的结论呢？首先需要构造一个半范 $p$，可以定义 $p(x)=\Vert f_0\Vert\cdot \Vert x\Vert$，容易验证其为半范（在这里能看出来半范的好处，由于不要求 $p(x+y)=p(x)+p(y)$，因此 $p$ 可以含有 $\Vert x\Vert$ 项）。那么就能找到 $f\in X^\star,f|_{X_0}=f_0,|f(x)|\le \Vert f_0\Vert\cdot \Vert x\Vert$，之后容易验证 $\Vert f\Vert=\Vert f_0\Vert.$ 证毕。</p>
+<p>对上一定义的假设条件进行增强，把 $X$ 限制为 Hilbert 空间，回忆上一章提到了 <strong>Hilbert 空间</strong>上的<strong>线性泛函</strong>都可以<strong>唯一的</strong>表示为 $f(x)=\langle x,z_0\rangle$ 的形式，那么我们可以把上面的保范延拓定理进一步加强，获得唯一性！</p>
+<blockquote>
+<p><strong>推论 1</strong>：若 $X$ 为 HIlbert 空间，$X_0$ 为 $X$ 的闭线性子空间，$f_0\in X_0’$，则<strong>存在唯一的</strong> $f\in X’$，$f|_{X_0}=f_0$ 且 $\Vert f\Vert = \Vert f_0\Vert.$</p>
+</blockquote>
+<p><strong>证明</strong>：$X_0$ 也是 Hilbert 空间，因此 $\exists! z_0\in X_0$，使得 $f_0(x)=\langle x,z_0\rangle$，因此很方便地可以取 $f_0(x)=\langle x,z_0\rangle, \forall x\in X$，并且可以验证 $f$ 满足条件 $f|_{X_0}=f_0, \Vert f\Vert = \Vert f_0\Vert=\Vert z_0\Vert.$ </p>
+<p>接下来就需要证明 $f$ 的唯一性。假设还有 $g$ 满足条件，那么 $\exists! z_1\in X$，$g(x)=\langle x,z_1\rangle$</p>
+<script type="math/tex; mode=display">
+\forall x\in X_0.f(x)-g(x)=\langle x,z_0-z_1\rangle=0 \Longrightarrow z_0-z_1\in X_0^{\perp} \\
+\Vert g_0\Vert=\Vert z_1\Vert^2 = \Vert z_1-z_0\Vert^2+\Vert z_0\Vert^2=\Vert f_0\Vert^2 \Longrightarrow z_1=z_0</script><p>证毕。</p>
+<blockquote>
+<p><strong>定理(Hahn-Banach) 4</strong>：$(X,\Vert\cdot\Vert)$，$x_0\in X, x_0\ne 0$，则 $\exists f\in X’, \Vert f\Vert=1$，使得 $f(x_0)=\Vert x_0\Vert.$</p>
+</blockquote>
+<p><strong>证明</strong>：可以取 $X_0=\mathbb{K}x_0=\{\lambda x_0,\lambda\in\mathbb{K}\}$，定义 $f_0(\lambda x_0)=\lambda \Vert x_0\Vert \in X_0’$，$\Vert f_0\Vert=1$，再应用上一推论自然就出来了。证毕。</p>
+<p><strong>NOTE</strong>：对于 $\forall x,y\in X,x\ne y$，那么我们取 $x_0=x-y\ne0$，根据上面的定理，一定存在 $f\in X’$ 使得 $f(x_0)=f(x)-f(y)\ne0$。这说明只要 $x\ne y$，就一定存在某个 $f\in X’,\Vert f\Vert=1$ 使得 $f(x)\ne f(y).$ 可以表述为</p>
+<script type="math/tex; mode=display">
+x=y \iff f(x)=f(y),\forall f\in X'</script><blockquote>
+<p><strong>推论 2</strong>：$X\ne\{0\}$ 为赋范空间，$x_0\in X,x_0\ne 0$，则</p>
+<script type="math/tex; mode=display">
+\Vert x_0\Vert = \max_{f\in X',\Vert f\Vert=1} |f(x_0)| = \max_{f\in X',\Vert f\Vert\le1} |f(x_0)| = \max_{f\ne0} \frac{|f(x_0)|}{\Vert f\Vert}</script><p><strong>NOTE</strong>：回忆 $\Vert f\Vert=\sup_{x\in X,\Vert x\Vert\le1}|f(x)|$，从这个结论来看，$X$ 与 $X’$ 有某种的对称性。证明略。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hilbert%E7%A9%BA%E9%97%B4/" rel="tag"># Hilbert空间</a>
+              <a href="/tags/Hahn-Banach%E5%AE%9A%E7%90%86/" rel="tag"># Hahn-Banach定理</a>
+              <a href="/tags/%E6%AC%A1%E7%BA%BF%E6%80%A7%E6%B3%9B%E5%87%BD/" rel="tag"># 次线性泛函</a>
+              <a href="/tags/%E5%8D%8A%E8%8C%83/" rel="tag"># 半范</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/11/functional-analysis/ch3-hilbert-space/" rel="prev" title="泛函分析笔记3：内积空间">
+      <i class="fa fa-chevron-left"></i> 泛函分析笔记3：内积空间
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/26/functional-analysis/ch4-2-application/" rel="next" title="泛函分析笔记5：Hahn-Banach定理的应用">
+      泛函分析笔记5：Hahn-Banach定理的应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Hahn-Banach-定理"><span class="nav-text">1. Hahn-Banach 定理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <script type="text/javascript" src="/js/snow1.js"></script>
+  <script type="text/javascript" src="/js/snow2.js"></script>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>泛函分析笔记7：弱收敛与弱星收敛</title>
-    <url>/wiki/functional-analysis/ch4-4-convergence/</url>
+    <url>/2020/12/26/functional-analysis/ch4-4-convergence/</url>
     <content><![CDATA[<p>一致有界性原理的一个应用就是序列和算子的收敛性分析。</p>
 <h2 id="1-序列收敛性"><a href="#1-序列收敛性" class="headerlink" title="1. 序列收敛性"></a>1. 序列收敛性</h2><p>$(X,\Vert\cdot\Vert)$，有 $x_n,x\in X$，称 $x_n$ <strong>强收敛</strong>到 $x$，若 $\Vert x_n-x\Vert \to 0$；称 $x_n$ <strong>弱收敛</strong>到 $x$ 若 $\forall f\in X’$ 都有 $f(x_n)\to f(x)$，记为 $x_n \stackrel{w}{\longrightarrow} x.$</p>
 <p>关于弱收敛有以下几条性质：</p>
@@ -128,7 +128,7 @@ a_{n,0}t_{n,0}^n & + & a_{n,1}t_{n,1}^n & + & \cdots & + & a_{n,n}t_{n,n}^n & = 
   </entry>
   <entry>
     <title>泛函分析笔记6：一致有界性原理</title>
-    <url>/wiki/functional-analysis/ch4-3-banach-steinhauss/</url>
+    <url>/2020/12/26/functional-analysis/ch4-3-banach-steinhauss/</url>
     <content><![CDATA[<p>Hahn-Banach定理主要是用于泛函的延拓，在较小的子空间上满足某个性质之后我们就可以将对应的泛函延拓至整个空间。而这一节要讲的一致有界性原理恰如其名，主要讨论一族有界线性算子一致有界的条件。他也是后续讨论序列弱收敛性以及泛函弱星收敛性的基础。</p>
 <h2 id="1-Baire范畴定理"><a href="#1-Baire范畴定理" class="headerlink" title="1. Baire范畴定理"></a>1. Baire范畴定理</h2><p>一致有界性原理的证明需要用到Baire范畴定理（也叫Baire纲定理）。</p>
 <p>$(X,d)$，若 $\bar{M}\subset X$ 没有内点，则称 $M$ 是<strong>无处稠密</strong>的。若 $N=\cup^\infty_n N_n$，$N_n$ 均为无处稠密的，则称 $N$ 为<strong>第一范畴</strong>。不为第一范畴的子集称为<strong>第二范畴</strong>。</p>
@@ -175,7 +175,7 @@ a_{n,0}t_{n,0}^n & + & a_{n,1}t_{n,1}^n & + & \cdots & + & a_{n,n}t_{n,n}^n & = 
   </entry>
   <entry>
     <title>泛函分析笔记5：Hahn-Banach定理的应用</title>
-    <url>/wiki/functional-analysis/ch4-2-application/</url>
+    <url>/2020/12/26/functional-analysis/ch4-2-application/</url>
     <content><![CDATA[<h2 id="1-共轭算子"><a href="#1-共轭算子" class="headerlink" title="1. 共轭算子"></a>1. 共轭算子</h2><p>赋范空间 $X,Y$，$T\in B(X,Y)$，对于任意的 $f\in Y’$，$X \stackrel{T}{\longrightarrow}Y\stackrel{f}{\longrightarrow}\mathbb{K}$，可以得到 $f\circ T\in X’$。因此我们可以定义映射</p>
 <script type="math/tex; mode=display">
 \begin{aligned}
@@ -268,7 +268,7 @@ g_{\lambda x+\mu y}(f)=f(\lambda x+\mu y)=\lambda f(x)+\mu g(y)=\lambda g_x(f)+\
   </entry>
   <entry>
     <title>泛函分析笔记4：Hahn-Banach定理</title>
-    <url>/wiki/functional-analysis/ch4-1-hahn-banach/</url>
+    <url>/2020/12/14/functional-analysis/ch4-1-hahn-banach/</url>
     <content><![CDATA[<p>前面三章讲了很多东西，但实际上都只是开胃小菜 &gt;__&lt;，度量空间、赋范空间、内积空间等等都是为了我们接下来要讲的四大定理做铺垫。泛函中的四大定理，即 Hahn-Banach 定理、一致有界性原理、开映射定理和闭图像定理，是整个泛函分析的基石（前面三章的内容是基石的基石）。</p>
 <a id="more"></a>
 <h2 id="1-Hahn-Banach-定理"><a href="#1-Hahn-Banach-定理" class="headerlink" title="1. Hahn-Banach 定理"></a>1. Hahn-Banach 定理</h2><p>首先介绍几个要用到的概念。对于定义了序关系 $\preceq$ 的集合 $X$，$N\subset X$，称 $x_0\in X$ 为 $N$ 的<strong>上界</strong>，若 $x\preceq x_0,\forall x\in N$；称 $y_0\in N$ 为<strong>极大元</strong>，若 $y_0\le y,\forall y\in N \Longrightarrow y=y_0.$</p>
@@ -354,7 +354,7 @@ x=y \iff f(x)=f(y),\forall f\in X'</script><blockquote>
   </entry>
   <entry>
     <title>泛函分析笔记3：内积空间</title>
-    <url>/wiki/functional-analysis/ch3-hilbert-space/</url>
+    <url>/2020/12/11/functional-analysis/ch3-hilbert-space/</url>
     <content><![CDATA[<p>我们前面讲了距离空间、赋范空间，距离空间赋予了两个点之间的距离度量，范数赋予了每个点自身的长度度量，而范数则可以导出距离。本章要讲的内积可以看成是更加统一的定义，因为从内积我们可以导出范数，进而导出距离。因此内积空间是一个“更小”的空间，在此基础上结合完备性我们引出了 Hilbert 空间，后续我们的研究也大多集中在 Hilbert 空间上。</p>
 <h2 id="1-内积空间"><a href="#1-内积空间" class="headerlink" title="1. 内积空间"></a>1. 内积空间</h2><p><strong>定义</strong>：$X$ 为 $\mathbb{K}$ 上的线性空间，$\langle \cdot,\cdot\rangle :X\times X\to \mathbb{K}$，若满足如下条件</p>
 <ol>
@@ -532,7 +532,7 @@ f(x) = \langle x,z_0\rangle , \forall x\in H</script></blockquote>
   </entry>
   <entry>
     <title>泛函分析笔记2：赋范空间</title>
-    <url>/wiki/functional-analysis/ch2-normed-space/</url>
+    <url>/2020/11/10/functional-analysis/ch2-normed-space/</url>
     <content><![CDATA[<p>在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。</p>
 <h2 id="1-线性空间"><a href="#1-线性空间" class="headerlink" title="1. 线性空间"></a>1. 线性空间</h2><p>线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)=\sum_i a_ix_i$，因此可以看出来包含了<strong>数乘</strong>和<strong>加法</strong>两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系的自洽性，我们还需要规定一些其他的运算规则。最后，给出来线性空间的定义：</p>
 <a id="more"></a>
@@ -740,7 +740,7 @@ T(x+y)=Tx+Ty,\quad T(\lambda x)=\lambda Tx \\
   </entry>
   <entry>
     <title>泛函分析笔记1：度量空间</title>
-    <url>/wiki/functional-analysis/ch1-metric-space/</url>
+    <url>/2020/10/18/functional-analysis/ch1-metric-space/</url>
     <content><![CDATA[<p>这一章节研究度量空间的基本结构，在开始前，我们需要思考几个问题：</p>
 <ol>
 <li>什么是度量空间？</li>
@@ -951,7 +951,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>泛函分析笔记0：绪论</title>
-    <url>/wiki/functional-analysis/ch0-intro/</url>
+    <url>/2020/10/18/functional-analysis/ch0-intro/</url>
     <content><![CDATA[<p>本系列泛函分析课程笔记的参考教材是清华大学出版社，步尚全老师写的《泛函分析基础》。</p>
 <p>笔记的内容基本来自于我的听课记录，以及自己复习过程中的一些想法，由于笔者的数学功底极其不扎实，因此很可能会有不准确甚至错误之处，欢迎大家指正。</p>
 ]]></content>
@@ -961,7 +961,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>VMWare15 + Ubuntu18.04 踩坑记录</title>
-    <url>/wiki/software/vmware/</url>
+    <url>/2020/08/11/software/vmware/</url>
     <content><![CDATA[<h2 id="1-虚拟机联网问题"><a href="#1-虚拟机联网问题" class="headerlink" title="1. 虚拟机联网问题"></a>1. 虚拟机联网问题</h2><p>VMWare虚拟机大致有 3 种联网方式，以下三种方式联网自由度逐渐递减：</p>
 <ol>
 <li>桥接：虚拟机就相当于局域网中的另一台主机，有独立的 ip 地址；</li>
@@ -991,7 +991,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>树莓派设置开机自启动程序</title>
-    <url>/wiki/hardware/raspberrypi-autostart/</url>
+    <url>/2020/07/20/hardware/raspberrypi-autostart/</url>
     <content><![CDATA[<p>最近调试树莓派，希望<strong>开机运行两个程序</strong>，其中一个是<strong>可执行文件</strong>，另一个是 <strong>python 脚本</strong>，他们都是无限循环的程序，也就是说不关机不会停止运行。中间还是遇到了很多 bug，现在记录一下自启动程序的设置方法以及debug的整个过程。</p>
 <h2 id="1-自启动程序设置方法"><a href="#1-自启动程序设置方法" class="headerlink" title="1. 自启动程序设置方法"></a>1. 自启动程序设置方法</h2><p>网上用的最多的方法就是修改 <code>/etc/rc.local</code> 文件：</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo nano /etc/rc.local</span><br></pre></td></tr></table></figure>
@@ -1027,7 +1027,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>JY901串口数据接收与处理(Python)</title>
-    <url>/wiki/hardware/jy901/</url>
+    <url>/2020/07/09/hardware/jy901/</url>
     <content><![CDATA[<p>最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。</p>
 <p>这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。</p>
 <a id="more"></a>
@@ -1053,7 +1053,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>Why Baby Why</title>
-    <url>/wiki/music/WhyBabyWhy/</url>
+    <url>/2020/06/12/music/WhyBabyWhy/</url>
     <content><![CDATA[<p><center><h2>夏天到了🍉</h2></center><br><a id="more"></a></p>
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=509531185&auto=1&height=66"></iframe>
 
@@ -1073,7 +1073,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>树莓派使用</title>
-    <url>/wiki/hardware/raspberrypi/</url>
+    <url>/2020/06/08/hardware/raspberrypi/</url>
     <content><![CDATA[<h2 id="1-系统安装"><a href="#1-系统安装" class="headerlink" title="1. 系统安装"></a>1. 系统安装</h2><p><a href="https://zhuanlan.zhihu.com/p/59027897" target="_blank" rel="noopener">参考链接</a></p>
 <h2 id="2-连接树莓派"><a href="#2-连接树莓派" class="headerlink" title="2. 连接树莓派"></a>2. 连接树莓派</h2><p>如果有显示器和键盘鼠标，可以直接利用HMDI线连接树莓派和显示器，像操作普通电脑一样。</p>
 <p>如果没有显示器，就需要通过ssh连接。首先需要知道树莓派的地址。</p>
@@ -1143,7 +1143,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>强大数定律与弱大数定律</title>
-    <url>/wiki/statistic/law%20of%20large%20numbers/</url>
+    <url>/2020/05/30/statistic/law%20of%20large%20numbers/</url>
     <content><![CDATA[<p>最近学习的时候遇到了<strong>强大数定律</strong>与<strong>弱大数定律</strong>，两者的区分提到了“<strong>依概率收敛</strong>”和“<strong>几乎处处收敛</strong>”，由于本人的数学基础太差，一直很难理解这个地方，在网上查阅了一些资料有了一些个人的理解，不知道对不对，不过还是想记录下来。提前说明，这里给出的解释非常的不严格，<del>甚至有点搞笑</del>，不过个人觉得很容易理解。</p>
 <p>首先给出来强弱大数定律的表述。</p>
 <p>对于独立同分布的无穷随机序列 $\{X_i\}$，期望为 $\mathbb{E}(X_i)=\mu$。大数定律要研究的就是样本均值的极限</p>
@@ -1180,7 +1180,7 @@ x(t_0)=x_0
   </entry>
   <entry>
     <title>凸优化笔记26：不动点迭代</title>
-    <url>/wiki/optimization/ch26-fixed-point/</url>
+    <url>/2020/05/27/optimization/ch26-fixed-point/</url>
     <content><![CDATA[<p>前面讲了很多具体的算法，比如梯度、次梯度、近似点梯度、加速近似点梯度、PPA、DR方法、ADMM、ALM等，对这些方法的迭代过程有了一些了解。这一节则主要是针对算法的<strong>收敛性</strong>进行分析，试图从一个更加抽象的层面，利用<strong>不动点迭代</strong>的思想，把上面的算法综合起来，给一个比较 general 的收敛性分析方法。</p>
 <h2 id="1-什么是不动点？"><a href="#1-什么是不动点？" class="headerlink" title="1. 什么是不动点？"></a>1. 什么是不动点？</h2><p>对于希尔伯特空间(Hilbert space) $\mathcal{H}$，定义了内积 $\left&lt;\cdot,\cdot\right&gt;$ 和 范数 $|\cdot|$（可以借助于 $\mathbb{R}^2$ 来想象）。算子 $T:\mathcal{H}\to\mathcal{H}$（或者是 $C\to C$，$C$ 为 $\mathcal{H}$ 的闭子集）。那么算子 $T$ 的不动点集合就定为</p>
 <script type="math/tex; mode=display">
@@ -1311,7 +1311,7 @@ T:=\operatorname{prox}_{\lambda f}</script><p>就是 <strong>ﬁrmly-nonexpansiv
   </entry>
   <entry>
     <title>凸优化笔记25：原始对偶问题 PDHG</title>
-    <url>/wiki/optimization/ch25-PDHG/</url>
+    <url>/2020/05/24/optimization/ch25-PDHG/</url>
     <content><![CDATA[<p>前面的章节要么从原始问题出发，要么从对偶问题出发，通过求解近似点或者一个子优化问题进行迭代，而且推导过程中我们发现根据问题的参数特征，比如矩阵 $A$ 是瘦高型的还是矮胖型的，采用对偶和原始问题的复杂度会不一样，可以选择一个更简单的。而这一节，我们将要从<strong>原始对偶问题</strong>出发来优化，什么是原始对偶问题呢？就是原始优化变量和对偶优化变量（原始函数和共轭函数）混合在一块，看下面的原理就知道了。</p>
 <a id="more"></a>
 <h2 id="1-原始对偶问题"><a href="#1-原始对偶问题" class="headerlink" title="1. 原始对偶问题"></a>1. 原始对偶问题</h2><p>现在考虑原始优化问题，其中 $f,g$ 为闭凸函数</p>
@@ -1676,7 +1676,7 @@ z_{k+1} &=\left(I+\sigma \partial g^{*}\right)^{-1}\left(z_{k}+\sigma A\left(2 x
   </entry>
   <entry>
     <title>凸优化笔记24：ADMM</title>
-    <url>/wiki/optimization/ch24-ADMM/</url>
+    <url>/2020/05/20/optimization/ch24-ADMM/</url>
     <content><![CDATA[<p>上一节讲了对偶问题上的 DR-splitting 就等价于原问题的 ADMM，这一节在详细的讲一下 ADMM 及其变种。</p>
 <a id="more"></a>
 <h2 id="1-标准-ADMM-形式"><a href="#1-标准-ADMM-形式" class="headerlink" title="1. 标准 ADMM 形式"></a>1. 标准 ADMM 形式</h2><p>首先还是给出 ADMM 要求解的问题的格式，也就是约束存在耦合：</p>
@@ -1781,7 +1781,7 @@ f(\mathbf{x})=f_{1}\left(\mathbf{x}_{1}\right)+f_{2}\left(\mathbf{x}_{2}\right)+
   </entry>
   <entry>
     <title>凸优化笔记23：算子分裂法 &amp; ADMM</title>
-    <url>/wiki/optimization/ch23-DR-splitting-admm/</url>
+    <url>/2020/05/10/optimization/ch23-DR-splitting-admm/</url>
     <content><![CDATA[<p>前面章节中，针对 $\min f(x)+g(Ax)$ 形式的优化问题，我们介绍了如 PG、dual PG、ALM、PPA 等方法。但是比如 PG 方法为 </p>
 <script type="math/tex; mode=display">
 x_{k+1}=\text{prox}_{th}(x_k-t_k\nabla g(x_k))</script><p>ALM 的第一步要解一个联合优化问题 </p>
@@ -1959,7 +1959,7 @@ M \sum_{k=0}^{\infty}\left\|G\left(y_{k}\right)\right\|_{2}^{2} \leq\left\|y_{0}
   </entry>
   <entry>
     <title>凸优化笔记22：近似点算法</title>
-    <url>/wiki/optimization/ch22-ppa/</url>
+    <url>/2020/05/09/optimization/ch22-ppa/</url>
     <content><![CDATA[<p>在进入具体的优化算法后，我们首先讲了基于梯度的，比如梯度下降(GD)、次梯度下降(SD)；然后又讲了近似点算子，之后讲了基于近似点算子的方法，比如近似点梯度下降(PG)、对偶问题的近似点梯度下降(DPG)、加速近似点梯度下降(APG)。而这一节讲的，还是基于近似点的！他叫<strong>近似点方法(Proximal Point Algorithm, PPA)</strong>，除此之外还会介绍<strong>增广拉格朗日方法(Augmentted Larangian Method, ALM)</strong>。我们就开始吧！</p>
 <a id="more"></a>
 <h2 id="1-近似点方法"><a href="#1-近似点方法" class="headerlink" title="1. 近似点方法"></a>1. 近似点方法</h2><p>近似点方法跟近似点梯度下降很像，在此之外我们先简单回顾一下 PG 方法。对优化问题</p>
@@ -2127,7 +2127,7 @@ y^\star=\nabla f_{(t)}(x) = \frac{1}{t}\left(x-\text{prox}_{tf}(x)\right)</scrip
   </entry>
   <entry>
     <title>Trouble I&#39;m In</title>
-    <url>/wiki/music/TroubleImIn/</url>
+    <url>/2020/05/04/music/TroubleImIn/</url>
     <content><![CDATA[<center><h2>Trouble I'm In</h2></center>
 
 <a id="more"></a>
@@ -2148,7 +2148,7 @@ y^\star=\nabla f_{(t)}(x) = \frac{1}{t}\left(x-\text{prox}_{tf}(x)\right)</scrip
   </entry>
   <entry>
     <title>凸优化笔记21：加速近似点梯度下降</title>
-    <url>/wiki/optimization/ch21-apg-fista/</url>
+    <url>/2020/04/24/optimization/ch21-apg-fista/</url>
     <content><![CDATA[<p>我们证明了梯度方法最快的收敛速度只能是 $O(1/k^2)$（没有强凸假设的话），但是前面的方法最多只能达到 $O(1/k)$ 的收敛速度，那么有没有方法能达到这一极限呢？有！这一节要讲的<strong>加速近似梯度方法(APG)</strong>就是。这个方法的构造非常的巧妙，证明过程中会发现每一项都恰到好处的抵消了！真不知道作者是怎么想出来这么巧妙地方法，各位可以看看证明过程自行体会。</p>
 <a id="more"></a>
 <h2 id="1-加速近似梯度方法"><a href="#1-加速近似梯度方法" class="headerlink" title="1. 加速近似梯度方法"></a>1. 加速近似梯度方法</h2><p>首先说我们要考虑的优化问题形式还是</p>
@@ -2225,7 +2225,7 @@ f\left(x_{i+1}\right)-f^{\star}+\frac{\gamma_{i+1}}{2}\left\|v_{i+1}-x^{\star}\r
   </entry>
   <entry>
     <title>凸优化笔记20：对偶近似点梯度下降</title>
-    <url>/wiki/optimization/ch20-dual-proximal-gradient/</url>
+    <url>/2020/04/23/optimization/ch20-dual-proximal-gradient/</url>
     <content><![CDATA[<p>前面讲了梯度下降、次梯度下降、近似点梯度下降方法并分析了收敛性。一开始我们还讲了对偶原理，那么如果原问题比较难求解的时候，我们可不可以转化为对偶问题并应用梯度法求解呢？当然可以，不过有一个问题就是对偶函数的梯度或者次梯度怎么计算呢？这就是这一节要关注的问题。</p>
 <p>首先一个问题是哪些形式的问题，其对偶问题相比于原问题更简单呢？可能有很多种，这一节主要关注一种：<strong>线性等式/不等式约束的优化问题</strong>。之所以考虑此类问题是因为如果有线性的等式/不等式约束，应用 Lagrange 对偶原理之后，我们可以自然的用原函数的<strong>共轭函数</strong>来表示其<strong>对偶问题</strong>，而共轭函数的次梯度是容易求解的，因为我们可以用 <strong>Legendre transformation</strong>。那么接下来就是详细的原理和例子了。</p>
 <a id="more"></a>
@@ -2390,7 +2390,7 @@ z_{i}^{+} &=P_{C_{i}}\left(z_{i}+t B_{i} \hat{x}\right), \quad i=1, \ldots, p
   </entry>
   <entry>
     <title>凸优化笔记19：近似点梯度下降</title>
-    <url>/wiki/optimization/ch19-proximal-gradient/</url>
+    <url>/2020/04/17/optimization/ch19-proximal-gradient/</url>
     <content><![CDATA[<p>前面讲了梯度下降法、次梯度下降法，并分析了他们的收敛性。上一节讲了近似梯度算子，我们说主要是针对非光滑问题的，这一节就要讲近似梯度算子在非光滑优化问题中的应用。先回顾一下上一节最重要的一部分内容：对于指示函数 $\delta_C$ 来说近似梯度算子得到的实际上就是向集合 $C$ 的投影。</p>
 <h2 id="1-近似点梯度下降"><a href="#1-近似点梯度下降" class="headerlink" title="1. 近似点梯度下降"></a>1. 近似点梯度下降</h2><p>这一部分考虑的问题主要是</p>
 <script type="math/tex; mode=display">
@@ -2475,7 +2475,7 @@ t_{i}\left(f\left(x_{i+1}\right)-f^{\star}\right) \leq \frac{1}{2}\left(\left\|x
   </entry>
   <entry>
     <title>凸优化笔记18：近似点算子 Proximal Mapping</title>
-    <url>/wiki/optimization/ch18-proximal-mapping/</url>
+    <url>/2020/04/16/optimization/ch18-proximal-mapping/</url>
     <content><![CDATA[<p>前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做<strong>近似点算子(Proximal mapping)</strong>，也是为了处理非光滑问题。</p>
 <a id="more"></a>
 <h2 id="1-闭函数"><a href="#1-闭函数" class="headerlink" title="1. 闭函数"></a>1. 闭函数</h2><p>在引入<strong>闭函数(closed function)</strong>的概念之前，我们先回顾一下<strong>闭集</strong>的概念：集合 $\mathcal{C}$ 是闭的，如果它包含边界，也即</p>
@@ -2665,7 +2665,7 @@ x=\operatorname{prox}_{f}(x)+\operatorname{prox}_{f^{*}}(x) \quad\text { for all
   </entry>
   <entry>
     <title>凸优化笔记17：次梯度下降</title>
-    <url>/wiki/optimization/ch17-subgradient-descent/</url>
+    <url>/2020/04/10/optimization/ch17-subgradient-descent/</url>
     <content><![CDATA[<p>对于光滑函数，我们可以用梯度下降法，并且证明了取不同的步长，可以得到次线性收敛，如果加上强凸性质，还可以得到线性收敛速度。那如果现在对于不可导的函数，我们就只能沿着次梯度下降，同样会面临步长的选择、方向的选择、收敛性分析等问题。</p>
 <a id="more"></a>
 <h2 id="1-收敛性分析"><a href="#1-收敛性分析" class="headerlink" title="1. 收敛性分析"></a>1. 收敛性分析</h2><p>次梯度下降的一般形式为</p>
@@ -2740,7 +2740,7 @@ f_{\text {best }}^{(k)}-f^{\star} \leq \frac{2G^2}{\mu(k+1)}</script>]]></conten
   </entry>
   <entry>
     <title>凸优化笔记16：次梯度 Subgradient</title>
-    <url>/wiki/optimization/ch16-subgradient/</url>
+    <url>/2020/04/10/optimization/ch16-subgradient/</url>
     <content><![CDATA[<p>前面讲了梯度下降的方法，关键在于步长的选择：固定步长、线搜索、BB方法等，但是如果优化函数本身存在不可导的点，就没有办法计算梯度了，这个时候就需要引入<strong>次梯度(Subgradient)</strong>，这一节主要关注次梯度的计算。</p>
 <a id="more"></a>
 <h2 id="1-次梯度"><a href="#1-次梯度" class="headerlink" title="1. 次梯度"></a>1. 次梯度</h2><p><strong>次梯度(subgradient)</strong>的定义为</p>
@@ -2950,7 +2950,7 @@ f^{\prime}(x ; y)=\sup _{g \in \partial f(x)} g^{T} y</script><p>也即 $f’(x;
   </entry>
   <entry>
     <title>MATLAB R2016a 无法启动并行池</title>
-    <url>/wiki/tools/matlab-parpool/</url>
+    <url>/2020/04/08/tools/matlab-parpool/</url>
     <content><![CDATA[<p>最近在用 MATLAB 跑仿真，但是不知怎么回事，之前并行计算 parfor 用的好好的，昨天突然就不能用了，一直报错无法启动并行池，报错原因还特别奇怪。在网上找了一大堆教程互相抄来抄去，没一个能用的。最后还是在官网论坛找到了一个答案成功解决问题。</p>
 <a id="more"></a>
 <h2 id="1-问题描述"><a href="#1-问题描述" class="headerlink" title="1. 问题描述"></a>1. 问题描述</h2><p>我用的是 MATLAB R2016a，当我运行带有 parfor 的代码时，左下角会有如下提示，表示无法启动并行池，而正常情况应该是右边这幅图</p>
@@ -3053,7 +3053,7 @@ f^{\prime}(x ; y)=\sup _{g \in \partial f(x)} g^{T} y</script><p>也即 $f’(x;
   </entry>
   <entry>
     <title>凸优化笔记15：梯度方法 Gradient Method</title>
-    <url>/wiki/optimization/ch15-gradient/</url>
+    <url>/2020/04/05/optimization/ch15-gradient/</url>
     <content><![CDATA[<p>前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的<strong>梯度方法</strong>。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数值不断减小。</p>
 <script type="math/tex; mode=display">
 x_{k+1}=x_{k}-t_k \nabla f(x_k),\quad k=0,1,...</script><p>上面的式子看起来简单，但是真正应用时你会发现有各种问题：</p>
@@ -3238,7 +3238,7 @@ f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}
   </entry>
   <entry>
     <title>凸优化笔记14：SDP Representablity</title>
-    <url>/wiki/optimization/ch14-sdp-rep/</url>
+    <url>/2020/04/05/optimization/ch14-sdp-rep/</url>
     <content><![CDATA[<p>这一节简单介绍一个 SDP Representablity（SDP-Rep），这个概念的提出主要是为了便于判断某个问题是否可以转化为 SDP 优化问题。</p>
 <p><strong>定义</strong>：<strong>集合</strong> $X\subseteq R^n$ 是 <strong>SDP-Rep</strong> 的，如果他可以表示为</p>
 <script type="math/tex; mode=display">
@@ -3266,7 +3266,7 @@ X=\{x| \text{there exist }u\in R^k \text{ such that for some } \\A_i,B_j,C\in R^
   </entry>
   <entry>
     <title>凸优化笔记13：互补性条件</title>
-    <url>/wiki/optimization/ch13-complementary/</url>
+    <url>/2020/03/27/optimization/ch13-complementary/</url>
     <content><![CDATA[<p>前面我们讲了凸优化问题、对偶原理、拉格朗日函数、KKT 条件，还从几何角度解释了强对偶性，那么这一节将从<strong>代数角度解释强对偶性</strong>，并给出 KKT 条件中的<strong>互补性条件</strong>的新的表达形式。</p>
 <a id="more"></a>
 <h2 id="1-LP-SOCP-SDP"><a href="#1-LP-SOCP-SDP" class="headerlink" title="1. LP / SOCP / SDP"></a>1. LP / SOCP / SDP</h2><p>在此之前我们先回顾一下比较重要的三类凸优化问题：LP、SOCP、SDP，为什么这么说呢？因为本质上这三类问题非常相似。我们先来回顾一下三类问题</p>
@@ -3375,7 +3375,7 @@ X\succeq0,S\succeq0,\left<X,S\right>=0 \iff XS=0 \iff \frac{XS+SX}{2}=0</script>
   </entry>
   <entry>
     <title>凸优化笔记12：KKT 条件</title>
-    <url>/wiki/optimization/ch12-kkt/</url>
+    <url>/2020/03/26/optimization/ch12-kkt/</url>
     <content><![CDATA[<p>上一小节讲了拉格朗日函数，可以把原始问题转化为对偶问题，并且对偶问题是凸的。我们还得到了弱对偶性和强对偶性的概念，并且提到了 Slater Condition 保证凸问题的强对偶性成立，并且给出了一些几何的直观解释。那么在这一节，我们将引出著名的 <strong>KKT 条件</strong>，它给出了最优解需要满足的必要条件，是求解优化问题最优解的一个重要方式。</p>
 <a id="more"></a>
 <h2 id="1-KKT-条件"><a href="#1-KKT-条件" class="headerlink" title="1. KKT 条件"></a>1. KKT 条件</h2><p>我们首先回顾一下拉格朗日函数，考虑下面的优化问题</p>
@@ -3553,7 +3553,7 @@ p^\star(u,v) &\ge g(\tilde\lambda,\tilde\nu)-u^T\tilde\lambda -v^T\tilde\nu \\
   </entry>
   <entry>
     <title>凸优化笔记 11：对偶原理 &amp; 拉格朗日函数</title>
-    <url>/wiki/optimization/ch11-dual/</url>
+    <url>/2020/03/18/optimization/ch11-dual/</url>
     <content><![CDATA[<p>前面讲了凸优化问题的定义，以及一些常见的凸优化问题类型，这一章就要引入著名的拉格朗日函数和对偶问题了。通过对偶问题，我们可以将一些非凸问题转化为凸优化问题，还可以求出原问题的非平凡下界，这对复杂优化问题是很有用的。</p>
 <a id="more"></a>
 <h2 id="1-拉格朗日函数"><a href="#1-拉格朗日函数" class="headerlink" title="1. 拉格朗日函数"></a>1. 拉格朗日函数</h2><p>考虑凸优化问题</p>
@@ -3793,7 +3793,7 @@ g(Z)=\inf _{x} L(x, Z)=\left\{\begin{array}{ll}
   </entry>
   <entry>
     <title>模糊数学笔记 7：层次分析法</title>
-    <url>/wiki/fuzzy/ch7-ahp/</url>
+    <url>/2020/03/15/fuzzy/ch7-ahp/</url>
     <content><![CDATA[<p>日常生活中有许多<strong>决策问题</strong>。决策是指在面临多种方案时需要依据一定的标准选择某一种方案。 比如买钢笔，一般要依据质量、颜色、实用性、价格、外形等方面的因素选择某一支钢笔。 又比如假期旅游，是去风光秀丽的苏州，还是去迷人的北戴河，或者是去山水甲天下的桂林，一般会依据景色、费用、食宿条件、旅途等因素选择去哪个地方。</p>
 <p>我们可以利用上一节讲的<strong>模糊综合评判</strong>的方法，对每一个备选方案都进行一次打分，最后取分最高的。不过既然这是新的一篇笔记，肯定还有其他方法啦。美国运筹学家托马斯.赛迪(T. Saaty等人)20世纪在七十年代为美国国防部提出了一种能有效处理这类问题的实用方法——<strong>层次分析法</strong>。 </p>
 <a id="more"></a>
@@ -3897,7 +3897,7 @@ CR=\frac{a_1CI_1+\cdots+a_mCI_m}{a_1RI_1+\cdots+a_mRI_m}</script><p>当 $CR&lt;0
   </entry>
   <entry>
     <title>凸优化笔记 10：凸优化问题</title>
-    <url>/wiki/optimization/ch10-cvx-optimization/</url>
+    <url>/2020/03/14/optimization/ch10-cvx-optimization/</url>
     <content><![CDATA[<p>前面讲了那么多关于凸集、凸函数的知识，然而都是铺垫，现在我们才来到了这门课的重头戏部分——凸优化问题！</p>
 <a id="more"></a>
 <h2 id="1-一般优化问题"><a href="#1-一般优化问题" class="headerlink" title="1. 一般优化问题"></a>1. 一般优化问题</h2><p>一般优化问题的形式为</p>
@@ -4296,7 +4296,7 @@ f_0(x)=(F_1(x),...,F_q(x))</script><p>相当于有 $q$ 个不同的目标 $F_i$�
   </entry>
   <entry>
     <title>模糊数学笔记 6：模糊综合评判</title>
-    <url>/wiki/fuzzy/ch6-evaluate/</url>
+    <url>/2020/03/13/fuzzy/ch6-evaluate/</url>
     <content><![CDATA[<p>假如我们现在设计了一种服装，想要调研一下这种服装的受欢迎程度，该怎么办呢？</p>
 <p>首先是怎么表示受欢迎程度呢？我们可以简单分为三个等级：受欢迎、一般欢迎、不受欢迎，由于不同的人感受可能不同，结合前面模糊集的概念，我们可以引入隶属度，比如调查后得到 50% 的人喜欢，30%一般，20%不喜欢，我们就可以取隶属度分别为 0.5，0.3，0.2。</p>
 <p>当然这样太粗糙了，我们知道评价一个衣服的因素有很多，比如样式、耐穿性、价格等，而不同因素即使对同一个人的值观感受也是不一样的，比如有的人很喜欢这个样式，但是摸了摸钱包，发现这个衣服是这么的难看！所以要想更好的评价，我们需要对每一个指标分别评估一下受欢迎程度，然后把各种因素综合起来。这就是模糊综合评判要做的事情。</p>
@@ -4346,7 +4346,7 @@ f_0(x)=(F_1(x),...,F_q(x))</script><p>相当于有 $q$ 个不同的目标 $F_i$�
   </entry>
   <entry>
     <title>凸优化笔记 9：广义凸函数</title>
-    <url>/wiki/optimization/ch9-gene-cvx/</url>
+    <url>/2020/03/11/optimization/ch9-gene-cvx/</url>
     <content><![CDATA[<p>有时候函数 $f$ 为向量，此时怎么定义凸函数呢？根据广义不等式引入。</p>
 <a id="more"></a>
 <h2 id="1-广义单调函数"><a href="#1-广义单调函数" class="headerlink" title="1. 广义单调函数"></a>1. 广义单调函数</h2><p>对于 $f:R^n\to R$，定义其单调性为存在正常锥 $K\subseteq R^n$，有</p>
@@ -4381,7 +4381,7 @@ f(\theta x+(1-\theta)y) \preceq_K \theta f(x)+(1-\theta)f(y)</script><p><strong>
   </entry>
   <entry>
     <title>凸优化笔记 8：对数凹函数 Log-concave Function</title>
-    <url>/wiki/optimization/ch8-log-cvx/</url>
+    <url>/2020/03/11/optimization/ch8-log-cvx/</url>
     <content><![CDATA[<p>对数凹函数，顾名思义即取完对数以后 $\log f(x)$ 是凹函数，其应用比如在求最大后验 MAP 时，往往会对联合概率密度函数取对数。</p>
 <a id="more"></a>
 <h2 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h2><p>函数 $f$ 被称为<strong>对数凹函数(log-concave)</strong>，如果 $\log f$ 是凹的，也即</p>
@@ -4424,7 +4424,7 @@ f(x)\nabla^2 f(x)\preceq \nabla f(x) \nabla f(x)^T,\forall x\in \text{dom}f</scr
   </entry>
   <entry>
     <title>Hexo NexT 7.7 主题美化</title>
-    <url>/wiki/tools/next-beautify/</url>
+    <url>/2020/03/11/tools/next-beautify/</url>
     <content><![CDATA[<p>网上很多关于主题美化的教程都是老版本 next 5.1 的，最近更新到 next 7 之后摸索了好久才找到简单有效的自定义主题方式，下面是具体的操作。</p>
 <a id="more"></a>
 <p>修改主题下 <code>_config.yml</code> 文件，找到下面这一部分，也即注释掉最后一行</p>
@@ -4445,7 +4445,7 @@ f(x)\nabla^2 f(x)\preceq \nabla f(x) \nabla f(x)^T,\forall x\in \text{dom}f</scr
   </entry>
   <entry>
     <title>模糊数学笔记 5：模糊聚类</title>
-    <url>/wiki/fuzzy/ch5-clustering/</url>
+    <url>/2020/03/07/fuzzy/ch5-clustering/</url>
     <content><![CDATA[<p>现在想要对 $n$ 个目标 $U=\{x_1,…,x_n\}$ 分类，并且每个对象都有多个指标，也即 $x_i=\{x_{i1},…,x_{im}\}$。</p>
 <p>模糊聚类通常包括三个步骤：</p>
 <ol>
@@ -4535,7 +4535,7 @@ u_{i j}=\frac{\left(\frac{1}{d_{i j}}\right)^{2 /(m-1)}}{\sum_{k=1}^{c}\left(\fr
   </entry>
   <entry>
     <title>凸优化笔记 7：拟凸函数 Quasiconvex Function</title>
-    <url>/wiki/optimization/ch7-quasicvx/</url>
+    <url>/2020/03/06/optimization/ch7-quasicvx/</url>
     <content><![CDATA[<h2 id="1-拟凸函数定义"><a href="#1-拟凸函数定义" class="headerlink" title="1. 拟凸函数定义"></a>1. 拟凸函数定义</h2><p><strong>拟凸函数(quasiconvex function)</strong>的定义为：若 $\text{dom}f$ 为凸集，且对任意的 $\alpha$，其下水平集 </p>
 <script type="math/tex; mode=display">
 S_\alpha = \{x\in\text{dom}f | f(x)\le\alpha\}</script><p>都是凸集，则 $f$ 为拟凸函数。</p>
@@ -4655,7 +4655,7 @@ S_\alpha = \{y| f(y)\le f(x)=\alpha \}\subseteq R^n</script><p>需要注意的�
   </entry>
   <entry>
     <title>凸优化笔记 6：共轭函数 Conjugate Function</title>
-    <url>/wiki/optimization/ch6-conjugate-func/</url>
+    <url>/2020/03/04/optimization/ch6-conjugate-func/</url>
     <content><![CDATA[<h2 id="1-共轭函数"><a href="#1-共轭函数" class="headerlink" title="1. 共轭函数"></a>1. 共轭函数</h2><h3 id="1-1-定义"><a href="#1-1-定义" class="headerlink" title="1.1 定义"></a>1.1 定义</h3><p>一个函数 $f$ 的<strong>共轭函数(conjugate function)</strong> 定义为</p>
 <script type="math/tex; mode=display">
 f^*(y)=\sup_{x\in\text{dom}f}(y^Tx-f(x))</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/6-conjugate.PNG" alt="conjugate function"></p>
@@ -4709,7 +4709,7 @@ f^*(y)=\sum e^{y_i-1}</script>]]></content>
   </entry>
   <entry>
     <title>凸优化笔记 5：保凸变换</title>
-    <url>/wiki/optimization/ch5-preserve-cvx/</url>
+    <url>/2020/03/04/optimization/ch5-preserve-cvx/</url>
     <content><![CDATA[<h2 id="1-保凸变换"><a href="#1-保凸变换" class="headerlink" title="1. 保凸变换"></a>1. 保凸变换</h2><p>前面提到过一次保凸变换，前面针对的是集合，凸集经过一定的保凸变换，映射后的集合仍然是凸集。这里复习一下</p>
 <ol>
 <li>任意个凸集的交集</li>
@@ -4812,7 +4812,7 @@ g(x,t)=tf(x/t),\text{dom }g=\{(x,t)|x/t \in\text{dom }f,t>0 \}</script><blockquo
   </entry>
   <entry>
     <title>模糊数学笔记 4：模糊关系</title>
-    <url>/wiki/fuzzy/ch4-relation/</url>
+    <url>/2020/03/01/fuzzy/ch4-relation/</url>
     <content><![CDATA[<h2 id="1-模糊关系"><a href="#1-模糊关系" class="headerlink" title="1. 模糊关系"></a>1. 模糊关系</h2><p><strong>定义</strong>：模糊关系 $R$ 的隶属函数 $\mu_R:U\times V\to[0,1]$，其中 $\mu_R(x,y)$ 表示 $(x,y)$ 具有关系 $R$ 的程度</p>
 <blockquote>
 <p><strong>Remarks</strong>：实际上模糊关系 $R$ 就是定义在一个笛卡尔积的论域 $U\times V$ 上的模糊关系，与之前介绍的普通的模糊关系并无太大差别。</p>
@@ -4898,7 +4898,7 @@ Q \supseteq Q^{2} \supseteq Q^{3} \supseteq \cdots \supseteq Q^{\mathbf{n}-1} \s
   </entry>
   <entry>
     <title>模糊数学笔记 3：扩展原理</title>
-    <url>/wiki/fuzzy/ch3-extension/</url>
+    <url>/2020/03/01/fuzzy/ch3-extension/</url>
     <content><![CDATA[<p>扩展原理实际上是将普通集合中的<strong>函数映射</strong>的概念扩展到了模糊集合上。</p>
 <a id="more"></a>
 <h2 id="1-映射的象"><a href="#1-映射的象" class="headerlink" title="1. 映射的象"></a>1. 映射的象</h2><h3 id="1-1-定义"><a href="#1-1-定义" class="headerlink" title="1.1 定义"></a>1.1 定义</h3><p>对于普通集合，设 $f:X\to Y,A\subseteq X$，$f(A)=\{f(x)|x\in A\}$ 称为 $A$ 的象</p>
@@ -4930,7 +4930,7 @@ Q \supseteq Q^{2} \supseteq Q^{3} \supseteq \cdots \supseteq Q^{\mathbf{n}-1} \s
   </entry>
   <entry>
     <title>模糊数学笔记 2：贴近度</title>
-    <url>/wiki/fuzzy/ch2-nearness/</url>
+    <url>/2020/03/01/fuzzy/ch2-nearness/</url>
     <content><![CDATA[<h2 id="1-贴近度"><a href="#1-贴近度" class="headerlink" title="1. 贴近度"></a>1. 贴近度</h2><p>给定 $A,B,C\in \mathcal{F}(U)$，$\sigma(<em>,</em>)$ 满足以下几个条件时，被称为<strong>贴近度</strong></p>
 <ol>
 <li>$\sigma(A,A)=1$</li>
@@ -4987,7 +4987,7 @@ Q \supseteq Q^{2} \supseteq Q^{3} \supseteq \cdots \supseteq Q^{\mathbf{n}-1} \s
   </entry>
   <entry>
     <title>凸优化笔记 4：凸函数 Convex Function</title>
-    <url>/wiki/optimization/ch4-cvx-function/</url>
+    <url>/2020/02/29/optimization/ch4-cvx-function/</url>
     <content><![CDATA[<h2 id="1-凸函数"><a href="#1-凸函数" class="headerlink" title="1. 凸函数"></a>1. 凸函数</h2><h3 id="1-1-凸函数定义"><a href="#1-1-凸函数定义" class="headerlink" title="1.1 凸函数定义"></a>1.1 凸函数定义</h3><p><strong>凸函数(convex function)</strong>的定义：</p>
 <script type="math/tex; mode=display">
 f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y),\quad \forall x,y\in\text{dom}f,\theta\in[0,1]</script><p>函数 $f$ 的<strong>扩展函数(extended-value extension)</strong> $\tilde{f}$ 定义为</p>
@@ -5074,7 +5074,7 @@ f(\mathbb{E}z)=\mathbb{E}f(z)</script><p>证明：离散情况易证，连续情
   </entry>
   <entry>
     <title>模糊数学笔记 1：模糊集 Fuzzy set</title>
-    <url>/wiki/fuzzy/ch1-set/</url>
+    <url>/2020/02/26/fuzzy/ch1-set/</url>
     <content><![CDATA[<p>传统集合中元素要么属于集合，要么不属于集合。但假如我们给出一个“所有年轻人组成的集合”，那么这个时候年龄多大才算年轻人呢？30岁算年轻人嘛？有的人觉得算，有的人觉得不算，这是一个比较模糊的界定，所以就引入了模糊集的概念。</p>
 <a id="more"></a>
 <h2 id="1-传统集合的定义"><a href="#1-传统集合的定义" class="headerlink" title="1. 传统集合的定义"></a>1. 传统集合的定义</h2><p><strong>论域</strong> U，<strong>集合</strong> A，这可以用一个映射来表示</p>
@@ -5147,7 +5147,7 @@ A_\lambda = \{x|A(x)>\lambda,x\in U\}</script><p>注意：<strong>截集为普�
   </entry>
   <entry>
     <title>凸优化笔记 3：广义不等式</title>
-    <url>/wiki/optimization/ch3-gene-ineq/</url>
+    <url>/2020/02/26/optimization/ch3-gene-ineq/</url>
     <content><![CDATA[<p>将普通的不等式 $1\le2$ 推广到更加复杂的情况，例如两个向量 $x\le y$ 该如何定义？这就是广义不等式(generalized inequality)</p>
 <a id="more"></a>
 <h2 id="1-正常锥"><a href="#1-正常锥" class="headerlink" title="1. 正常锥"></a>1. 正常锥</h2><p><strong>正常锥(proper cone)</strong> $K\subseteq R^n$ 需要满足</p>
@@ -5201,7 +5201,7 @@ K^{*}=\left\{y | y^{T} x \geq 0 \text { for all } x \in K\right\}</script><p>有
   </entry>
   <entry>
     <title>凸优化笔记 2：超平面分离定理</title>
-    <url>/wiki/optimization/ch2-separa-hyper/</url>
+    <url>/2020/02/26/optimization/ch2-separa-hyper/</url>
     <content><![CDATA[<p>简单理解就是：没有交集的两个凸集，可以被一个超平面完全分隔开。</p>
 <a id="more"></a>
 <h2 id="1-超平面分离定理"><a href="#1-超平面分离定理" class="headerlink" title="1. 超平面分离定理"></a>1. 超平面分离定理</h2><p><strong>超平面分离定理(Separating hyperplane theorem)</strong>：若 $C,D$ 为非空凸集，且 $C\cap D=\varnothing$，则存在 $a\ne 0,b$，使得</p>
@@ -5232,7 +5232,7 @@ a^Ty\le b,\quad a^Tx\ge b\quad\forall x\in C</script><p>Proof：omit…</p>
   </entry>
   <entry>
     <title>凸优化笔记 1：Convex Sets</title>
-    <url>/wiki/optimization/ch1-cvx-sets/</url>
+    <url>/2020/02/22/optimization/ch1-cvx-sets/</url>
     <content><![CDATA[<h2 id="1-凸集"><a href="#1-凸集" class="headerlink" title="1. 凸集"></a>1. 凸集</h2><p>区分两种集合的定义（下面的描述并不是严格的数学语言，领会意思就行了）：</p>
 <ul>
 <li><strong>仿射集(Affine set)</strong>：$x=\theta x_1 + (1-\theta)x_2,\quad \theta\in\mathbb{R}$</li>
@@ -5337,7 +5337,7 @@ f(x)=\frac{A x+b}{c^{T} x+d}, \quad \text { dom } f=\left\{x | c^{T} x+d>0\right
   </entry>
   <entry>
     <title>凸优化笔记 0：绪论</title>
-    <url>/wiki/optimization/ch0-intro/</url>
+    <url>/2020/02/22/optimization/ch0-intro/</url>
     <content><![CDATA[<h2 id="0-绪论"><a href="#0-绪论" class="headerlink" title="0. 绪论"></a>0. 绪论</h2><p>首先明确凸优化这门课的主要目的：</p>
 <ol>
 <li>判断一个问题是否为凸的</li>
@@ -5371,7 +5371,7 @@ f(\alpha x+\beta y) \leq \alpha f(x)+\beta f(y),\quad \alpha+\beta=1,\alpha>0,\b
   </entry>
   <entry>
     <title>PID 控制器</title>
-    <url>/wiki/system/pid/</url>
+    <url>/2020/02/21/system/pid/</url>
     <content><![CDATA[<p>在过程控制中，按偏差的比例（P）、积分（I）和微分（D）进行控制的PID控制器（亦称PID调节器）是应用最为广泛的一种自动控制器。它具有原理简单，易于实现，适用面广，控制参数相互独立，参数的选定比较简单等优点.</p>
 <a id="more"></a>
 <h2 id="1-基本原理"><a href="#1-基本原理" class="headerlink" title="1. 基本原理"></a>1. 基本原理</h2><p><strong>PID控制器</strong>（比例-积分-微分控制器），由比例单元（P）、积分单元（I）和微分单元（D）组成。可以透过调整这三个单元的增益 $K_p$，$K_i$ 和 $K_d$ 来调定其特性。PID控制器主要适用于基本上线性，且动态特性不随时间变化的系统。</p>
@@ -5419,7 +5419,7 @@ u(k)&=K_p\left[e_{k}+\frac{1}{T_i} \sum_{j=0}^{k} e_{j}+T_d \frac{e_{k}-e_{k-1}}
   </entry>
   <entry>
     <title>LaSalle&#39;s invariance principle 拉萨尔不变性原理</title>
-    <url>/wiki/system/lasalle/</url>
+    <url>/2020/02/20/system/lasalle/</url>
     <content><![CDATA[<p>拉萨尔不变原理是李亚普诺夫第二方法的推广。这种观察给出了李亚普诺夫理论的统一认识，且极大地推广了李亚普诺夫第二方法，现在人们称这一推广为拉萨尔不变原理。</p>
 <a id="more"></a>
 <h2 id="1-系统模型"><a href="#1-系统模型" class="headerlink" title="1. 系统模型"></a>1. 系统模型</h2><p>考虑一个控制系统</p>
@@ -5448,7 +5448,7 @@ u(k)&=K_p\left[e_{k}+\frac{1}{T_i} \sum_{j=0}^{k} e_{j}+T_d \frac{e_{k}-e_{k-1}}
   </entry>
   <entry>
     <title>Second-Order Cone Programming(SOCP) 二次锥规划</title>
-    <url>/wiki/optimization/socp/</url>
+    <url>/2020/02/17/optimization/socp/</url>
     <content><![CDATA[<p>二次锥规划是凸优化的一部分，可以应用<strong>内点法</strong>快速求解，相比于<strong>半正定规划</strong>更有效。</p>
 <a id="more"></a>
 <h2 id="1-二阶锥"><a href="#1-二阶锥" class="headerlink" title="1. 二阶锥"></a>1. 二阶锥</h2><h3 id="1-1-二阶锥定义"><a href="#1-1-二阶锥定义" class="headerlink" title="1.1 二阶锥定义"></a>1.1 二阶锥定义</h3><p>在此之前，先给出<strong>二阶锥</strong>的定义。</p>
@@ -5499,7 +5499,7 @@ x^{T} A^{T} A x+b^{T} x+c \leq 0  \notag</script><p>可以等价转化为 SOC �
   </entry>
   <entry>
     <title>笔记本选购指南</title>
-    <url>/wiki/tools/laptop/</url>
+    <url>/2020/02/09/tools/laptop/</url>
     <content><![CDATA[<p>根据网上的资料总结了一些笔记本选购过程中需要注意的一些参数。</p>
 <a id="more"></a>
 <h2 id="1-确定需求类型"><a href="#1-确定需求类型" class="headerlink" title="1. 确定需求类型"></a>1. 确定需求类型</h2><p>笔记本大致可以分为三类：</p>
@@ -5557,7 +5557,7 @@ x^{T} A^{T} A x+b^{T} x+c \leq 0  \notag</script><p>可以等价转化为 SOC �
   </entry>
   <entry>
     <title>矩阵分析学习笔记</title>
-    <url>/wiki/linear-algebra/matrix/</url>
+    <url>/2020/02/03/linear-algebra/matrix/</url>
     <content><![CDATA[<p>在网上自学矩阵分析的一些笔记，主要是总结一些结论性的东西，并没有太多证明。对于非数学专业的学生，笔者认为抛开证明的细节，从更加具象的角度理解矩阵可能会有更清晰的理解。</p>
 <p>未完待续，更新中 …</p>
 <p>参考资料：<a href="https://zhuanlan.zhihu.com/matrix-learning" target="_blank" rel="noopener">知乎专栏</a></p>
@@ -6107,7 +6107,7 @@ f(A)=P\left(\begin{array}{ccc}
   </entry>
   <entry>
     <title>统计推断(十一)  Sum-product algorithm</title>
-    <url>/wiki/statistic/SI_Ch11_Sumproduct/</url>
+    <url>/2020/02/03/statistic/SI_Ch11_Sumproduct/</url>
     <content><![CDATA[<p>和积算法/信念传播算法</p>
 <a id="more"></a>
 <h2 id="1-Sum-product-Message-passing-on-trees"><a href="#1-Sum-product-Message-passing-on-trees" class="headerlink" title="1. Sum-product(Message passing) on trees"></a>1. Sum-product(Message passing) on trees</h2><ul>
@@ -6166,7 +6166,7 @@ m_{i \rightarrow j}^{t+1}\left(x_{j}\right)&=\max _{x_{i} \in \mathcal{X}} \phi_
   </entry>
   <entry>
     <title>统计推断(十) Elimination algorithm</title>
-    <url>/wiki/statistic/SI_Ch10_Elimination/</url>
+    <url>/2020/02/03/statistic/SI_Ch10_Elimination/</url>
     <content><![CDATA[<p>消去算法</p>
 <a id="more"></a>
 <hr>
@@ -6209,7 +6209,7 @@ p_{\mathbf{x}}(\boldsymbol{x}) \propto \exp \left(x_{1} x_{2}-x_{1} x_{3}-x_{2} 
   </entry>
   <entry>
     <title>统计推断(九) Graphical models</title>
-    <url>/wiki/statistic/SI_Ch9_GraphModels/</url>
+    <url>/2020/02/03/statistic/SI_Ch9_GraphModels/</url>
     <content><![CDATA[<h2 id="1-Undirected-graphical-models-Markov-random-fields"><a href="#1-Undirected-graphical-models-Markov-random-fields" class="headerlink" title="1. Undirected graphical models(Markov random fields)"></a>1. Undirected graphical models(Markov random fields)</h2><ul>
 <li><p>节点表示随机变量，边表示与节点相关的势函数</p>
 <script type="math/tex; mode=display">
@@ -6279,7 +6279,7 @@ p_{\mathbf{x}}(\mathbf{x}) \propto \prod_{j} f_{j}\left(\mathbf{x}_{f_{j}}\right
   </entry>
   <entry>
     <title>统计推断(八) Model Selection</title>
-    <url>/wiki/statistic/SI_Ch8_ModelSelection/</url>
+    <url>/2020/02/03/statistic/SI_Ch8_ModelSelection/</url>
     <content><![CDATA[<p>模型选择</p>
 <a id="more"></a>
 <h2 id="1-Bayesian-Approach"><a href="#1-Bayesian-Approach" class="headerlink" title="1.Bayesian Approach"></a>1.Bayesian Approach</h2><ul>
@@ -6316,7 +6316,7 @@ p_{\mathrm{y} | \mathrm{H}}(\boldsymbol{y} | H)=\int q_{0}(x) \mathrm{d} x \appr
   </entry>
   <entry>
     <title>统计推断(七)  Typical Sequence</title>
-    <url>/wiki/statistic/SI_Ch7_TypicalSequence/</url>
+    <url>/2020/02/03/statistic/SI_Ch7_TypicalSequence/</url>
     <content><![CDATA[<p>典型集</p>
 <a id="more"></a>
 <h2 id="1-一些定理"><a href="#1-一些定理" class="headerlink" title="1. 一些定理"></a>1. 一些定理</h2><blockquote>
@@ -6481,7 +6481,7 @@ p_{*}=\underset{p \in \mathcal{S}}{\arg \min } D(p \| q)</script></blockquote>
   </entry>
   <entry>
     <title>统计推断(六) Modeling</title>
-    <url>/wiki/statistic/SI_Ch6_Modeling/</url>
+    <url>/2020/02/03/statistic/SI_Ch6_Modeling/</url>
     <content><![CDATA[<p>模型选择</p>
 <a id="more"></a>
 <h2 id="1-Modeling-problem"><a href="#1-Modeling-problem" class="headerlink" title="1. Modeling problem"></a>1. Modeling problem</h2><ul>
@@ -6577,7 +6577,7 @@ p^{*}=\underset{p \in \mathcal{L}_{\mathrm{t}}}{\arg \max } H(p)=\underset{p \in
   </entry>
   <entry>
     <title>统计推断(五)  EM algorithm</title>
-    <url>/wiki/statistic/SI_Ch5_EMAlgorithm/</url>
+    <url>/2020/02/03/statistic/SI_Ch5_EMAlgorithm/</url>
     <content><![CDATA[<p>EM 算法</p>
 <a id="more"></a>
 <h2 id="1-EM-ML-algorithm"><a href="#1-EM-ML-algorithm" class="headerlink" title="1. EM-ML algorithm"></a>1. EM-ML algorithm</h2><ul>
@@ -6708,7 +6708,7 @@ U(x,x^n) = \mathbb{E}[\ln p(z;x)|y;x^n] \\</script><p>EM 算法迭代过程中�
   </entry>
   <entry>
     <title>统计推断(四) Information Geometry</title>
-    <url>/wiki/statistic/SI_Ch4_InformationGeometry/</url>
+    <url>/2020/02/03/statistic/SI_Ch4_InformationGeometry/</url>
     <content><![CDATA[<p>信息几何</p>
 <a id="more"></a>
 <h2 id="1-Generalized-Bayesian-decision"><a href="#1-Generalized-Bayesian-decision" class="headerlink" title="1. Generalized Bayesian decision"></a>1. Generalized Bayesian decision</h2><ul>
@@ -6883,7 +6883,7 @@ D(p \| q)=D\left(p \| p^{*}\right)+D\left(p^{*} \| q\right), \quad \text { for a
   </entry>
   <entry>
     <title>统计推断(三) Exponential Family</title>
-    <url>/wiki/statistic/SI_Ch3_ExponentialFamily/</url>
+    <url>/2020/02/03/statistic/SI_Ch3_ExponentialFamily/</url>
     <content><![CDATA[<p>指数族</p>
 <a id="more"></a>
 <h2 id="1-Exponential-family"><a href="#1-Exponential-family" class="headerlink" title="1. Exponential family"></a>1. Exponential family</h2><ul>
@@ -7030,7 +7030,7 @@ t(x)=\int^x J_y(u)du, \ \ \ \alpha(x)=\int^x u J_y(u) du</script></li>
   </entry>
   <entry>
     <title>统计推断(二) Estimation Problem</title>
-    <url>/wiki/statistic/SI_Ch2_Estimation/</url>
+    <url>/2020/02/03/statistic/SI_Ch2_Estimation/</url>
     <content><![CDATA[<p>参数估计</p>
 <a id="more"></a>
 <h2 id="1-Bayesian-parameter-estimation"><a href="#1-Bayesian-parameter-estimation" class="headerlink" title="1. Bayesian parameter estimation"></a>1. Bayesian parameter estimation</h2><ul>
@@ -7230,7 +7230,7 @@ cov(e(y),f(y))=\int (\hat x(y)-x)\frac{\partial}{\partial x} p_{y}(\mathbf{y} ; 
   </entry>
   <entry>
     <title>统计推断(一) Hypothesis Test</title>
-    <url>/wiki/statistic/SI_Ch1_Hypothesis%20Test/</url>
+    <url>/2020/02/03/statistic/SI_Ch1_Hypothesis%20Test/</url>
     <content><![CDATA[<p>假设检验</p>
 <a id="more"></a>
 <h2 id="1-Binary-Bayesian-hypothesis-testing"><a href="#1-Binary-Bayesian-hypothesis-testing" class="headerlink" title="1. Binary Bayesian hypothesis testing"></a>1. Binary Bayesian hypothesis testing</h2><h3 id="1-0-Problem-Setting"><a href="#1-0-Problem-Setting" class="headerlink" title="1.0 Problem Setting"></a>1.0 Problem Setting</h3><ul>
@@ -7419,7 +7419,7 @@ g(x) &\leq f(x, y), \forall x \forall y \\
   </entry>
   <entry>
     <title>Windows任务栏右侧小图标显示不完整</title>
-    <url>/wiki/tools/taskbar/</url>
+    <url>/2020/01/08/tools/taskbar/</url>
     <content><![CDATA[<a id="more"></a>
 <p>之前发现windows电脑右侧小图标显示不完整</p>
 <p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/taskbar_before.png" alt="before"></p>
@@ -7438,7 +7438,7 @@ g(x) &\leq f(x, y), \forall x \forall y \\
   </entry>
   <entry>
     <title>Git 工作原理(二)</title>
-    <url>/wiki/git/git-principle-2/</url>
+    <url>/2019/12/29/git/git-principle-2/</url>
     <content><![CDATA[<blockquote>
 <p>在上一篇文章<a href="https://glooow1024.github.io/2019/12/29/git/git-principle-1/#more" target="_blank" rel="noopener">Git工作原理（一）</a>中，我们介绍了简单的 git 版本控制，上一篇文章中并没有牵涉到分支 branch 相关的内容，这篇文章将会介绍：当我们创建不同的分支时，git 做了些什么？</p>
 </blockquote>
@@ -7517,7 +7517,7 @@ g(x) &\leq f(x, y), \forall x \forall y \\
   </entry>
   <entry>
     <title>Git 工作原理(一)</title>
-    <url>/wiki/git/git-principle-1/</url>
+    <url>/2019/12/29/git/git-principle-1/</url>
     <content><![CDATA[<p>今天讲一下 Git 工作原理，本文主要目的不是讲解如何使用各种 git 命令，而是关于一些常用 git 命令之后仓库中会出现什么变化，以及 git 是如何进行仓库的版本控制的。</p>
 <a id="more"></a>
 <p>[TOC]</p>
@@ -7621,7 +7621,7 @@ g(x) &\leq f(x, y), \forall x \forall y \\
   </entry>
   <entry>
     <title>Particle Filter</title>
-    <url>/wiki/statistic/particle%20filter/</url>
+    <url>/2019/12/10/statistic/particle%20filter/</url>
     <content><![CDATA[<p>今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。</p>
 <a id="more"></a>
 <p>[TOC]</p>
@@ -7728,7 +7728,7 @@ w_{k}^{i} &\propto \frac{p\left(\mathbf{x}_{0: k}^{i} | \mathbf{y}_{1: k}\right)
   </entry>
   <entry>
     <title>Hello World</title>
-    <url>/wiki/hello-world/</url>
+    <url>/2019/11/09/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
@@ -7742,7 +7742,7 @@ w_{k}^{i} &\propto \frac{p\left(\mathbf{x}_{0: k}^{i} | \mathbf{y}_{1: k}\right)
   </entry>
   <entry>
     <title>Adobe Acrobat Pro DC更新后提示登录激活问题</title>
-    <url>/wiki/software/acrobat/</url>
+    <url>/2002/08/05/software/acrobat/</url>
     <content><![CDATA[<p>Adobe Acrobat Pro DC 更新之后不能直接用 AMTEmu v0.9.2 激活了。</p>
 <p>不过只需要修改以下注册表再重新激活就可以了。</p>
 <p>通过 <code>win+R</code> 输入 <code>regedit</code> 打开注册表，在以下位置处</p>

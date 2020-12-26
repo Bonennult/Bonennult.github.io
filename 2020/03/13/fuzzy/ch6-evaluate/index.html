@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="假如我们现在设计了一种服装，想要调研一下这种服装的受欢迎程度，该怎么办呢？ 首先是怎么表示受欢迎程度呢？我们可以简单分为三个等级：受欢迎、一般欢迎、不受欢迎，由于不同的人感受可能不同，结合前面模糊集的概念，我们可以引入隶属度，比如调查后得到 50% 的人喜欢，30%一般，20%不喜欢，我们就可以取隶属度分别为 0.5，0.3，0.2。 当然这样太粗糙了，我们知道评价一个衣服的因素有很多，比如样式、">
+<meta name="keywords" content="模糊综合评判">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模糊数学笔记 6：模糊综合评判">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;13&#x2F;fuzzy&#x2F;ch6-evaluate&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="假如我们现在设计了一种服装，想要调研一下这种服装的受欢迎程度，该怎么办呢？ 首先是怎么表示受欢迎程度呢？我们可以简单分为三个等级：受欢迎、一般欢迎、不受欢迎，由于不同的人感受可能不同，结合前面模糊集的概念，我们可以引入隶属度，比如调查后得到 50% 的人喜欢，30%一般，20%不喜欢，我们就可以取隶属度分别为 0.5，0.3，0.2。 当然这样太粗糙了，我们知道评价一个衣服的因素有很多，比如样式、">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-03-27T10:07:31.238Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/03/13/fuzzy/ch6-evaluate/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>模糊数学笔记 6：模糊综合评判 | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/13/fuzzy/ch6-evaluate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          模糊数学笔记 6：模糊综合评判
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-03-13 11:08:31" itemprop="dateCreated datePublished" datetime="2020-03-13T11:08:31+08:00">2020-03-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-27 18:07:31" itemprop="dateModified" datetime="2020-03-27T18:07:31+08:00">2020-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Fuzzy-Mathematics/" itemprop="url" rel="index"><span itemprop="name">Fuzzy Mathematics</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/03/13/fuzzy/ch6-evaluate/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/03/13/fuzzy/ch6-evaluate/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>假如我们现在设计了一种服装，想要调研一下这种服装的受欢迎程度，该怎么办呢？</p>
+<p>首先是怎么表示受欢迎程度呢？我们可以简单分为三个等级：受欢迎、一般欢迎、不受欢迎，由于不同的人感受可能不同，结合前面模糊集的概念，我们可以引入隶属度，比如调查后得到 50% 的人喜欢，30%一般，20%不喜欢，我们就可以取隶属度分别为 0.5，0.3，0.2。</p>
+<p>当然这样太粗糙了，我们知道评价一个衣服的因素有很多，比如样式、耐穿性、价格等，而不同因素即使对同一个人的值观感受也是不一样的，比如有的人很喜欢这个样式，但是摸了摸钱包，发现这个衣服是这么的难看！所以要想更好的评价，我们需要对每一个指标分别评估一下受欢迎程度，然后把各种因素综合起来。这就是模糊综合评判要做的事情。</p>
+<a id="more"></a>
+<h2 id="1-一级模糊综合评判"><a href="#1-一级模糊综合评判" class="headerlink" title="1. 一级模糊综合评判"></a>1. 一级模糊综合评判</h2><p>现在我们把上面描述的过程规范化。我们有<strong>因素集</strong> $U=\{u_1,…,u_n\}$，<strong>评语集</strong> $V=\{v_1,…,v_m\}$。</p>
+<p>综合评判的步骤是什么呢？</p>
+<ol>
+<li>首先要对每个因素分别进行单因素评判，也就是获得 $r_i = (r_{i1},\cdots,r_{im})$</li>
+<li>然后把 $n$ 个因素的评判指标拼接成一个 $n\times m$ 的矩阵，可以获得综合评判矩阵 $R=(r_1^T,\cdots,r_n^T)^T$</li>
+<li>之后需要对所有因素进行综合评判，因此可以设置一个权重 $A=(a_1,…,a_n)$，再根据算子 $M(\cdot,\cdot)$ 计算 $B=A\circ R=M(A,R)$，这个过程实际上就类似于一个加权的过程</li>
+<li>上一步结束后实际上得到的还是一个向量，要想最后给一个总的评价指标，可以对该向量再进行一次加权或者其他操作，获得一个总的指标。</li>
+</ol>
+<p>下面我对第 3，4 条再详细解释一下。</p>
+<p>算子 $M(\cdot,\cdot)$ 可以取很多种形式，比如</p>
+<ul>
+<li>$M(\wedge,\vee) \Longrightarrow \boldsymbol{b}_{j}=\max \left\{\left(\boldsymbol{a}_{i} \wedge \boldsymbol{r}_{i j}\right), \mathbf{1} \leq \boldsymbol{i} \leq \boldsymbol{n}\right\}(\boldsymbol{j}=\mathbf{1}, \boldsymbol{2}, \cdots, \boldsymbol{m})$</li>
+<li>$M(\cdot,\vee) \Longrightarrow \boldsymbol{b}_{j}=\max \left\{\left(\boldsymbol{a}_{i} \cdot \boldsymbol{r}_{i j}\right), \mathbf{1} \leq \boldsymbol{i} \leq \boldsymbol{n}\right\}(\boldsymbol{j}=\mathbf{1}, \boldsymbol{2}, \cdots, \boldsymbol{m})$</li>
+<li>$M(\cdot,+) \Longrightarrow \boldsymbol{b}_{j}=\sum_i \left(\boldsymbol{a}_{i} \cdot\boldsymbol{r}_{i j}\right), (\boldsymbol{j}=\mathbf{1}, \boldsymbol{2}, \cdots, \boldsymbol{m})$</li>
+<li>$M(\wedge,\bigoplus)=\boldsymbol{b}_{j}=\min \left\{1, \sum_{i=1}^{n}\left(a_{i} \wedge r_{i j}\right)\right\}(j=1,2, \cdots, m)$</li>
+<li>$M(\wedge,+) \Longrightarrow \boldsymbol{b}_{j}=\sum_i \left(\boldsymbol{a}_{i} \wedge\frac{\boldsymbol{r}_{i j}}{r_0}\right), (\boldsymbol{j}=\mathbf{1}, \boldsymbol{2}, \cdots, \boldsymbol{m}),r_0=\sum_k r_{kj}$</li>
+</ul>
+<p>不同的算子形式有不同特点，也适用于不同情况。</p>
+<p>第 3 步经过 $M(,)$ 算子之后，我们得到了模糊评判向量 $B$，要获得综合结论也可以有不同的方式</p>
+<ul>
+<li>$u=\max{(b_1,…,b_n)}$</li>
+<li>$u=\sum_i \mu_i b_i / \sum_i b_i$</li>
+</ul>
+<h2 id="2-多级模糊综合评判"><a href="#2-多级模糊综合评判" class="headerlink" title="2. 多级模糊综合评判"></a>2. 多级模糊综合评判</h2><p>有时候对一件事物的评价有很多指标，这些指标又可以分为几大类，比如对高校的评分，可以包括</p>
+<ul>
+<li>教学：教学下面又可以分为师资力量、教学设施、学生质量等等</li>
+<li>科研：…… 可以有很多指标</li>
+<li>图书馆、后勤 ……</li>
+</ul>
+<p>这个时候我们可以划分为多个层次依此评判综合，其步骤可以描述为以下形式：</p>
+<ol>
+<li>将原始因素集 $U=\{u_1,…,u_n\}$ 划分为若干组 $U=\bigcup_i U_i,U_i\cap U_j=\varnothing$</li>
+<li>对每组 $U_i$ 分别进行模糊评判，得到 $B_i$</li>
+<li>对总的评判矩阵 $R=(B_1^T,…,B_k^T)^T$ 再次进行综合评判，得到 $B=A\circ R$，然后可以得到总的综合评语</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%A8%A1%E7%B3%8A%E7%BB%BC%E5%90%88%E8%AF%84%E5%88%A4/" rel="tag"># 模糊综合评判</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/11/optimization/ch9-gene-cvx/" rel="prev" title="凸优化笔记 9：广义凸函数">
+      <i class="fa fa-chevron-left"></i> 凸优化笔记 9：广义凸函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/14/optimization/ch10-cvx-optimization/" rel="next" title="凸优化笔记 10：凸优化问题">
+      凸优化笔记 10：凸优化问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-一级模糊综合评判"><span class="nav-text">1. 一级模糊综合评判</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-多级模糊综合评判"><span class="nav-text">2. 多级模糊综合评判</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <script type="text/javascript" src="/js/snow1.js"></script>
+  <script type="text/javascript" src="/js/snow2.js"></script>
+
+</body>
+</html>

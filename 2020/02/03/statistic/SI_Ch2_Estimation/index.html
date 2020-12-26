@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="参数估计">
+<meta name="keywords" content="参数估计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计推断(二) Estimation Problem">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;03&#x2F;statistic&#x2F;SI_Ch2_Estimation&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="参数估计">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-03-27T10:04:15.196Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/03/statistic/SI_Ch2_Estimation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>统计推断(二) Estimation Problem | 你是下雨天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">你是下雨天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="search-pop-overlay">
+  <div class="popup search-popup">
+      <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/03/statistic/SI_Ch2_Estimation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Glooow">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="你是下雨天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          统计推断(二) Estimation Problem
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-03 19:56:00" itemprop="dateCreated datePublished" datetime="2020-02-03T19:56:00+08:00">2020-02-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-27 18:04:15" itemprop="dateModified" datetime="2020-03-27T18:04:15+08:00">2020-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" itemprop="url" rel="index"><span itemprop="name">统计推断</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/02/03/statistic/SI_Ch2_Estimation/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/03/statistic/SI_Ch2_Estimation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>参数估计</p>
+<a id="more"></a>
+<h2 id="1-Bayesian-parameter-estimation"><a href="#1-Bayesian-parameter-estimation" class="headerlink" title="1. Bayesian parameter estimation"></a>1. Bayesian parameter estimation</h2><ul>
+<li><p>Formulation</p>
+<ul>
+<li>Prior distribution $p_{\mathsf{x}}(\cdot)$</li>
+<li>Observation $p_{\mathsf{y|x}}(\cdot|\cdot)$</li>
+<li>Cost $C(a,\hat a)$</li>
+</ul>
+</li>
+<li><p>Solution</p>
+<ul>
+<li>$\hat x(\cdot) = \arg\min_{f(\cdot)} \mathbb E[C(x,f(y))]$</li>
+<li>$\hat{\mathbf{x}}(\mathbf{y})=\underset{\mathbf{a}}{\arg \min } \int_{\mathcal{X}} C(\mathbf{x}, \mathbf{a}) p_{\mathbf{x} | \mathbf{y}}(\mathbf{x} | \mathbf{y}) \mathrm{d} \mathbf{x}$</li>
+</ul>
+</li>
+<li><p>Specific case</p>
+<ul>
+<li><p><strong>MAE</strong>(Minimum absolute-error)</p>
+<ul>
+<li>$C(a,\hat a)=|a-\hat a|$</li>
+<li>$\hat x$ is the <strong>median</strong> of the belief $p_{\mathsf{x|y}}(x|y)$</li>
+</ul>
+</li>
+<li><p><strong>MAP</strong>(Maximum a posteriori)</p>
+<ul>
+<li><script type="math/tex; mode=display">C(a,\hat a) = \left\{
+\begin{array}{ll}{1,} & {|a-\hat a|>\varepsilon} \\ 
+{0,} & {otherwise}\end{array}\right.</script></li>
+<li>$\hat x_{MAP}(y) = \arg \max_a p_{\mathsf{x|y}}(a|y)$</li>
+</ul>
+</li>
+<li><p><strong>BLS</strong>(Bayes’ least-squares)</p>
+<ul>
+<li><p>$C(a,\hat a)=||a-\hat a||^2$</p>
+</li>
+<li><p>$\hat x_{BLS}(y) = \mathbb E [\mathsf{x|y}]$</p>
+</li>
+<li><p>proposition</p>
+<ul>
+<li><p>unbiased:  $b = \mathbb E[\mathsf{e(x,y)}]=E[\mathsf{\hat x(y)-x}]=0$</p>
+</li>
+<li><p>误差的协方差矩阵就是 <strong>belief</strong>（后验分布？）的协方差阵的期望</p>
+<script type="math/tex; mode=display">
+\Lambda_{BLS}=\mathbb E[\mathsf{\Lambda_{x|y}(y)}]</script></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Orthogonality</p>
+<script type="math/tex; mode=display">
+      \hat x(\cdot)\ is\ BLS \iff \mathbb E\left[ \mathsf{[\hat x(y)-x]g^T(y)}\right]=0</script><pre><code>&gt; **Proof**:  omit
+</code></pre></li>
+</ul>
+<h2 id="2-Linear-least-square-estimation"><a href="#2-Linear-least-square-estimation" class="headerlink" title="2. Linear least-square estimation"></a>2. Linear least-square estimation</h2><ul>
+<li><p>Drawback of BLS $\hat x_{BLS}(y)=E[x|y]$</p>
+<ul>
+<li>requires posterior $p(x|y)$, which needs $p(x)$ and $p(y|x)$</li>
+<li>calculating posterior is complicated</li>
+<li>estimator is <strong>nonlinear</strong></li>
+</ul>
+</li>
+<li><p>Definition of LLS</p>
+<ul>
+<li>$\hat {\mathbf{x}}_{LLS}(y) = \arg \min\limits_{f(\cdot) \in \mathcal{B}} E\left[||\mathsf{x-f(y)}||^2\right] \\ \mathcal{B}=\{f(\cdot):f(y)=Ay+d\}$</li>
+<li>注意 $\hat {\mathbf{x}}(\mathsf{y})$ 是一个随机变量，是关于 $\mathsf{y}$ 的一个函数</li>
+<li>LLS 与 BLS 都是假设 x 为一个随机变量，有先验分布，不同之处在于 LLS 要求估计函数为关于观测值 y 的线性函数，因此 LLS 只需要知道二阶矩，而 BLS 需要知道后验均值</li>
+</ul>
+</li>
+<li><p>Property</p>
+<ul>
+<li><p>Orthogonality</p>
+<script type="math/tex; mode=display">
+\hat {\mathbf{x}}(\cdot)\ is\ LLS \iff E[\hat {\mathbf{x}}(\mathsf{y})-\mathsf{x}]=0\ \ and\ \ E[(\hat {\mathbf{x}}(\mathsf{y})-\mathsf{x})\mathsf{y}^T]=0</script></li>
+<li><p>推论：由正交性可得到</p>
+<ul>
+<li>$\hat x_{LLS}(y)=\mu_X+\Lambda_{xy}\Lambda_y^{-1}(y-\mu_y)$</li>
+<li>$\Lambda_{\mathrm{LLS}} \triangleq \mathbb{E}\left[\left(\mathbf{x}-\hat{\mathbf{x}}_{\mathrm{LLS}}(\mathbf{y})\right)\left(\mathbf{x}-\hat{\mathbf{x}}_{\mathrm{LLS}}(\mathbf{y})\right)^{\mathrm{T}}\right]=\Lambda_{\mathrm{x}}-\Lambda_{\mathrm{xy}} \Lambda_{\mathrm{y}}^{-1} \Lambda_{\mathrm{xy}}^{\mathrm{T}}$</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>Proof</strong>: x 可以是向量</p>
+<p>$\Longrightarrow$：反证法</p>
+<ol>
+<li><p>suppose $E[\hat x_{LLS}(y)-x]=\mathbb{b} \ne 0$，take $\hat x’=\hat x_{LLS} - b$<br>then $E\left[||\hat x’ - x||^2\right]=E\left[||\hat x - x||^2\right]-b^2 &lt; E\left[||\hat x - x||^2\right]$<br>与 LLS 的定义矛盾；</p>
+</li>
+<li><p>$e=\hat x(y)-x$<br>Take $\hat x’ = \hat x_{LLS} - \Lambda_{ey}\Lambda_y^{-1}(y-\mu_y)$</p>
+<script type="math/tex; mode=display">
+\begin{align}
+M &= E\left[(\hat x' -x)(\hat x' -x)^T \right] \\
+&= E\left[(\hat x-x)(\hat x-x)^T\right]-\Lambda_{ey}\Lambda_y^{-1}\Lambda_{ey}^T
+\end{align}</script><p>由于 $E\left[||\mathsf{x-f(y)}||^2\right] = tr\{M\}$，LLS 的 MSE 应当最小<br>由于 $\Lambda_y$ 正定，因此应有 $\Lambda_{ey}\Lambda_y^{-1}\Lambda_{ey}^T=0$<br>故 $E\left[(\hat x-\mu_x)(y-\mu_y)^T \right]=0 \Longrightarrow E[(\hat {\mathbf{x}}(\mathsf{y})-\mathsf{x})\mathsf{y}^T]=0$</p>
+</li>
+</ol>
+<p>$\Longleftarrow$：suppose another linear estimator $\hat x’$</p>
+<script type="math/tex; mode=display">
+\begin{align}
+E\left[(\hat x'-x)(\hat x'-x)^T\right] &= E[(\hat x'-\hat x+\hat x-x)(\hat x'-\hat x+\hat x-x)^T] \\
+&= E[(\hat x'-\hat x)(\hat x'-\hat x)^T] + E[(\hat x-x)(\hat x-x)^T] \\&\ \ \ \ \  - 2E[(\hat x-x)(\hat x'-\hat x)^T] \\
+&= E[(\hat x'-\hat x)(\hat x'-\hat x)^T] + E[(\hat x-x)(\hat x-x)^T]
+\end{align}</script><p>第三个等号是由于 $\hat x’-\hat x = A’y+d’$</p>
+<p>同样的根据上面 $MSE=tr\{M\}$ 可得到 $\hat x$ 有最小的 MSE</p>
+</blockquote>
+</li>
+<li><p>联合高斯分布的情况</p>
+<ul>
+<li>定理：如果 x 和 y 是联合高斯分布的，那么 <script type="math/tex; mode=display">
+\hat x_{BLS}(y) = \hat x_{LLS}(y)</script></li>
+</ul>
+<blockquote>
+<p>证明：$e_{LLS}=\hat x_{LLS}-x$ 也是高斯分布</p>
+<p>由于 $E[e_{LLS}\ y^T]=0$，故 $e_{LLS}$ 与 y 相互独立</p>
+<p>$E[e_{LLS}|y]=E[e_{LLS}]=0 \to E[\hat x_{LLS}|y]=\hat x_{LLS} = E[x|y]$</p>
+</blockquote>
+<ul>
+<li>通常如果只有联合二阶矩信息，那么 LLS 是 minmax</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-Non-Bayesian-formulation"><a href="#3-Non-Bayesian-formulation" class="headerlink" title="3. Non-Bayesian formulation"></a>3. Non-Bayesian formulation</h2><ul>
+<li>Formulation<ul>
+<li>observation: distribution of y <strong>parameterized</strong> by x,   $p_\mathsf{y}(\mathbf{y;x})$<br>not <strong>conditioned</strong> on x,   $p_\mathsf{y|x}(\mathbf{y|x})$<br>此时 x 不再是一个随机变量，而是未知的一个参数</li>
+<li>bias: $b(x)=E[\hat x(y)-\mathbf{x}]$</li>
+<li>误差协方差矩阵 $\Lambda_{\mathrm{e}}(\mathrm{x})=\mathbb{E}\left[(\mathrm{e}(\mathrm{x}, \mathrm{y})-\mathrm{b}(\mathrm{x}))(\mathrm{e}(\mathrm{x}, \mathrm{y})-\mathrm{b}(\mathrm{x}))^{\mathrm{T}}\right]$</li>
+</ul>
+</li>
+<li><p><strong>有效(valid)</strong>估计器不应当显式地依赖于 x</p>
+</li>
+<li><p><strong>MVU</strong>: Minimum-variance unbiased estimator</p>
+<ul>
+<li>在 MMSE 条件下最优估计就是 MVU 估计<script type="math/tex; mode=display">
+\begin{align}
+MSE &= E[e^2]=E[(\hat x-x)^2]=E[(\hat x-\mu_{\hat x}+\mu_{\hat x }-x)^2] \\
+& =E[(\hat x-\mu_{\hat x})^2]+b^2= \Lambda_{\hat x}(x) + b^2\\
+\end{align}</script></li>
+</ul>
+</li>
+<li><p>MVU 可能不存在</p>
+<ul>
+<li>可能不存在无偏估计，即 $\mathcal{A}=\varnothing$</li>
+<li>存在无偏估计 $\mathcal{A} \ne \varnothing$，但是不存在某个估计量在所有情况（任意 x）下都是最小方差</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-CRB"><a href="#4-CRB" class="headerlink" title="4. CRB"></a>4. CRB</h2><p><strong>定理</strong>：满足正规条件时</p>
+<script type="math/tex; mode=display">
+\mathbb{E}\left[\frac{\partial}{\partial x} \ln p_{y}(\mathbf{y} ; x) \right] = 0 \ \ \ \ for \ all \ \ x</script><p>有</p>
+<script type="math/tex; mode=display">
+\lambda_{\hat x}(X) \ge \frac{1}{J_y(x)}</script><p>其中 Fisher 信息为</p>
+<script type="math/tex; mode=display">
+J_{y}(x)=\mathbb{E}\left[\left(\frac{\partial}{\partial x} \ln p_{y}(\mathbf{y} ; x)\right)^{2}\right]=-\mathbb{E}\left[\frac{\partial^{2}}{\partial x^{2}} \ln p_{y}(\mathbf{y} ; x)\right]</script><p><strong>证明</strong>：取 $f(y)=\frac{\partial}{\partial x} \ln p_{y}(\mathbf{y} ; x)$，有 $E[f(y)]=0$</p>
+<script type="math/tex; mode=display">
+cov(e(y),f(y))=\int (\hat x(y)-x)\frac{\partial}{\partial x} p_{y}(\mathbf{y} ; x)dy=1</script><script type="math/tex; mode=display">
+1=cov(e,f)\le Var(e)Var(f)</script><p><strong>备注</strong></p>
+<ul>
+<li>正规条件不满足时，CRB 不存在</li>
+<li>Fisher 信息可以看作 $p_{y}(\mathbf{y} ; x)$ 的曲率</li>
+</ul>
+<h2 id="4-有效估计量"><a href="#4-有效估计量" class="headerlink" title="4. 有效估计量"></a>4. 有效估计量</h2><ul>
+<li><p>定义：可以达到 CRB 的无偏估计量</p>
+</li>
+<li><p>有效估计量一定是 MVU 估计量</p>
+</li>
+<li><p>MVU 估计量不一定是有效估计量，也即 CRB 不一定是紧致（tight）的，有时没有估计量可以对所有的 x 达到 CRB</p>
+</li>
+<li><p>性质：（唯一的、无偏的，可以达到 CRB）</p>
+<script type="math/tex; mode=display">
+\hat x \ \ is \ \ efficient \iff \hat x(y)=x+\frac{1}{J_y(x)}\frac{\partial}{\partial x} \ln p_{y}(\mathbf{y} ; x)</script></li>
+</ul>
+<blockquote>
+<p><strong>证明</strong>：有效估计量 $\iff$ 可以达到 CRB $\iff$ 取等号 $Var(e)Var(f)=1$ $\iff$ 取等号 $e(y)=k(x)f(y)$ $\iff$ $e(y)=x+k(X)f(y)$</p>
+<script type="math/tex; mode=display">
+\frac{1}{J_y(x)}=E[e^2(y)]=k(x)E[e(y)f(y)]=k(x)</script></blockquote>
+<h2 id="5-ML-estimation"><a href="#5-ML-estimation" class="headerlink" title="5. ML estimation"></a>5. ML estimation</h2><ul>
+<li>Definition<script type="math/tex; mode=display">
+\hat x_{ML}(\cdot)=\arg\max_{a} p(y|a)</script></li>
+</ul>
+<blockquote>
+<p><strong>Proposition</strong>: if efficient estimator exists, it’s ML estimator</p>
+<script type="math/tex; mode=display">
+\hat x_{eff}(\cdot)=\hat x_{ML}(\cdot)</script><p><strong>Proof</strong>:</p>
+<script type="math/tex; mode=display">
+\hat x_{eff}(y)=x+\frac{1}{J_y(x)}\frac{\partial}{\partial x}\ln p(y;x)</script><p>由于有效(valid)估计器不应当依赖于 x，因此上式中 x 取任意一个值都应当是相等的，可取 $\hat x_{ML}(y)$</p>
+<script type="math/tex; mode=display">
+\hat x_{eff}(y)=\hat x_{ML}(y) + \frac{1}{J_y(x)}\frac{\partial \ln p(y;x)}{\partial x}\Big|_{x=\hat x_{ML}}=\hat x_{ML}(y)</script><p><strong>备注</strong>：反之不一定成立，即 ML 估计器不一定是有效的，比如有时候全局的有效估计器(efficient estimator)不存在，也即此时按公式计算得到的 $\hat x_{eff}(y)$ 实际上是依赖于 x 的，那么此时就不存在一个全局最优的估计器，此时的 ML 估计器也没有任何好的特性。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1/" rel="tag"># 参数估计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/03/statistic/SI_Ch1_Hypothesis%20Test/" rel="prev" title="统计推断(一) Hypothesis Test">
+      <i class="fa fa-chevron-left"></i> 统计推断(一) Hypothesis Test
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/03/statistic/SI_Ch3_ExponentialFamily/" rel="next" title="统计推断(三) Exponential Family">
+      统计推断(三) Exponential Family <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Bayesian-parameter-estimation"><span class="nav-text">1. Bayesian parameter estimation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Linear-least-square-estimation"><span class="nav-text">2. Linear least-square estimation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Non-Bayesian-formulation"><span class="nav-text">3. Non-Bayesian formulation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-CRB"><span class="nav-text">4. CRB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-有效估计量"><span class="nav-text">4. 有效估计量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-ML-estimation"><span class="nav-text">5. ML estimation</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Glooow</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Glooow</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
+      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
+      placeholder: "Comments here!",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+  <!--�������������Ч-->
+  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
+  <!--ѩ����Ч-->
+  <script type="text/javascript" src="/js/snow1.js"></script>
+  <script type="text/javascript" src="/js/snow2.js"></script>
+
+</body>
+</html>
