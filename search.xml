@@ -1301,12 +1301,12 @@ T:=\operatorname{prox}_{\lambda f}</script><p>就是 <strong>ﬁrmly-nonexpansiv
       </categories>
       <tags>
         <tag>PG 算法</tag>
+        <tag>利普希兹连续</tag>
+        <tag>强凸函数</tag>
         <tag>近似点算子</tag>
         <tag>PPA</tag>
         <tag>算子分裂法</tag>
         <tag>不动点迭代</tag>
-        <tag>利普希兹连续</tag>
-        <tag>强凸函数</tag>
       </tags>
   </entry>
   <entry>
@@ -2121,8 +2121,8 @@ y^\star=\nabla f_{(t)}(x) = \frac{1}{t}\left(x-\text{prox}_{tf}(x)\right)</scrip
       <tags>
         <tag>近似点算子</tag>
         <tag>ALM</tag>
-        <tag>PPA</tag>
         <tag>增广拉格朗日函数</tag>
+        <tag>PPA</tag>
       </tags>
   </entry>
   <entry>
@@ -3230,8 +3230,8 @@ f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}
       <tags>
         <tag>梯度下降</tag>
         <tag>利普希兹连续</tag>
-        <tag>强凸函数</tag>
         <tag>co-coercivity</tag>
+        <tag>强凸函数</tag>
         <tag>线搜索</tag>
         <tag>BB方法</tag>
       </tags>
@@ -3366,11 +3366,11 @@ X\succeq0,S\succeq0,\left<X,S\right>=0 \iff XS=0 \iff \frac{XS+SX}{2}=0</script>
         <category>Convex Optimization</category>
       </categories>
       <tags>
+        <tag>SDP</tag>
         <tag>KKT条件</tag>
         <tag>互补性条件</tag>
         <tag>LP</tag>
         <tag>SOCP</tag>
-        <tag>SDP</tag>
       </tags>
   </entry>
   <entry>
@@ -4286,9 +4286,9 @@ f_0(x)=(F_1(x),...,F_q(x))</script><p>相当于有 $q$ 个不同的目标 $F_i$�
         <category>Convex Optimization</category>
       </categories>
       <tags>
+        <tag>SDP</tag>
         <tag>LP</tag>
         <tag>SOCP</tag>
-        <tag>SDP</tag>
         <tag>凸优化问题</tag>
         <tag>QP</tag>
         <tag>GP</tag>
@@ -4529,8 +4529,8 @@ u_{i j}=\frac{\left(\frac{1}{d_{i j}}\right)^{2 /(m-1)}}{\sum_{k=1}^{c}\left(\fr
         <category>Fuzzy Mathematics</category>
       </categories>
       <tags>
-        <tag>模糊矩阵</tag>
         <tag>模糊聚类</tag>
+        <tag>模糊矩阵</tag>
       </tags>
   </entry>
   <entry>
@@ -4892,8 +4892,8 @@ Q \supseteq Q^{2} \supseteq Q^{3} \supseteq \cdots \supseteq Q^{\mathbf{n}-1} \s
         <category>Fuzzy Mathematics</category>
       </categories>
       <tags>
-        <tag>模糊关系</tag>
         <tag>模糊矩阵</tag>
+        <tag>模糊关系</tag>
       </tags>
   </entry>
   <entry>
