@@ -2,8 +2,8 @@
   --body-bg-color: #eee;
   --content-bg-color: #fff;
   --card-bg-color: #f5f5f5;
-  --text-color: #bbb;
-  --link-color: #bbb;
+  --text-color: #aaa;
+  --link-color: #aaa;
   --link-hover-color: #222;
   --brand-color: #fff;
   --brand-hover-color: #fff;
@@ -181,8 +181,8 @@ template {
   display: none;
 }
 ::selection {
-  background: #262a30;
-  color: #fff;
+  background: #f5f5f5;
+  color: #222;
 }
 html,
 body {
@@ -327,9 +327,9 @@ td {
 }
 .btn {
   background: #fff;
-  border: 2px solid #bbb;
+  border: 2px solid #aaa;
   border-radius: 2px;
-  color: #bbb;
+  color: #aaa;
   display: inline-block;
   font-size: 0.875em;
   line-height: 2;
@@ -635,7 +635,7 @@ pre .javascript .function {
   margin-bottom: 10px;
 }
 .post-body .label {
-  color: #bbb;
+  color: #aaa;
   display: inline;
   padding: 0 2px;
 }
@@ -1217,7 +1217,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #65d9f6;
+  background: #ff0524;
   border-radius: 50%;
   content: ' ';
   display: inline-block;

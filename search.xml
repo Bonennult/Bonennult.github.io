@@ -2381,8 +2381,8 @@ z_{i}^{+} &=P_{C_{i}}\left(z_{i}+t B_{i} \hat{x}\right), \quad i=1, \ldots, p
         <category>Convex Optimization</category>
       </categories>
       <tags>
-        <tag>共轭函数</tag>
         <tag>PG 算法</tag>
+        <tag>共轭函数</tag>
         <tag>拉格朗日函数</tag>
         <tag>近似点算子</tag>
         <tag>ALM</tag>
