@@ -6,11 +6,11 @@
     <title>凸优化笔记26：不动点迭代 | 你是下雨天</title>
     
     
-        <meta name="keywords" content="PG 算法,利普希兹连续,强凸函数,近似点算子,PPA,算子分裂法,不动点迭代" />
+        <meta name="keywords" content="PG 算法,近似点算子,PPA,算子分裂法,不动点迭代,利普希兹连续,强凸函数" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="前面讲了很多具体的算法，比如梯度、次梯度、近似点梯度、加速近似点梯度、PPA、DR方法、ADMM、ALM等，对这些方法的迭代过程有了一些了解。这一节则主要是针对算法的收敛性进行分析，试图从一个更加抽象的层面，利用不动点迭代的思想，把上面的算法综合起来，给一个比较 general 的收敛性分析方法。 1. 什么是不动点？对于希尔伯特空间(Hilbert space) $\mathcal{H}$，定义">
-<meta name="keywords" content="PG 算法,利普希兹连续,强凸函数,近似点算子,PPA,算子分裂法,不动点迭代">
+<meta name="keywords" content="PG 算法,近似点算子,PPA,算子分裂法,不动点迭代,利普希兹连续,强凸函数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="凸优化笔记26：不动点迭代">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;optimization&#x2F;ch26-fixed-point&#x2F;index.html">
@@ -186,7 +186,7 @@
                             &nbsp;
                             Functional Analysis
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-1-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-2-application/">泛函分析笔记5：Hahn-Banach定理的应用</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-3-banach-steinhauss/">泛函分析笔记6：一致有界性原理</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-4-convergence/">泛函分析笔记7：弱收敛与弱星收敛</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">

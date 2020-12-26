@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>泛函分析笔记6：一致有界性原理 | 你是下雨天</title>
+    
+    
+        <meta name="keywords" content="Baire范畴定理,无处稠密,第一范畴、第二范畴,一致有界性原理,共鸣定理" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Hahn-Banach定理主要是用于泛函的延拓，在较小的子空间上满足某个性质之后我们就可以将对应的泛函延拓至整个空间。而这一节要讲的一致有界性原理恰如其名，主要讨论一族有界线性算子一致有界的条件。他也是后续讨论序列弱收敛性以及泛函弱星收敛性的基础。 1. Baire范畴定理一致有界性原理的证明需要用到Baire范畴定理（也叫Baire纲定理）。 $(X,d)$，若 $\bar{M}\subset">
+<meta name="keywords" content="Baire范畴定理,无处稠密,第一范畴、第二范畴,一致有界性原理,共鸣定理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="泛函分析笔记6：一致有界性原理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;wiki&#x2F;functional-analysis&#x2F;ch4-3-banach-steinhauss&#x2F;index.html">
+<meta property="og:site_name" content="你是下雨天">
+<meta property="og:description" content="Hahn-Banach定理主要是用于泛函的延拓，在较小的子空间上满足某个性质之后我们就可以将对应的泛函延拓至整个空间。而这一节要讲的一致有界性原理恰如其名，主要讨论一族有界线性算子一致有界的条件。他也是后续讨论序列弱收敛性以及泛函弱星收敛性的基础。 1. Baire范畴定理一致有界性原理的证明需要用到Baire范畴定理（也叫Baire纲定理）。 $(X,d)$，若 $\bar{M}\subset">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-12-26T08:47:47.938Z">
+<meta name="twitter:card" content="summary">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="你是下雨天" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+</head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">你是下雨天</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Control
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/system/lasalle/">LaSalle's invariance principle 拉萨尔不变性原理</a></li>  <li class="file"><a href="/wiki/system/pid/">PID 控制器</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Convex Optimization
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/optimization/socp/">Second-Order Cone Programming(SOCP) 二次锥规划</a></li>  <li class="file"><a href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a></li>  <li class="file"><a href="/wiki/optimization/ch1-cvx-sets/">凸优化笔记 1：Convex Sets</a></li>  <li class="file"><a href="/wiki/optimization/ch2-separa-hyper/">凸优化笔记 2：超平面分离定理</a></li>  <li class="file"><a href="/wiki/optimization/ch3-gene-ineq/">凸优化笔记 3：广义不等式</a></li>  <li class="file"><a href="/wiki/optimization/ch4-cvx-function/">凸优化笔记 4：凸函数 Convex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a></li>  <li class="file"><a href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a></li>  <li class="file"><a href="/wiki/optimization/ch7-quasicvx/">凸优化笔记 7：拟凸函数 Quasiconvex Function</a></li>  <li class="file"><a href="/wiki/optimization/ch8-log-cvx/">凸优化笔记 8：对数凹函数 Log-concave Function</a></li>  <li class="file"><a href="/wiki/optimization/ch9-gene-cvx/">凸优化笔记 9：广义凸函数</a></li>  <li class="file"><a href="/wiki/optimization/ch10-cvx-optimization/">凸优化笔记 10：凸优化问题</a></li>  <li class="file"><a href="/wiki/optimization/ch11-dual/">凸优化笔记 11：对偶原理 & 拉格朗日函数</a></li>  <li class="file"><a href="/wiki/optimization/ch12-kkt/">凸优化笔记12：KKT 条件</a></li>  <li class="file"><a href="/wiki/optimization/ch13-complementary/">凸优化笔记13：互补性条件</a></li>  <li class="file"><a href="/wiki/optimization/ch14-sdp-rep/">凸优化笔记14：SDP Representablity</a></li>  <li class="file"><a href="/wiki/optimization/ch15-gradient/">凸优化笔记15：梯度方法 Gradient Method</a></li>  <li class="file"><a href="/wiki/optimization/ch16-subgradient/">凸优化笔记16：次梯度 Subgradient</a></li>  <li class="file"><a href="/wiki/optimization/ch17-subgradient-descent/">凸优化笔记17：次梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch18-proximal-mapping/">凸优化笔记18：近似点算子 Proximal Mapping</a></li>  <li class="file"><a href="/wiki/optimization/ch19-proximal-gradient/">凸优化笔记19：近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch20-dual-proximal-gradient/">凸优化笔记20：对偶近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch21-apg-fista/">凸优化笔记21：加速近似点梯度下降</a></li>  <li class="file"><a href="/wiki/optimization/ch22-ppa/">凸优化笔记22：近似点算法</a></li>  <li class="file"><a href="/wiki/optimization/ch23-DR-splitting-admm/">凸优化笔记23：算子分裂法 & ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch24-ADMM/">凸优化笔记24：ADMM</a></li>  <li class="file"><a href="/wiki/optimization/ch25-PDHG/">凸优化笔记25：原始对偶问题 PDHG</a></li>  <li class="file"><a href="/wiki/optimization/ch26-fixed-point/">凸优化笔记26：不动点迭代</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            Functional Analysis
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-1-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-2-application/">泛函分析笔记5：Hahn-Banach定理的应用</a></li>  <li class="file active"><a href="/wiki/functional-analysis/ch4-3-banach-steinhauss/">泛函分析笔记6：一致有界性原理</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-4-convergence/">泛函分析笔记7：弱收敛与弱星收敛</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Fuzzy Mathematics
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/fuzzy/ch1-set/">模糊数学笔记 1：模糊集 Fuzzy set</a></li>  <li class="file"><a href="/wiki/fuzzy/ch2-nearness/">模糊数学笔记 2：贴近度</a></li>  <li class="file"><a href="/wiki/fuzzy/ch3-extension/">模糊数学笔记 3：扩展原理</a></li>  <li class="file"><a href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a></li>  <li class="file"><a href="/wiki/fuzzy/ch5-clustering/">模糊数学笔记 5：模糊聚类</a></li>  <li class="file"><a href="/wiki/fuzzy/ch6-evaluate/">模糊数学笔记 6：模糊综合评判</a></li>  <li class="file"><a href="/wiki/fuzzy/ch7-ahp/">模糊数学笔记 7：层次分析法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Git
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/git/git-principle-1/">Git 工作原理(一)</a></li>  <li class="file"><a href="/wiki/git/git-principle-2/">Git 工作原理(二)</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hardware
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/hardware/raspberrypi/">树莓派使用</a></li>  <li class="file"><a href="/wiki/hardware/jy901/">JY901串口数据接收与处理(Python)</a></li>  <li class="file"><a href="/wiki/hardware/raspberrypi-autostart/">树莓派设置开机自启动程序</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Hexo
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/next-beautify/">Hexo NexT 7.7 主题美化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Linear Algebra
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/linear-algebra/matrix/">矩阵分析学习笔记</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Music
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/music/TroubleImIn/">Trouble I'm In</a></li>  <li class="file"><a href="/wiki/music/WhyBabyWhy/">Why Baby Why</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Software
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/software/acrobat/">Adobe Acrobat Pro DC更新后提示登录激活问题</a></li>  <li class="file"><a href="/wiki/software/vmware/">VMWare15 + Ubuntu18.04 踩坑记录</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            windows
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/taskbar/">Windows任务栏右侧小图标显示不完整</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            概率论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/law%20of%20large%20numbers/">强大数定律与弱大数定律</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            电子产品
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/laptop/">笔记本选购指南</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            统计推断
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/statistic/particle%20filter/">Particle Filter</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch1_Hypothesis%20Test/">统计推断(一) Hypothesis Test</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch2_Estimation/">统计推断(二) Estimation Problem</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch3_ExponentialFamily/">统计推断(三) Exponential Family</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch4_InformationGeometry/">统计推断(四) Information Geometry</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch5_EMAlgorithm/">统计推断(五)  EM algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch6_Modeling/">统计推断(六) Modeling</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch7_TypicalSequence/">统计推断(七)  Typical Sequence</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch8_ModelSelection/">统计推断(八) Model Selection</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch9_GraphModels/">统计推断(九) Graphical models</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch10_Elimination/">统计推断(十) Elimination algorithm</a></li>  <li class="file"><a href="/wiki/statistic/SI_Ch11_Sumproduct/">统计推断(十一)  Sum-product algorithm</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            软件
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/tools/matlab-parpool/">MATLAB R2016a 无法启动并行池</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/wiki/hello-world/">Hello World</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-functional-analysis/ch4-3-banach-steinhauss" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Functional-Analysis/">Functional Analysis</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/Baire%E8%8C%83%E7%95%B4%E5%AE%9A%E7%90%86/" rel="tag">Baire范畴定理</a>, <a class="tag-link" href="/tags/%E4%B8%80%E8%87%B4%E6%9C%89%E7%95%8C%E6%80%A7%E5%8E%9F%E7%90%86/" rel="tag">一致有界性原理</a>, <a class="tag-link" href="/tags/%E5%85%B1%E9%B8%A3%E5%AE%9A%E7%90%86/" rel="tag">共鸣定理</a>, <a class="tag-link" href="/tags/%E6%97%A0%E5%A4%84%E7%A8%A0%E5%AF%86/" rel="tag">无处稠密</a>, <a class="tag-link" href="/tags/%E7%AC%AC%E4%B8%80%E8%8C%83%E7%95%B4%E3%80%81%E7%AC%AC%E4%BA%8C%E8%8C%83%E7%95%B4/" rel="tag">第一范畴、第二范畴</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/functional-analysis/ch4-3-banach-steinhauss/">
+            <time datetime="2020-12-26T08:36:30.000Z" itemprop="datePublished">2020-12-26</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/functional-analysis/ch4-3-banach-steinhauss.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/functional-analysis/ch4-3-banach-steinhauss.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/functional-analysis/ch4-3-banach-steinhauss.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            泛函分析笔记6：一致有界性原理
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Baire范畴定理"><span class="toc-number">1.</span> <span class="toc-text">1. Baire范畴定理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-一致有界性原理"><span class="toc-number">2.</span> <span class="toc-text">2. 一致有界性原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-应用举例"><span class="toc-number">3.</span> <span class="toc-text">3. 应用举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">4.</span> <span class="toc-text">参考资料</span></a></li></ol>
+                </div>
+            
+        
+        
+            <p>Hahn-Banach定理主要是用于泛函的延拓，在较小的子空间上满足某个性质之后我们就可以将对应的泛函延拓至整个空间。而这一节要讲的一致有界性原理恰如其名，主要讨论一族有界线性算子一致有界的条件。他也是后续讨论序列弱收敛性以及泛函弱星收敛性的基础。</p>
+<h2 id="1-Baire范畴定理"><a href="#1-Baire范畴定理" class="headerlink" title="1. Baire范畴定理"></a>1. Baire范畴定理</h2><p>一致有界性原理的证明需要用到Baire范畴定理（也叫Baire纲定理）。</p>
+<p>$(X,d)$，若 $\bar{M}\subset X$ 没有内点，则称 $M$ 是<strong>无处稠密</strong>的。若 $N=\cup^\infty_n N_n$，$N_n$ 均为无处稠密的，则称 $N$ 为<strong>第一范畴</strong>。不为第一范畴的子集称为<strong>第二范畴</strong>。</p>
+<a id="more"></a>
+<p><em>例子 1</em>：$X=\mathbb{R},d(s,t)=|s-t|$，任意有限集均为无处稠密的，因此可数集均为第一范畴。</p>
+<blockquote>
+<p><strong>定理(范畴定理)</strong>：$(X,d)$ 为<strong>非空完备</strong>的，则 $X$ 必为<strong>第二范畴</strong>的。</p>
+</blockquote>
+<p><strong>证明</strong>：第二范畴意味着 $X$ 不能表示为可数个没有内点的集合的并集。假设 $X$ 属于第一范畴，即 $X=\cup_n M_n$，并且不妨设 $M_n$ 均为闭集（否则可以取 $X=\cup_n  \bar{M}_n$），并且 $M_n$ 都没有内点。</p>
+<p>首先考虑 $Y_1=M_1^c$ 为开集，因此存在某个 $x_1\in Y_1,r_1\in(0,1/2)$ 使得 $B(x_1,r_1)\subset Y_1$。由于 $M_2$ 也没有内点并且为闭集，因此 $Y_2=B(x_1,r_1) \cap M_2^c \ne \varnothing$ 也为开集，因此可以找到某个 $x_2\in Y_2,r_2\in(0,r_1/2)$ 使得 $B(x_2,r_2)\subset Y_2$。依此类推，可以找到 $B(x_1,r_1) \supset \cdots \supset B(x_n,r_n)\supset \cdots$，并且有 $r_n\in (0,1/2^n)$。容易验证 $\{x_n\}$ 为柯西列，因此存在收敛值 $x_n\to x,x\in X$。对于 $k\ge1$ 考虑 $x_{n+k},x\in \bar{B}(x_n,r_n/2)\subset B(x_n,r_n)$，于是有 $x\in B(x_n,r_n),\forall n\ge1$，因此就有 $x\notin M_n,\forall n\ge1$，因此 $x\notin X$，导出矛盾。证毕。</p>
+<h2 id="2-一致有界性原理"><a href="#2-一致有界性原理" class="headerlink" title="2. 一致有界性原理"></a>2. 一致有界性原理</h2><blockquote>
+<p><strong>一致有界性原理</strong>：假设 $X$ 为 <strong>Banach 空间</strong>，$Y$ 为赋范空间，$T_i\in B(X,Y),\forall i\in \mathcal{I}$，并且对任取 $x\in X$ 有</p>
+<script type="math/tex; mode=display">
+\sup_{i\in\mathcal{I}} \Vert T_ix\Vert < \infty</script><p>则 $\sup_{i\in\mathcal{I}}\Vert T_i\Vert&lt;\infty.$</p>
+<p><strong>NOTE</strong>：条件当中针对的是固定任意一个 $x\in X$，$T_i x$ 有界，也即是说所有的 $T_ix,i\in\mathcal{I}$ 存在一个上界 $c_x$，该上界与 $x$ 有关。对于线性泛函，我们只需要考虑 $\Vert x\Vert=1$ 的情况，但即便如此，一般而言由该条件并不能推导出对于所有的 $\Vert x\Vert, c_x$ 存在一个共同的上界，因为随着 $x$ 的变化 $c_x$ 有可能趋于无穷。而一致有界性原理则说明当 $X$ 为 Banach 空间的时候，一定存在这样一个上界，从而说明 $\Vert T_i\Vert$ 有上确界。</p>
+</blockquote>
+<p><strong>证明</strong>：根据上面的分析，我们在寻找 $\sup_i\Vert T_i\Vert$ 的时候不能局限在 $\Vert x\Vert=1$ 的情况，下面的证明方法很巧妙。</p>
+<p>首先考虑 $X$ 完备，根据 Baire 范畴定理，不能表示为可数个没有内点的集合的并集。那么假如我们将其表示为可数个集合的并集，则一定存在某个集合有内点。因此考虑 $M_n=\{x\in X, \sup_i\Vert T_ix\Vert \le n\}$，因此就有 $X=\cup_n^\infty M_n$，一定存在某个 $N\ge1$ 使得 $M_N$ 有内点，此时找到 $x_0\in M_N,r&gt;0$ 使得 $\bar{B}(x_0,r)\subset M_N$，并且 $\forall y\in X,\Vert y\Vert=1$，都有</p>
+<script type="math/tex; mode=display">
+\Vert T_i(x_0)\Vert \le N,\ \Vert T_i(x_0+ry)\Vert \le N,\quad \forall i\in\mathcal{I},\Vert y\Vert=1 \\
+\Longrightarrow \Vert T_iy\Vert \le 2N/r, \quad \forall i\in\mathcal{I},\Vert y\Vert=1 \\
+\Longrightarrow \sup_{i\in\mathcal{I}}\Vert T_i\Vert \le 2N/r</script><p>证毕。</p>
+<blockquote>
+<p><strong>共鸣定理</strong>：假设 $X$ 为 <strong>Banach 空间</strong>，$Y$ 为赋范空间，$T_i\in B(X,Y),\forall i\in \mathcal{I}$，设 $\sup_i\Vert T_i\Vert = \infty$，则 $\exists x\in X$ 使得 $\sup_{i} \Vert T_i x\Vert= \infty$，其中 $x$ 即为 $T_i$ 的共鸣点。</p>
+<p><strong>NOTE</strong>：实际上共鸣定理就是一致有界性原理的逆反命题。</p>
+</blockquote>
+<h2 id="3-应用举例"><a href="#3-应用举例" class="headerlink" title="3. 应用举例"></a>3. 应用举例</h2><p>一致有界性原理的 Banach 空间假设是必不可少的，下面的例子将进行解释。</p>
+<p><strong><em>例子 2</em></strong>：$X$ 为所有的多项式，即 $p\in X$ 可以表示为 $p(t)=a_0+a_1 t+\cdots a_N t^N$，定义 $\Vert p\Vert =\max_{0\le i\le N}|a_i|$。取一列线性泛函 $f_n(p)=a_0+a_1+\cdots a_n$，那么可以验证 $f_n\in X’$ 并且有 $\Vert f_n\Vert=n+1$。</p>
+<p>此时显然我们有对任意固定的 $p=a_0+a_1 t+\cdots a_N t^N\in X$，$\Vert f_n(p)\Vert \le |a_0|+\cdots+|a_N|$，但是同时我们也有 $\sup_n \Vert f_n\Vert=\infty$，这似乎与一致有界性原理矛盾？其实原因是 $X$ 并不是 Banach 空间。</p>
+<p>考虑 $p_n(t)=1+\frac{1}{2}t+\cdots+\frac{1}{n+1}t^n$，那么可以验证 $\{p_n\}$ 为柯西列，但是其收敛值却并不在 $X$ 内部（$X$ 中只包含有限项的多项式），因此 $X$ 不完备。</p>
+<p>一致有界性原理还可用于讨论 Fourier 级数的收敛问题。</p>
+<p><strong><em>例子 3</em></strong>：考虑 $t\in[0,2\pi]$，$f(t)=a_0+\sum_{n=1}^N\left(a_n \cos nt+b_n\sin nt\right).$</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><blockquote>
+<ul>
+<li><a href=""></a></li>
+<li><a href=""></a></li>
+</ul>
+</blockquote>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/wiki/functional-analysis/ch4-4-convergence/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    泛函分析笔记7：弱收敛与弱星收敛
+                
+            </div>
+        </a>
+    
+    
+        <a href="/wiki/functional-analysis/ch4-2-application/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">泛函分析笔记5：Hahn-Banach定理的应用</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            Glooow &copy; 2020 
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

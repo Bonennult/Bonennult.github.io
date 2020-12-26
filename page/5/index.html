@@ -179,7 +179,7 @@
                             &nbsp;
                             Functional Analysis
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/wiki/functional-analysis/ch0-intro/">泛函分析笔记0：绪论</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch1-metric-space/">泛函分析笔记1：度量空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch2-normed-space/">泛函分析笔记2：赋范空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch3-hilbert-space/">泛函分析笔记3：内积空间</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-1-hahn-banach/">泛函分析笔记4：Hahn-Banach定理</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-2-application/">泛函分析笔记5：Hahn-Banach定理的应用</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-3-banach-steinhauss/">泛函分析笔记6：一致有界性原理</a></li>  <li class="file"><a href="/wiki/functional-analysis/ch4-4-convergence/">泛函分析笔记7：弱收敛与弱星收敛</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">
@@ -361,6 +361,258 @@
 </aside>
             
             <section id="main">
+        <article id="post-optimization/ch6-conjugate-func" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%85%B1%E8%BD%AD%E5%87%BD%E6%95%B0/" rel="tag">共轭函数</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch6-conjugate-func/">
+            <time datetime="2020-03-04T15:49:41.000Z" itemprop="datePublished">2020-03-04</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch6-conjugate-func.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch6-conjugate-func.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch6-conjugate-func.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/wiki/optimization/ch6-conjugate-func/">凸优化笔记 6：共轭函数 Conjugate Function</a>
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                
+                <p><h2 id="1-共轭函数"><a href="#1-共轭函数" class="headerlink" title="1. 共轭函数"></a>1. 共轭函数</h2><h3 id="1-1-定义"><a href="#1-1-定义" class="headerlink" title="1.1 定义"></a>1.1 定义</h3><p>一个函数 $f$ 的<strong>共轭函数(conjugate function)</strong> 定义为</p>
+<script type="math/tex; mode=display">
+f^*(y)=\sup_{x\in\text{dom}f}(y^Tx-f(x))</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/6-conjugate.PNG" alt="conjugate function"></p></p>
+            
+        
+        
+            </div>   
+            <div class="article-more-link">
+                <a href="/wiki/optimization/ch6-conjugate-func/#more">Read More</a>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+
+
+
+
+    
+        <article id="post-optimization/ch5-preserve-cvx" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/%E4%BF%9D%E5%87%B8%E5%8F%98%E6%8D%A2/" rel="tag">保凸变换</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/optimization/ch5-preserve-cvx/">
+            <time datetime="2020-03-04T15:49:33.000Z" itemprop="datePublished">2020-03-04</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch5-preserve-cvx.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch5-preserve-cvx.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch5-preserve-cvx.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/wiki/optimization/ch5-preserve-cvx/">凸优化笔记 5：保凸变换</a>
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                
+                <p><h2 id="1-保凸变换"><a href="#1-保凸变换" class="headerlink" title="1. 保凸变换"></a>1. 保凸变换</h2><p>前面提到过一次保凸变换，前面针对的是集合，凸集经过一定的保凸变换，映射后的集合仍然是凸集。这里复习一下</p>
+<ol>
+<li>任意个凸集的交集</li>
+<li>仿射变换</li>
+<li>透视变换</li>
+<li>分式线性函数</li>
+</ol>
+<p>而这里要讲的是对函数经过操作以后，得到的仍然是凸函数。</p></p>
+            
+        
+        
+            </div>   
+            <div class="article-more-link">
+                <a href="/wiki/optimization/ch5-preserve-cvx/#more">Read More</a>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+
+
+
+
+    
+        <article id="post-fuzzy/ch4-relation" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Fuzzy-Mathematics/">Fuzzy Mathematics</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/%E6%A8%A1%E7%B3%8A%E5%85%B3%E7%B3%BB/" rel="tag">模糊关系</a>, <a class="tag-link" href="/tags/%E6%A8%A1%E7%B3%8A%E7%9F%A9%E9%98%B5/" rel="tag">模糊矩阵</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/wiki/fuzzy/ch4-relation/">
+            <time datetime="2020-03-01T09:43:56.000Z" itemprop="datePublished">2020-03-01</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/fuzzy/ch4-relation.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/fuzzy/ch4-relation.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/fuzzy/ch4-relation.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/wiki/fuzzy/ch4-relation/">模糊数学笔记 4：模糊关系</a>
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                
+                <p><h2 id="1-模糊关系"><a href="#1-模糊关系" class="headerlink" title="1. 模糊关系"></a>1. 模糊关系</h2><p><strong>定义</strong>：模糊关系 $R$ 的隶属函数 $\mu_R:U\times V\to[0,1]$，其中 $\mu_R(x,y)$ 表示 $(x,y)$ 具有关系 $R$ 的程度</p>
+<blockquote>
+<p><strong>Remarks</strong>：实际上模糊关系 $R$ 就是定义在一个笛卡尔积的论域 $U\times V$ 上的模糊关系，与之前介绍的普通的模糊关系并无太大差别。</p>
+</blockquote></p>
+            
+        
+        
+            </div>   
+            <div class="article-more-link">
+                <a href="/wiki/fuzzy/ch4-relation/#more">Read More</a>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+
+
+
+
+    
         <article id="post-fuzzy/ch3-extension" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -932,248 +1184,8 @@ f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y),\quad \forall x,y\in\text{d
 
 
     
-        <article id="post-optimization/ch0-intro" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-                    <div class="article-meta">
-                        
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Convex-Optimization/">Convex Optimization</a>
-    </div>
-
-                        
-                        
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/wiki/optimization/ch0-intro/">
-            <time datetime="2020-02-22T11:13:19.000Z" itemprop="datePublished">2020-02-22</time>
-        </a>
-    </div>
-
-
-                        
-                            <i class="fa fa-bar-chart"></i>
-                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
-                        
-                        
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/optimization/ch0-intro.md'> Source </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/optimization/ch0-intro.md'> Edit </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/optimization/ch0-intro.md'> History </a>
-                            </div>
-                        
-                    </div>
-                
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/wiki/optimization/ch0-intro/">凸优化笔记 0：绪论</a>
-        </h1>
-    
-
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-        
-            
-                
-                <p><h2 id="0-绪论"><a href="#0-绪论" class="headerlink" title="0. 绪论"></a>0. 绪论</h2><p>首先明确凸优化这门课的主要目的：</p>
-<ol>
-<li>判断一个问题是否为凸的</li>
-<li>将一个问题转化为凸的</li>
-<li>求解凸优化问题，给出算法性能</li>
-</ol></p>
-            
-        
-        
-            </div>   
-            <div class="article-more-link">
-                <a href="/wiki/optimization/ch0-intro/#more">Read More</a>
-            </div>
-        
-        <footer class="article-footer">
-        </footer>
-    </div>
-</article>
-
-
-
-
-
-
-    
-        <article id="post-system/pid" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-                    <div class="article-meta">
-                        
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Control/">Control</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/PID/" rel="tag">PID</a>
-    </div>
-
-                        
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/wiki/system/pid/">
-            <time datetime="2020-02-21T08:53:27.000Z" itemprop="datePublished">2020-02-21</time>
-        </a>
-    </div>
-
-
-                        
-                            <i class="fa fa-bar-chart"></i>
-                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
-                        
-                        
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/system/pid.md'> Source </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/system/pid.md'> Edit </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/system/pid.md'> History </a>
-                            </div>
-                        
-                    </div>
-                
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/wiki/system/pid/">PID 控制器</a>
-        </h1>
-    
-
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-        
-            
-                
-                <p><p>在过程控制中，按偏差的比例（P）、积分（I）和微分（D）进行控制的PID控制器（亦称PID调节器）是应用最为广泛的一种自动控制器。它具有原理简单，易于实现，适用面广，控制参数相互独立，参数的选定比较简单等优点.</p></p>
-            
-        
-        
-            </div>   
-            <div class="article-more-link">
-                <a href="/wiki/system/pid/#more">Read More</a>
-            </div>
-        
-        <footer class="article-footer">
-        </footer>
-    </div>
-</article>
-
-
-
-
-
-
-    
-        <article id="post-system/lasalle" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-                    <div class="article-meta">
-                        
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Control/">Control</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Lyapunov/" rel="tag">Lyapunov</a>, <a class="tag-link" href="/tags/%E7%B3%BB%E7%BB%9F%E7%A8%B3%E5%AE%9A%E6%80%A7/" rel="tag">系统稳定性</a>
-    </div>
-
-                        
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/wiki/system/lasalle/">
-            <time datetime="2020-02-20T07:46:02.000Z" itemprop="datePublished">2020-02-20</time>
-        </a>
-    </div>
-
-
-                        
-                            <i class="fa fa-bar-chart"></i>
-                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
-                        
-                        
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/system/lasalle.md'> Source </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/system/lasalle.md'> Edit </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/system/lasalle.md'> History </a>
-                            </div>
-                        
-                    </div>
-                
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/wiki/system/lasalle/">LaSalle&#39;s invariance principle 拉萨尔不变性原理</a>
-        </h1>
-    
-
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-        
-            
-                
-                <p><p>拉萨尔不变原理是李亚普诺夫第二方法的推广。这种观察给出了李亚普诺夫理论的统一认识，且极大地推广了李亚普诺夫第二方法，现在人们称这一推广为拉萨尔不变原理。</p></p>
-            
-        
-        
-            </div>   
-            <div class="article-more-link">
-                <a href="/wiki/system/lasalle/#more">Read More</a>
-            </div>
-        
-        <footer class="article-footer">
-        </footer>
-    </div>
-</article>
-
-
-
-
-
-
-    
         <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/4/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/6/">Next &amp;raquo;</a>
         </nav>
     
 </section>
