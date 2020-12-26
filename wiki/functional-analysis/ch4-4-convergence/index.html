@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="你是下雨天">
 <meta property="og:description" content="一致有界性原理的一个应用就是序列和算子的收敛性分析。 1. 序列收敛性$(X,\Vert\cdot\Vert)$，有 $x_n,x\in X$，称 $x_n$ 强收敛到 $x$，若 $\Vert x_n-x\Vert \to 0$；称 $x_n$ 弱收敛到 $x$ 若 $\forall f\in X’$ 都有 $f(x_n)\to f(x)$，记为 $x_n \stackrel{w}{\longr">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-12-26T08:46:10.335Z">
+<meta property="og:updated_time" content="2020-12-26T08:59:33.712Z">
 <meta name="twitter:card" content="summary">
     
 
@@ -425,7 +425,7 @@
             
                 <div id="toc" class="toc-article">
                 <strong class="toc-title">Catalogue</strong>
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-序列收敛性"><span class="toc-number">1.</span> <span class="toc-text">1. 序列收敛性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-线性泛函收敛性"><span class="toc-number">2.</span> <span class="toc-text">2. 线性泛函收敛性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-一般有界线性算子收敛性"><span class="toc-number">3.</span> <span class="toc-text">3. 一般有界线性算子收敛性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-应用举例"><span class="toc-number">4.</span> <span class="toc-text">4. 应用举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">5.</span> <span class="toc-text">参考资料</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-序列收敛性"><span class="toc-number">1.</span> <span class="toc-text">1. 序列收敛性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-线性泛函收敛性"><span class="toc-number">2.</span> <span class="toc-text">2. 线性泛函收敛性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-一般有界线性算子收敛性"><span class="toc-number">3.</span> <span class="toc-text">3. 一般有界线性算子收敛性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-应用举例"><span class="toc-number">4.</span> <span class="toc-text">4. 应用举例</span></a></li></ol>
                 </div>
             
         
@@ -542,12 +542,6 @@ a_{n,0}t_{n,0}^n & + & a_{n,1}t_{n,1}^n & + & \cdots & + & a_{n,n}t_{n,n}^n & = 
 \end{cases}</script><p>上式左侧可以用 Vandermonde 矩阵表示，因此存在唯一解 $a_{n,k},k=1,…,n$。</p>
 <p>接下来对于任意的 $x\in C[a,b]$，能否找到 $a_{n,k}$ 满足的条件使得 $f_n(x)\to f(x)$ 呢？根据 Stone-Weierstrass 定理，多项式的集合在 $C[a,b]$ 中是<strong>稠密的</strong>，因此对于任意次数 $N$ 的多项式 $p$ 总有 $f_n(p)\to f(p)$。那么再应用前面的定理（即只需要判断完全集 $M\subset X$ 中的元素是否满足条件即可），可以有如下结论</p>
 <p><strong>定理(G.Polya)</strong>：设数值积分 $f_n$ 满足前面对于有限次多项式的要求（即 $a_{n,k}$ 为 Vandermonde 矩阵方程的解）则任取 $x\in C[a,b],f_n(x)\to f(x)$ 当且仅当存在常数 $C\ge0$，使得任取 $n\ge1$，有 $\sum_{k=1}^na_{n,k}\le C.$</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><blockquote>
-<ul>
-<li><a href=""></a></li>
-<li><a href=""></a></li>
-</ul>
-</blockquote>
 
             </div>
         
