@@ -1,6 +1,6 @@
 /* global CONFIG */
 
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   // Popup Window
   let isfetched = false;
   let datas;
@@ -15,22 +15,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const input = document.querySelector('.search-input');
   const resultContent = document.getElementById('search-result');
 
-  // Ref: https://github.com/ForbesLindesay/unescape-html
-  const unescapeHtml = html => {
-    return String(html)
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, '\'')
-      .replace(/&#x3A;/g, ':')
-      // Replace all the other &#x; chars
-      .replace(/&#(\d+);/g, (m, p) => {
-        return String.fromCharCode(p);
-      })
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&');
-  };
-
   const getIndexByWord = (word, text, caseSensitive) => {
+    if (CONFIG.localsearch.unescape) {
+      let div = document.createElement('div');
+      div.innerText = word;
+      word = div.innerHTML;
+    }
     let wordLen = word.length;
     if (wordLen === 0) return [];
     let startPosition = 0;
@@ -109,13 +99,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if (searchText.length > 0) {
       // Perform local searching
       datas.forEach(({ title, content, url }) => {
-        title = title.trim();
         let titleInLowerCase = title.toLowerCase();
-        if (CONFIG.localsearch.unescape) {
-          content = unescapeHtml(content);
-        }
         let contentInLowerCase = content.toLowerCase();
-        let articleUrl = decodeURIComponent(url).replace(/\/{2,}/g, '/');
         let indexOfTitle = [];
         let indexOfContent = [];
         let searchTextCount = 0;
@@ -184,13 +169,13 @@ window.addEventListener('DOMContentLoaded', () => {
           let resultItem = '';
 
           if (slicesOfTitle.length !== 0) {
-            resultItem += `<li><a href="${articleUrl}" class="search-result-title">${highlightKeyword(title, slicesOfTitle[0])}</a>`;
+            resultItem += `<li><a href="${url}" class="search-result-title">${highlightKeyword(title, slicesOfTitle[0])}</a>`;
           } else {
-            resultItem += `<li><a href="${articleUrl}" class="search-result-title">${title}</a>`;
+            resultItem += `<li><a href="${url}" class="search-result-title">${title}</a>`;
           }
 
           slicesOfContent.forEach(slice => {
-            resultItem += `<a href="${articleUrl}"><p class="search-result">${highlightKeyword(content, slice)}...</p></a>`;
+            resultItem += `<a href="${url}"><p class="search-result">${highlightKeyword(content, slice)}...</p></a>`;
           });
 
           resultItem += '</li>';
@@ -206,7 +191,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (keywords.length === 1 && keywords[0] === '') {
       resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>';
     } else if (resultItems.length === 0) {
-      resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>';
+      resultContent.innerHTML = '<div id="no-result"><i class="far fa-frown fa-5x"></i></div>';
     } else {
       resultItems.sort((resultLeft, resultRight) => {
         if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
@@ -216,12 +201,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         return resultRight.id - resultLeft.id;
       });
-      let searchResultList = '<ul class="search-result-list">';
-      resultItems.forEach(result => {
-        searchResultList += result.item;
-      });
-      searchResultList += '</ul>';
-      resultContent.innerHTML = searchResultList;
+      resultContent.innerHTML = `<ul class="search-result-list">${resultItems.map(result => result.item).join('')}</ul>`;
       window.pjax && window.pjax.refresh(resultContent);
     }
   };
@@ -230,10 +210,6 @@ window.addEventListener('DOMContentLoaded', () => {
     fetch(CONFIG.root + searchPath)
       .then(response => response.text())
       .then(res => {
-        // Remove loading animation
-        document.getElementById('no-result').innerHTML = '<i class="fa fa-search fa-5x"></i>';
-        input.focus();
-
         // Get the contents from search data
         isfetched = true;
         datas = isXml ? [...new DOMParser().parseFromString(res, 'text/xml').querySelectorAll('entry')].map(element => {
@@ -245,9 +221,14 @@ window.addEventListener('DOMContentLoaded', () => {
         }) : JSON.parse(res);
         // Only match articles with not empty titles
         datas = datas.filter(data => data.title).map(data => {
+          data.title = data.title.trim();
           data.content = data.content ? data.content.trim().replace(/<[^>]+>/g, '') : '';
+          data.url = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
           return data;
         });
+        // Remove loading animation
+        document.getElementById('no-result').innerHTML = '<i class="fa fa-search fa-5x"></i>';
+        inputEventFunction();
       });
   };
 
@@ -270,15 +251,16 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.popup-trigger').forEach(element => {
     element.addEventListener('click', () => {
       document.body.style.overflow = 'hidden';
-      document.querySelector('.search-pop-overlay').style.display = 'block';
-      isfetched ? input.focus() : fetchData();
+      document.querySelector('.search-pop-overlay').classList.add('search-active');
+      input.focus();
+      if (!isfetched) fetchData();
     });
   });
 
   // Monitor main search box
   const onPopupClose = () => {
     document.body.style.overflow = '';
-    document.querySelector('.search-pop-overlay').style.display = '';
+    document.querySelector('.search-pop-overlay').classList.remove('search-active');
   };
 
   document.querySelector('.search-pop-overlay').addEventListener('click', event => {
