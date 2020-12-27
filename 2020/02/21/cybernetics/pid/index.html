@@ -24,18 +24,18 @@
 <meta name="keywords" content="PID">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PID 控制器">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;21&#x2F;system&#x2F;pid&#x2F;index.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;21&#x2F;cybernetics&#x2F;pid&#x2F;index.html">
 <meta property="og:site_name" content="你是下雨天">
 <meta property="og:description" content="在过程控制中，按偏差的比例（P）、积分（I）和微分（D）进行控制的PID控制器（亦称PID调节器）是应用最为广泛的一种自动控制器。它具有原理简单，易于实现，适用面广，控制参数相互独立，参数的选定比较简单等优点.">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;PID_varyingP.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;Change_with_Ki.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;Change_with_Kd.png">
-<meta property="og:updated_time" content="2020-06-25T12:01:54.255Z">
+<meta property="og:updated_time" content="2020-12-27T03:44:43.130Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;PID_varyingP.jpg">
 
-<link rel="canonical" href="http://yoursite.com/2020/02/21/system/pid/">
+<link rel="canonical" href="http://yoursite.com/2020/02/21/cybernetics/pid/">
 
 
 <script id="page-configurations">
@@ -191,7 +191,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/21/system/pid/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/21/cybernetics/pid/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -221,7 +221,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-06-25 20:01:54" itemprop="dateModified" datetime="2020-06-25T20:01:54+08:00">2020-06-25</time>
+                <time title="Modified: 2020-12-27 11:44:43" itemprop="dateModified" datetime="2020-12-27T11:44:43+08:00">2020-12-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -229,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Control/" itemprop="url" rel="index"><span itemprop="name">Control</span></a>
+                  <a href="/categories/Cybernetics/" itemprop="url" rel="index"><span itemprop="name">Cybernetics</span></a>
                 </span>
             </span>
 
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Valine: </span>
     
-    <a title="valine" href="/2020/02/21/system/pid/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/21/system/pid/" itemprop="commentCount"></span>
+    <a title="valine" href="/2020/02/21/cybernetics/pid/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/21/cybernetics/pid/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -269,6 +269,7 @@
 <a id="more"></a>
 <h2 id="1-基本原理"><a href="#1-基本原理" class="headerlink" title="1. 基本原理"></a>1. 基本原理</h2><p><strong>PID控制器</strong>（比例-积分-微分控制器），由比例单元（P）、积分单元（I）和微分单元（D）组成。可以透过调整这三个单元的增益 $K_p$，$K_i$ 和 $K_d$ 来调定其特性。PID控制器主要适用于基本上线性，且动态特性不随时间变化的系统。</p>
 <p>PID控制器的比例单元(P)、积分单元(I)和微分单元(D)分别对应目前误差、过去累计误差及未来误差。若是不知道受控系统的特性，一般认为PID控制器是最适用的控制器。</p>
+<!--more-->
 <h2 id="2-控制算法"><a href="#2-控制算法" class="headerlink" title="2. 控制算法"></a>2. 控制算法</h2><p>若定义 $u(t)$ 为控制输出，PID算法可以用下式表示</p>
 <script type="math/tex; mode=display">
 \mathrm{u}(t)=\mathrm{MV}(t)=K_{p} e(t)+K_{i} \int_{0}^{t} e(\tau) d \tau+K_{d} \frac{d}{d t} e(t)</script><p>其中 $e(t)$ 表示误差。</p>
@@ -320,7 +321,7 @@ u(k)&=K_p\left[e_{k}+\frac{1}{T_i} \sum_{j=0}^{k} e_{j}+T_d \frac{e_{k}-e_{k-1}}
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/02/20/system/lasalle/" rel="prev" title="LaSalle's invariance principle 拉萨尔不变性原理">
+    <a href="/2020/02/20/cybernetics/lasalle/" rel="prev" title="LaSalle's invariance principle 拉萨尔不变性原理">
       <i class="fa fa-chevron-left"></i> LaSalle's invariance principle 拉萨尔不变性原理
     </a></div>
       <div class="post-nav-item">
@@ -413,7 +414,7 @@ u(k)&=K_p\left[e_{k}+\frac{1}{T_i} \sum_{j=0}^{k} e_{j}+T_d \frac{e_{k}-e_{k-1}}
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-count">130</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
