@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="你是下雨天">
 <meta property="og:description" content="Hahn-Banach定理主要是用于泛函的延拓，在较小的子空间上满足某个性质之后我们就可以将对应的泛函延拓至整个空间。而这一节要讲的一致有界性原理恰如其名，主要讨论一族有界线性算子一致有界的条件。他也是后续讨论序列弱收敛性以及泛函弱星收敛性的基础。 1. Baire范畴定理一致有界性原理的证明需要用到Baire范畴定理（也叫Baire纲定理）。 $(X,d)$，若 $\bar{M}\subset">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-12-26T08:59:27.786Z">
+<meta property="og:updated_time" content="2020-12-30T08:46:11.365Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/2020/12/26/functional-analysis/ch4-3-banach-steinhauss/">
@@ -209,10 +209,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-12-26 16:36:30 / Modified: 16:59:27" itemprop="dateCreated datePublished" datetime="2020-12-26T16:36:30+08:00">2020-12-26</time>
+              <time title="Created: 2020-12-26 16:36:30" itemprop="dateCreated datePublished" datetime="2020-12-26T16:36:30+08:00">2020-12-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-30 16:46:11" itemprop="dateModified" datetime="2020-12-30T16:46:11+08:00">2020-12-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -286,7 +292,25 @@
 <p>此时显然我们有对任意固定的 $p=a_0+a_1 t+\cdots a_N t^N\in X$，$\Vert f_n(p)\Vert \le |a_0|+\cdots+|a_N|$，但是同时我们也有 $\sup_n \Vert f_n\Vert=\infty$，这似乎与一致有界性原理矛盾？其实原因是 $X$ 并不是 Banach 空间。</p>
 <p>考虑 $p_n(t)=1+\frac{1}{2}t+\cdots+\frac{1}{n+1}t^n$，那么可以验证 $\{p_n\}$ 为柯西列，但是其收敛值却并不在 $X$ 内部（$X$ 中只包含有限项的多项式），因此 $X$ 不完备。</p>
 <p>一致有界性原理还可用于讨论 Fourier 级数的收敛问题。</p>
-<p><strong><em>例子 3</em></strong>：考虑 $t\in[0,2\pi]$，$f(t)=a_0+\sum_{n=1}^N\left(a_n \cos nt+b_n\sin nt\right).$</p>
+<p><strong><em>例子 3</em></strong>：考虑 $t\in[0,2\pi]$，对于 $[0,2\pi]$ 上的周期函数，很多时候我们用 Fourier 级数来表示他们，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+a_0(x) &= \frac{1}{2\pi}\int_0^{2\pi} x(t)dt \\
+a_m(x) &= \frac{1}{\pi}\int_a^{2\pi} x(t)\cos(mt)dt, m\ge1 \\
+b_m(x) &= \frac{1}{\pi}\int_a^{2\pi} x(t)\sin(mt)dt, m\ge1
+\end{aligned}</script><p> $x_n(t)=a_0+\sum_{m=1}^n\left(a_m \cos mt+b_m\sin mt\right)$ 即为 Fourier 级数。但是一个问题就是 Fourier 级数是否点点收敛到 $x$？答案是否定的，可以用一致有界性原理证明。</p>
+<p>证明：考虑 $f_n(x)=x_n(0)=a_0(x)+\sum_{m=1}^n a_m(x)$，显然 $f_n(x)$ 为 $C_{per}[0,2\pi]$（连续周期函数）上的线性泛函。并且有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f_n(x)&=\frac{1}{2\pi}\int_0^{2\pi} \left(1+2\sum_{m=1}^n \cos(mt) \right)x(t)dt \\
+&= \frac{1}{2\pi}\int_0^{2\pi} \frac{\sin(n+1/2)t}{\sin(t/2)}x(t)dt= \frac{1}{2\pi}\int_0^{2\pi} Q_n(t)x(t)dt \\
+\end{aligned}</script><p>因此 $\Vert f_n\Vert \le \int_0^{2\pi} |Q_n(t)|dt$。由于 $Q_n(t)$ 在 $[0,2\pi]$ 上只有有限个零点，因此可以构造合适的 $x$ 证明 $\Vert f_n=\Vert \ge \frac{1}{2\pi}\int_0^{2\pi} |Q_n(t)|dt$。而</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\int_0^{2\pi} |Q_n(t)|dt &\ge 2\int_0^{(2n+1)\pi} \frac{|\sin t|}{t}dt \ge2\sum_{k=0}^{2n}\int_{k\pi}^{(k+1)\pi} \frac{|\sin t|}{t}dt \\
+&\ge \sqrt{2} \sum_{k=0}^{2n}\int_{k\pi+\pi/4}^{k\pi+3\pi/4} \frac{1}{t}dt \\
+&\ge \sum_{k=0}^{2n} \frac{4\sqrt{2}}{8k+3}
+\end{aligned}</script><p>因此有 $\sup_{n\ge1}\Vert f_n\Vert=\infty$，由一致有界性原理，存在 $x_0\in C_{per}[0,2\pi]$ 使得 $\sup_{n\ge1} |f_n(x_0)|=\infty$，因此 $x_0$ 的 Fourier 级数在 $t=0$ 处不收敛。证毕。</p>
 
     </div>
 
@@ -389,7 +413,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-count">75</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

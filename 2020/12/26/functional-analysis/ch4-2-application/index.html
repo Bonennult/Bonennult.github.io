@@ -29,7 +29,7 @@
 <meta property="og:description" content="1. 共轭算子赋范空间 $X,Y$，$T\in B(X,Y)$，对于任意的 $f\in Y’$，$X \stackrel{T}{\longrightarrow}Y\stackrel{f}{\longrightarrow}\mathbb{K}$，可以得到 $f\circ T\in X’$。因此我们可以定义映射  \begin{aligned} T^{\times}:Y&amp;apos; &amp;\to X&amp;apos; \\ f &amp;">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;ch4-1-conjugate-operator.png">
-<meta property="og:updated_time" content="2020-12-26T08:57:21.243Z">
+<meta property="og:updated_time" content="2020-12-30T08:45:40.059Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;ch4-1-conjugate-operator.png">
 
@@ -211,10 +211,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-12-26 16:35:26 / Modified: 16:57:21" itemprop="dateCreated datePublished" datetime="2020-12-26T16:35:26+08:00">2020-12-26</time>
+              <time title="Created: 2020-12-26 16:35:26" itemprop="dateCreated datePublished" datetime="2020-12-26T16:35:26+08:00">2020-12-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-30 16:45:40" itemprop="dateModified" datetime="2020-12-30T16:45:40+08:00">2020-12-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -336,7 +342,33 @@ g_{\lambda x+\mu y}(f)=f(\lambda x+\mu y)=\lambda f(x)+\mu g(y)=\lambda g_x(f)+\
 <p><em>例子 3</em>：$c_o,\ \ell^1,\ \ell^\infty,\ C[a,b]$ 都不是自反空间。</p>
 <p><strong>证明</strong>：$c_0’=\ell^1,(\ell^1)’=\ell^\infty, (\ell^\infty)’=\ell^1$（参考课本 P68），但是由于 <strong>$c_0,\ell^1$ 是可分的，而 $\ell^\infty$ 不是可分的</strong>，因此 $\ell^1$ 不自反。</p>
 <p>$C[a,b]’$ 是不可分的，$C[a,b]$ 是可分的， 细节参考课本，懒得写了……后面心情好了再补吧……</p>
-<h2 id="3-Riemann-Stieltjes积分"><a href="#3-Riemann-Stieltjes积分" class="headerlink" title="3. Riemann-Stieltjes积分"></a>3. Riemann-Stieltjes积分</h2>
+<h2 id="3-Riemann-Stieltjes积分"><a href="#3-Riemann-Stieltjes积分" class="headerlink" title="3. Riemann-Stieltjes积分"></a>3. Riemann-Stieltjes积分</h2><p>称函数 $\omega:[a,b]\to\mathbb{K}$ 为<strong>有界变差函数</strong>，若存在常数 $C\ge0$，使得任取 $[a,b]$ 的分划</p>
+<script type="math/tex; mode=display">
+a=t_0<t_1<\cdots<t_n=b</script><p>都有 $\sum_{i=1}^n |\omega(t_i)-\omega(t_{i-1})|\le C$。记所有 $[a,b]$ 上的有界变差函数构成的集合为 $BV[a,b]$。并定义 $[a,s],a\le s\le b$ 上的<strong>全变差</strong>为</p>
+<script type="math/tex; mode=display">
+\text{Var}_{[a,s]}(\omega)=\sup\sum_{i=1}^n |\omega(t_i)-\omega(t_{i-1})|</script><p>其中上确界是对所有 $[a,s]$ 上的分划来取。</p>
+<p><strong>命题</strong>：若 $\omega:[a,b]\to\mathbb{R}$ 单调，则 $\omega\in BV[a,b]$，并且此时有 $\text{Var}_{[a,b]}(\omega)=|\omega(b)-\omega(a)|.$</p>
+<p><strong>命题</strong>：若 $\omega:[a,b]\to \mathbb{R}$ 为有界变差的，则存在 $\omega_1,\omega_2$ 单调递增，使得 $\omega=\omega_1-\omega_2.$</p>
+<p>证明：取 $\omega_1(t)=\text{Var}_{[a,t]}(\omega)$，那么易证 $\omega_1$ 是单调递增的。取 $\omega_2=\omega-\omega_1$ 也是递增的，这是因为 $\forall t&lt;s$，$t,x\in[a,b]$ 都有 </p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\omega_2(s)-\omega_2(t)
+&=\text{Var}_{[a,s]}(\omega)-\text{Var}_{[a,t]}(\omega)-\omega(s)+\omega(t) \\
+&=\text{Var}_{[t,s]}(\omega)-(\omega(s)-\omega(t)) \ge 0
+\end{aligned}</script><p>其中第二个等号用到了下面的引理。</p>
+<p><strong>引理</strong>：$\text{Var}_{[a,s]}(\omega)=\text{Var}_{[a,t]}(\omega)+\text{Var}_{[t,s]}(\omega).$</p>
+<p>证明：略。</p>
+<p>在 $BV[a,b]$ 上定义范数 $\Vert \omega\Vert_{bv}=\text{Var}_{[a,b]}(\omega)+|\omega(a)|$，则可以证明 $\Vert\cdot\Vert_{bv}$ 为 $BV[a,b]$ 上的范数，并且 $BV[a,b]$ 为 Banach 空间。</p>
+<p>对 $\forall \omega\in BV[a,b], x\in C[a,b]$，若 $\mathcal{P}$ 为 $[a,b]$ 的分划 $a=t_0&lt;t_1&lt;\cdots&lt;t_n=b$，令 </p>
+<script type="math/tex; mode=display">
+S(x,\omega,\mathcal{P})=\sum_{i=1}^n x(t_{i-1})(\omega(t_i)-\omega(t_{i-1}))</script><p>是 $x$ 关于有界变差函数 $\omega$ 和分划 $\mathcal{P}$ 的 Darboux 和。记 $\eta(\mathcal{P})=\max_i (t_i-t_{i-1}) \to 0$，若存在唯一的 $A\in\mathbb{K}$ 使得 $S(x,\omega,\mathcal{P})\to A$，则称 $A$ 为 $x$ 关于 $\omega$ 的 Riemann-Stieltjes 积分，记为</p>
+<script type="math/tex; mode=display">
+A = \int_a^b x(t)d\omega(t).</script><p>定义线性泛函 $\phi_{\omega}:C[a,b]\to\mathbb{K}$ 为</p>
+<script type="math/tex; mode=display">
+\phi_\omega(x)=\int_a^b x(t)d\omega(t)</script><p>则 $\phi_\omega\in C[a,b]’$，并且有 $\Vert \phi_\omega\Vert\le \text{Var}_{[a,b]}(\omega)$。</p>
+<p><strong>定理</strong>：$\forall \phi\in C[a,b]’$，$\exists! \omega\in BV[a,b]$，满足 $\omega(a)=0$，$\forall x\in C[a,b]$，$\phi(x)=\int_a^b x(t)d\omega(t)$，此时有 $\Vert \phi\Vert=\Vert\omega\Vert_{bv}.$</p>
+<p>证明：略。</p>
+
     </div>
 
     
@@ -437,7 +469,7 @@ g_{\lambda x+\mu y}(f)=f(\lambda x+\mu y)=\lambda f(x)+\mu g(y)=\lambda g_x(f)+\
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-count">75</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
