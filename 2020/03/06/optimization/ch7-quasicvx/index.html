@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -17,25 +17,27 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1. 拟凸函数定义拟凸函数(quasiconvex function)的定义为：若 $\text{dom}f$ 为凸集，且对任意的 $\alpha$，其下水平集   S_\alpha = \{x\in\text{dom}f | f(x)\le\alpha\}都是凸集，则 $f$ 为拟凸函数。">
-<meta name="keywords" content="拟凸函数">
+  <meta name="description" content="1. 拟凸函数定义拟凸函数(quasiconvex function)的定义为：若 $\text{dom}f$ 为凸集，且对任意的 $\alpha$，其下水平集   S_\alpha &#x3D; \{x\in\text{dom}f | f(x)\le\alpha\}都是凸集，则 $f$ 为拟凸函数。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="凸优化笔记 7：拟凸函数 Quasiconvex Function">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;06&#x2F;optimization&#x2F;ch7-quasicvx&#x2F;index.html">
+<meta property="og:url" content="http://example.com/2020/03/06/optimization/ch7-quasicvx/index.html">
 <meta property="og:site_name" content="你是下雨天">
-<meta property="og:description" content="1. 拟凸函数定义拟凸函数(quasiconvex function)的定义为：若 $\text{dom}f$ 为凸集，且对任意的 $\alpha$，其下水平集   S_\alpha = \{x\in\text{dom}f | f(x)\le\alpha\}都是凸集，则 $f$ 为拟凸函数。">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-quasicvx.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-quasi.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-quasi_support.PNG">
-<meta property="og:updated_time" content="2020-03-27T09:58:55.833Z">
+<meta property="og:description" content="1. 拟凸函数定义拟凸函数(quasiconvex function)的定义为：若 $\text{dom}f$ 为凸集，且对任意的 $\alpha$，其下水平集   S_\alpha &#x3D; \{x\in\text{dom}f | f(x)\le\alpha\}都是凸集，则 $f$ 为拟凸函数。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-quasicvx.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-quasi.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-quasi_support.PNG">
+<meta property="article:published_time" content="2020-03-06T09:36:26.000Z">
+<meta property="article:modified_time" content="2020-03-27T09:58:55.833Z">
+<meta property="article:author" content="Glooow">
+<meta property="article:tag" content="拟凸函数">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-quasicvx.PNG">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-quasicvx.PNG">
 
-<link rel="canonical" href="http://yoursite.com/2020/03/06/optimization/ch7-quasicvx/">
+<link rel="canonical" href="http://example.com/2020/03/06/optimization/ch7-quasicvx/">
 
 
 <script id="page-configurations">
@@ -191,7 +193,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/06/optimization/ch7-quasicvx/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/06/optimization/ch7-quasicvx/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -458,7 +460,7 @@ S_\alpha = \{y| f(y)\le f(x)=\alpha \}\subseteq R^n</script><p>需要注意的�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-拟凸函数定义"><span class="nav-text">1. 拟凸函数定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-拟凸函数的判定-等价定义"><span class="nav-text">2. 拟凸函数的判定/等价定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Jensen-不等式"><span class="nav-text">2.1 Jensen 不等式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-“降维打击”"><span class="nav-text">2.1 “降维打击”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-一阶条件"><span class="nav-text">2.2 一阶条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-二阶条件"><span class="nav-text">2.3 二阶条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-拟凸函数的保凸变换"><span class="nav-text">3. 拟凸函数的保凸变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-与仿射变换复合"><span class="nav-text">3.1 与仿射变换复合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-最大值-上确界"><span class="nav-text">3.2 最大值/上确界</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-复合函数"><span class="nav-text">3.3 复合函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-下确界"><span class="nav-text">3.4 下确界</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%8B%9F%E5%87%B8%E5%87%BD%E6%95%B0%E5%AE%9A%E4%B9%89"><span class="nav-text">1. 拟凸函数定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%8B%9F%E5%87%B8%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A4%E5%AE%9A-%E7%AD%89%E4%BB%B7%E5%AE%9A%E4%B9%89"><span class="nav-text">2. 拟凸函数的判定&#x2F;等价定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Jensen-%E4%B8%8D%E7%AD%89%E5%BC%8F"><span class="nav-text">2.1 Jensen 不等式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E2%80%9C%E9%99%8D%E7%BB%B4%E6%89%93%E5%87%BB%E2%80%9D"><span class="nav-text">2.1 “降维打击”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%B8%80%E9%98%B6%E6%9D%A1%E4%BB%B6"><span class="nav-text">2.2 一阶条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BA%8C%E9%98%B6%E6%9D%A1%E4%BB%B6"><span class="nav-text">2.3 二阶条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%8B%9F%E5%87%B8%E5%87%BD%E6%95%B0%E7%9A%84%E4%BF%9D%E5%87%B8%E5%8F%98%E6%8D%A2"><span class="nav-text">3. 拟凸函数的保凸变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%8E%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2%E5%A4%8D%E5%90%88"><span class="nav-text">3.1 与仿射变换复合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%9C%80%E5%A4%A7%E5%80%BC-%E4%B8%8A%E7%A1%AE%E7%95%8C"><span class="nav-text">3.2 最大值&#x2F;上确界</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%A4%8D%E5%90%88%E5%87%BD%E6%95%B0"><span class="nav-text">3.3 复合函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E4%B8%8B%E7%A1%AE%E7%95%8C"><span class="nav-text">3.4 下确界</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -495,7 +497,7 @@ S_\alpha = \{y| f(y)\le f(x)=\alpha \}\subseteq R^n</script><p>需要注意的�
         <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
@@ -572,9 +574,17 @@ S_\alpha = \{y| f(y)\le f(x)=\alpha \}\subseteq R^n</script><p>需要注意的�
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -583,7 +593,9 @@ S_\alpha = \{y| f(y)\le f(x)=\alpha \}\subseteq R^n</script><p>需要注意的�
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

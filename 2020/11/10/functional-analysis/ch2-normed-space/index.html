@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -17,21 +17,30 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。 1. 线性空间线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)=\sum_i a_ix_i$，因此可以看出来包含了数乘和加法两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系">
-<meta name="keywords" content="线性空间,赋范空间,Banach空间,Hamel基,Schauder基,线性算子,算子范数,线性泛函">
+  <meta name="description" content="在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。 1. 线性空间线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)&#x3D;\sum_i a_ix_i$，因此可以看出来包含了数乘和加法两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系">
 <meta property="og:type" content="article">
 <meta property="og:title" content="泛函分析笔记2：赋范空间">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;11&#x2F;10&#x2F;functional-analysis&#x2F;ch2-normed-space&#x2F;index.html">
+<meta property="og:url" content="http://example.com/2020/11/10/functional-analysis/ch2-normed-space/index.html">
 <meta property="og:site_name" content="你是下雨天">
-<meta property="og:description" content="在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。 1. 线性空间线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)=\sum_i a_ix_i$，因此可以看出来包含了数乘和加法两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-11-10T12:18:48.214Z">
+<meta property="og:description" content="在度量空间中，我们重点关注的是两个元素之间的距离，而这一部分要引出来的赋范空间中，则对每个元素本身也赋予了“范数”，也就是“长度”。 1. 线性空间线性空间，可以简单理解为对线性运算封闭的集合。那么线性运算的形式是什么呢？常见的线性运算可以写为 $T(x;a)&#x3D;\sum_i a_ix_i$，因此可以看出来包含了数乘和加法两种基本运算，因此线性空间必然需要对数乘和加法封闭，除此之外，为了保证运算体系">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-10T12:15:17.000Z">
+<meta property="article:modified_time" content="2020-11-10T12:18:48.214Z">
+<meta property="article:author" content="Glooow">
+<meta property="article:tag" content="线性空间">
+<meta property="article:tag" content="赋范空间">
+<meta property="article:tag" content="Banach空间">
+<meta property="article:tag" content="Hamel基">
+<meta property="article:tag" content="Schauder基">
+<meta property="article:tag" content="线性算子">
+<meta property="article:tag" content="算子范数">
+<meta property="article:tag" content="线性泛函">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/11/10/functional-analysis/ch2-normed-space/">
+<link rel="canonical" href="http://example.com/2020/11/10/functional-analysis/ch2-normed-space/">
 
 
 <script id="page-configurations">
@@ -187,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/10/functional-analysis/ch2-normed-space/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/10/functional-analysis/ch2-normed-space/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -536,7 +545,7 @@ T(x+y)=Tx+Ty,\quad T(\lambda x)=\lambda Tx \\
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-线性空间"><span class="nav-text">1. 线性空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-赋范空间与Banach空间"><span class="nav-text">2. 赋范空间与Banach空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-有限维赋范空间"><span class="nav-text">3. 有限维赋范空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-有界线性算子"><span class="nav-text">4. 有界线性算子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-线性算子"><span class="nav-text">4.1 线性算子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-算子范数"><span class="nav-text">4.2 算子范数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-有界线性泛函"><span class="nav-text">5. 有界线性泛函</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%BA%BF%E6%80%A7%E7%A9%BA%E9%97%B4"><span class="nav-text">1. 线性空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%B5%8B%E8%8C%83%E7%A9%BA%E9%97%B4%E4%B8%8EBanach%E7%A9%BA%E9%97%B4"><span class="nav-text">2. 赋范空间与Banach空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9C%89%E9%99%90%E7%BB%B4%E8%B5%8B%E8%8C%83%E7%A9%BA%E9%97%B4"><span class="nav-text">3. 有限维赋范空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9C%89%E7%95%8C%E7%BA%BF%E6%80%A7%E7%AE%97%E5%AD%90"><span class="nav-text">4. 有界线性算子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%BA%BF%E6%80%A7%E7%AE%97%E5%AD%90"><span class="nav-text">4.1 线性算子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%AE%97%E5%AD%90%E8%8C%83%E6%95%B0"><span class="nav-text">4.2 算子范数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%9C%89%E7%95%8C%E7%BA%BF%E6%80%A7%E6%B3%9B%E5%87%BD"><span class="nav-text">5. 有界线性泛函</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -573,7 +582,7 @@ T(x+y)=Tx+Ty,\quad T(\lambda x)=\lambda Tx \\
         <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
@@ -650,9 +659,17 @@ T(x+y)=Tx+Ty,\quad T(\lambda x)=\lambda Tx \\
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -661,7 +678,9 @@ T(x+y)=Tx+Ty,\quad T(\lambda x)=\lambda Tx \\
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

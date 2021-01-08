@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -17,23 +17,26 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="将普通的不等式 $1\le2$ 推广到更加复杂的情况，例如两个向量 $x\le y$ 该如何定义？这就是广义不等式(generalized inequality)">
-<meta name="keywords" content="锥,广义不等式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="凸优化笔记 3：广义不等式">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;26&#x2F;optimization&#x2F;ch3-gene-ineq&#x2F;index.html">
+<meta property="og:url" content="http://example.com/2020/02/26/optimization/ch3-gene-ineq/index.html">
 <meta property="og:site_name" content="你是下雨天">
 <meta property="og:description" content="将普通的不等式 $1\le2$ 推广到更加复杂的情况，例如两个向量 $x\le y$ 该如何定义？这就是广义不等式(generalized inequality)">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;3-minimum.png">
-<meta property="og:updated_time" content="2020-03-27T09:59:21.032Z">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/3-minimum.png">
+<meta property="article:published_time" content="2020-02-26T13:30:37.000Z">
+<meta property="article:modified_time" content="2020-03-27T09:59:21.032Z">
+<meta property="article:author" content="Glooow">
+<meta property="article:tag" content="锥">
+<meta property="article:tag" content="广义不等式">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;3-minimum.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/3-minimum.png">
 
-<link rel="canonical" href="http://yoursite.com/2020/02/26/optimization/ch3-gene-ineq/">
+<link rel="canonical" href="http://example.com/2020/02/26/optimization/ch3-gene-ineq/">
 
 
 <script id="page-configurations">
@@ -189,7 +192,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/26/optimization/ch3-gene-ineq/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/26/optimization/ch3-gene-ineq/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -390,7 +393,7 @@ K^{*}=\left\{y | y^{T} x \geq 0 \text { for all } x \in K\right\}</script><p>有
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-正常锥"><span class="nav-text">1. 正常锥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-广义不等式"><span class="nav-text">2. 广义不等式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-最小元与极小元"><span class="nav-text">3. 最小元与极小元</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-最小元-minimum"><span class="nav-text">3.1 最小元(minimum)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-极小元-minimal"><span class="nav-text">3.2 极小元(minimal)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-对偶锥"><span class="nav-text">4. 对偶锥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-最小元与极小元-应用对偶锥定义"><span class="nav-text">5. 最小元与极小元(应用对偶锥定义)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-最小元"><span class="nav-text">5.1 最小元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-极小元"><span class="nav-text">5.2 极小元</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%AD%A3%E5%B8%B8%E9%94%A5"><span class="nav-text">1. 正常锥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%B9%BF%E4%B9%89%E4%B8%8D%E7%AD%89%E5%BC%8F"><span class="nav-text">2. 广义不等式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9C%80%E5%B0%8F%E5%85%83%E4%B8%8E%E6%9E%81%E5%B0%8F%E5%85%83"><span class="nav-text">3. 最小元与极小元</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%9C%80%E5%B0%8F%E5%85%83-minimum"><span class="nav-text">3.1 最小元(minimum)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%9E%81%E5%B0%8F%E5%85%83-minimal"><span class="nav-text">3.2 极小元(minimal)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AF%B9%E5%81%B6%E9%94%A5"><span class="nav-text">4. 对偶锥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%9C%80%E5%B0%8F%E5%85%83%E4%B8%8E%E6%9E%81%E5%B0%8F%E5%85%83-%E5%BA%94%E7%94%A8%E5%AF%B9%E5%81%B6%E9%94%A5%E5%AE%9A%E4%B9%89"><span class="nav-text">5. 最小元与极小元(应用对偶锥定义)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%9C%80%E5%B0%8F%E5%85%83"><span class="nav-text">5.1 最小元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%9E%81%E5%B0%8F%E5%85%83"><span class="nav-text">5.2 极小元</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -427,7 +430,7 @@ K^{*}=\left\{y | y^{T} x \geq 0 \text { for all } x \in K\right\}</script><p>有
         <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
@@ -504,9 +507,17 @@ K^{*}=\left\{y | y^{T} x \geq 0 \text { for all } x \in K\right\}</script><p>有
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -515,7 +526,9 @@ K^{*}=\left\{y | y^{T} x \geq 0 \text { for all } x \in K\right\}</script><p>有
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

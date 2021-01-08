@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -17,27 +17,29 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="日常生活中有许多决策问题。决策是指在面临多种方案时需要依据一定的标准选择某一种方案。 比如买钢笔，一般要依据质量、颜色、实用性、价格、外形等方面的因素选择某一支钢笔。 又比如假期旅游，是去风光秀丽的苏州，还是去迷人的北戴河，或者是去山水甲天下的桂林，一般会依据景色、费用、食宿条件、旅途等因素选择去哪个地方。 我们可以利用上一节讲的模糊综合评判的方法，对每一个备选方案都进行一次打分，最后取分最高的。">
-<meta name="keywords" content="层次分析法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模糊数学笔记 7：层次分析法">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;03&#x2F;15&#x2F;fuzzy&#x2F;ch7-ahp&#x2F;index.html">
+<meta property="og:url" content="http://example.com/2020/03/15/fuzzy/ch7-ahp/index.html">
 <meta property="og:site_name" content="你是下雨天">
 <meta property="og:description" content="日常生活中有许多决策问题。决策是指在面临多种方案时需要依据一定的标准选择某一种方案。 比如买钢笔，一般要依据质量、颜色、实用性、价格、外形等方面的因素选择某一支钢笔。 又比如假期旅游，是去风光秀丽的苏州，还是去迷人的北戴河，或者是去山水甲天下的桂林，一般会依据景色、费用、食宿条件、旅途等因素选择去哪个地方。 我们可以利用上一节讲的模糊综合评判的方法，对每一个备选方案都进行一次打分，最后取分最高的。">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-layers.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-matA.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-ri1.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-ri2.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-layers2.PNG">
-<meta property="og:updated_time" content="2020-03-27T10:07:35.030Z">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-layers.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-matA.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-ri1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-ri2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-layers2.PNG">
+<meta property="article:published_time" content="2020-03-15T03:59:28.000Z">
+<meta property="article:modified_time" content="2020-03-27T10:07:35.030Z">
+<meta property="article:author" content="Glooow">
+<meta property="article:tag" content="层次分析法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;7-layers.PNG">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/7-layers.PNG">
 
-<link rel="canonical" href="http://yoursite.com/2020/03/15/fuzzy/ch7-ahp/">
+<link rel="canonical" href="http://example.com/2020/03/15/fuzzy/ch7-ahp/">
 
 
 <script id="page-configurations">
@@ -193,7 +195,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/fuzzy/ch7-ahp/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/15/fuzzy/ch7-ahp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -444,7 +446,7 @@ CR=\frac{a_1CI_1+\cdots+a_mCI_m}{a_1RI_1+\cdots+a_mRI_m}</script><p>当 $CR&lt;0
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-层次分析法-AHP"><span class="nav-text">1. 层次分析法 AHP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-建立层次结构模型"><span class="nav-text">1.1 建立层次结构模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-构造成对比较矩阵"><span class="nav-text">1.2 构造成对比较矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-层次单排序及一致性检验"><span class="nav-text">1.3 层次单排序及一致性检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-层次总排序及其一致性检验"><span class="nav-text">1.4 层次总排序及其一致性检验</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%B1%82%E6%AC%A1%E5%88%86%E6%9E%90%E6%B3%95-AHP"><span class="nav-text">1. 层次分析法 AHP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%BB%BA%E7%AB%8B%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">1.1 建立层次结构模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%9E%84%E9%80%A0%E6%88%90%E5%AF%B9%E6%AF%94%E8%BE%83%E7%9F%A9%E9%98%B5"><span class="nav-text">1.2 构造成对比较矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%B1%82%E6%AC%A1%E5%8D%95%E6%8E%92%E5%BA%8F%E5%8F%8A%E4%B8%80%E8%87%B4%E6%80%A7%E6%A3%80%E9%AA%8C"><span class="nav-text">1.3 层次单排序及一致性检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%B1%82%E6%AC%A1%E6%80%BB%E6%8E%92%E5%BA%8F%E5%8F%8A%E5%85%B6%E4%B8%80%E8%87%B4%E6%80%A7%E6%A3%80%E9%AA%8C"><span class="nav-text">1.4 层次总排序及其一致性检验</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -481,7 +483,7 @@ CR=\frac{a_1CI_1+\cdots+a_mCI_m}{a_1RI_1+\cdots+a_mRI_m}</script><p>当 $CR&lt;0
         <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
@@ -558,9 +560,17 @@ CR=\frac{a_1CI_1+\cdots+a_mCI_m}{a_1RI_1+\cdots+a_mRI_m}</script><p>当 $CR&lt;0
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -569,7 +579,9 @@ CR=\frac{a_1CI_1+\cdots+a_mCI_m}{a_1RI_1+\cdots+a_mRI_m}</script><p>当 $CR&lt;0
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -17,29 +17,36 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的梯度方法。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数">
-<meta name="keywords" content="梯度下降,利普希兹连续,co-coercivity,强凸函数,线搜索,BB方法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="凸优化笔记15：梯度方法 Gradient Method">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;05&#x2F;optimization&#x2F;ch15-gradient&#x2F;index.html">
+<meta property="og:url" content="http://example.com/2020/04/05/optimization/ch15-gradient/index.html">
 <meta property="og:site_name" content="你是下雨天">
 <meta property="og:description" content="前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的梯度方法。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-lipschitz.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-quadra-upper.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-quadra-lower.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-quadra-upper.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-line-search.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-line-search2.PNG">
-<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-bb.PNG">
-<meta property="og:updated_time" content="2020-05-09T06:06:39.550Z">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-lipschitz.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-quadra-upper.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-quadra-lower.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-quadra-upper.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-line-search.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-line-search2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-bb.PNG">
+<meta property="article:published_time" content="2020-04-05T10:12:30.000Z">
+<meta property="article:modified_time" content="2020-05-09T06:06:39.550Z">
+<meta property="article:author" content="Glooow">
+<meta property="article:tag" content="梯度下降">
+<meta property="article:tag" content="利普希兹连续">
+<meta property="article:tag" content="co-coercivity">
+<meta property="article:tag" content="强凸函数">
+<meta property="article:tag" content="线搜索">
+<meta property="article:tag" content="BB方法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Glooow1024&#x2F;ImgHosting&#x2F;master&#x2F;hexo&#x2F;2020&#x2F;15-lipschitz.PNG">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2020/15-lipschitz.PNG">
 
-<link rel="canonical" href="http://yoursite.com/2020/04/05/optimization/ch15-gradient/">
+<link rel="canonical" href="http://example.com/2020/04/05/optimization/ch15-gradient/">
 
 
 <script id="page-configurations">
@@ -195,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/05/optimization/ch15-gradient/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/04/05/optimization/ch15-gradient/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -527,7 +534,7 @@ f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-凸函数"><span class="nav-text">1. 凸函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Lipschitz-continuity"><span class="nav-text">2. Lipschitz continuity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-强凸函数"><span class="nav-text">3. 强凸函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-梯度方法收敛性分析"><span class="nav-text">4. 梯度方法收敛性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-固定步长"><span class="nav-text">4.1 固定步长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-线搜索"><span class="nav-text">4.2 线搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-一阶方法的收敛极限"><span class="nav-text">4.3 一阶方法的收敛极限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-强凸函数的梯度方法"><span class="nav-text">4.4 强凸函数的梯度方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-BB-方法"><span class="nav-text">5. BB 方法</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%87%B8%E5%87%BD%E6%95%B0"><span class="nav-text">1. 凸函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Lipschitz-continuity"><span class="nav-text">2. Lipschitz continuity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%BC%BA%E5%87%B8%E5%87%BD%E6%95%B0"><span class="nav-text">3. 强凸函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%A2%AF%E5%BA%A6%E6%96%B9%E6%B3%95%E6%94%B6%E6%95%9B%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-text">4. 梯度方法收敛性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%9B%BA%E5%AE%9A%E6%AD%A5%E9%95%BF"><span class="nav-text">4.1 固定步长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%BA%BF%E6%90%9C%E7%B4%A2"><span class="nav-text">4.2 线搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E4%B8%80%E9%98%B6%E6%96%B9%E6%B3%95%E7%9A%84%E6%94%B6%E6%95%9B%E6%9E%81%E9%99%90"><span class="nav-text">4.3 一阶方法的收敛极限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E5%BC%BA%E5%87%B8%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%96%B9%E6%B3%95"><span class="nav-text">4.4 强凸函数的梯度方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-BB-%E6%96%B9%E6%B3%95"><span class="nav-text">5. BB 方法</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -564,7 +571,7 @@ f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}
         <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="/mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
@@ -641,9 +648,17 @@ f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -652,7 +667,9 @@ f\left(x_{k}\right)-f^{\star} \leq \frac{L}{2}\left\|x_{k}-x^{\star}\right\|_{2}
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
