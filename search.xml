@@ -488,9 +488,9 @@
             
             <tag> 强凸函数 </tag>
             
-            <tag> PG 算法 </tag>
-            
             <tag> 近似点算子 </tag>
+            
+            <tag> PG 算法 </tag>
             
             <tag> PPA </tag>
             
@@ -691,11 +691,11 @@
             
             <tag> 拉格朗日函数 </tag>
             
-            <tag> PG 算法 </tag>
-            
             <tag> 近似点算子 </tag>
             
             <tag> 共轭函数 </tag>
+            
+            <tag> PG 算法 </tag>
             
             <tag> ALM </tag>
             
@@ -913,13 +913,13 @@
             
             <tag> KKT条件 </tag>
             
+            <tag> SDP </tag>
+            
             <tag> 互补性条件 </tag>
             
             <tag> LP </tag>
             
             <tag> SOCP </tag>
-            
-            <tag> SDP </tag>
             
         </tags>
       
@@ -1027,11 +1027,11 @@
       
         <tags>
             
+            <tag> SDP </tag>
+            
             <tag> LP </tag>
             
             <tag> SOCP </tag>
-            
-            <tag> SDP </tag>
             
             <tag> 凸优化问题 </tag>
             
