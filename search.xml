@@ -6,9 +6,6 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><center><h2><a target="_blank" rel="noopener" href="https://i.y.qq.com/v8/playsong.html?songid=104772455">走着走着就散了</a></h2></center>
 
 
-			<script>
-				console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");
-			</script>
 <blockquote>
 <p>习惯人群中找你的影子<br>回想那些幸福的日子<br>但其实我明白，我和从前的我<br>已经分开很远很远</p>
 <p>寂寞世界中的两颗心<br>寂寞城市中的每个人<br>我们相遇相拥，相互猜测怀疑<br>一边微笑一边流泪</p>
