@@ -281,7 +281,7 @@
 <p>首先是可以利用下面的命令查看是否运行了含有 <code>runme</code> 的程序</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux|grep runme</span><br></pre></td></tr></table></figure>
 <p>另外可以将 <code>rc.local</code> 的第一行 <code>#!/bin/sh</code> 修改为</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh -e(或者 -x)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh -e(或者 -x)</span></span><br></pre></td></tr></table></figure>
 <p>这样可以把日志记录到 <code>/var/log/messages</code> 文件中，后续可以查看这个文件看看是哪里报错。</p>
 <p>然后是每次修改 <code>rc.local</code> 之后都要重启来检验有没有问题，太麻烦了，其实还有更高效的方法，只需要在命令行运行</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart rc-local</span><br><span class="line">systemctl status rc-local</span><br></pre></td></tr></table></figure>

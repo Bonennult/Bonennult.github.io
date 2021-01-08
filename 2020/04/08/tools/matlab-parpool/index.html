@@ -308,10 +308,10 @@
 </table>
 </div>
 <p>很显然我的第一步就 fail 了，我按照网上的说法运行下面这句话也没用</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">distcomp.feature( <span class="string">'LocalUseMpiexec'</span>, <span class="built_in">false</span> )</span><br></pre></td></tr></table></figure>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">distcomp.feature( <span class="string">&#x27;LocalUseMpiexec&#x27;</span>, <span class="built_in">false</span> )</span><br></pre></td></tr></table></figure>
 <p>最后幸运的是在官网论坛找到了一篇可以解决我的问题的回答，下面给出解决方法。</p>
 <h2 id="2-解决方法"><a href="#2-解决方法" class="headerlink" title="2. 解决方法"></a>2. 解决方法</h2><blockquote>
-<p>参考链接：<a href="https://www.mathworks.com/matlabcentral/answers/92124-why-am-i-unable-to-use-parpool-with-the-local-scheduler-or-validate-my-local-configuration-of-parall" target="_blank" rel="noopener">https://www.mathworks.com/matlabcentral/answers/92124-why-am-i-unable-to-use-parpool-with-the-local-scheduler-or-validate-my-local-configuration-of-parall</a></p>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://www.mathworks.com/matlabcentral/answers/92124-why-am-i-unable-to-use-parpool-with-the-local-scheduler-or-validate-my-local-configuration-of-parall">https://www.mathworks.com/matlabcentral/answers/92124-why-am-i-unable-to-use-parpool-with-the-local-scheduler-or-validate-my-local-configuration-of-parall</a></p>
 <p>我用<strong>第 5 步(Clear the local scheduler data folder)</strong>解决了我的问题，不过下面还是贴出来完整的 debug 过程</p>
 </blockquote>
 <h3 id="2-1-检查-license"><a href="#2-1-检查-license" class="headerlink" title="2.1 检查 license"></a>2.1 检查 license</h3><p>运行命令检查 <code>Parallel Computing Toolbox</code> 的 license 正确</p>
@@ -319,7 +319,7 @@
 <p>如果得到的回答是 <code>ans=1</code>，则说明 license 没问题。否则需要添加 license。</p>
 <h3 id="2-2-确保你的-MATLAB-版本与-PCT-版本匹配"><a href="#2-2-确保你的-MATLAB-版本与-PCT-版本匹配" class="headerlink" title="2.2 确保你的 MATLAB 版本与 PCT 版本匹配"></a>2.2 确保你的 MATLAB 版本与 PCT 版本匹配</h3><p>运行命令 <code>ver</code> 查看，如果不匹配则无法使用。这种情况 …… 建议重装。</p>
 <h3 id="2-3-Disable-local-mpiexec"><a href="#2-3-Disable-local-mpiexec" class="headerlink" title="2.3 Disable local mpiexec"></a>2.3 Disable local mpiexec</h3><p>运行下面的命令</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">distcomp.feature( <span class="string">'LocalUseMpiexec'</span>, <span class="built_in">false</span> )</span><br></pre></td></tr></table></figure>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">distcomp.feature( <span class="string">&#x27;LocalUseMpiexec&#x27;</span>, <span class="built_in">false</span> )</span><br></pre></td></tr></table></figure>
 <p>这也是网上绝大部分教程的方法，不过对我就不适用，如果对你也不适用的话，往下继续看。</p>
 <h3 id="2-4-Check-your-local-scheduler-configuration"><a href="#2-4-Check-your-local-scheduler-configuration" class="headerlink" title="2.4 Check your local scheduler configuration"></a>2.4 Check your local scheduler configuration</h3><p>这一部分我贴出原文吧，大概是说如果你修改了默认配置，则可以重置他们。</p>
 <blockquote>
@@ -360,7 +360,7 @@
 <li>Highlight your local scheduler configuration and click the “Validate” button (“Start Validation” for R201b or earlier)</li>
 <li>Once the validation completes, click the “details” link to see the results</li>
 </ol>
-<p>You can then forward your output of validation, the results of the tests below, and your license number to support here: <a href="http://www.mathworks.com/support/contact_us/index.html" target="_blank" rel="noopener">http://www.mathworks.com/support/contact_us/index.html</a></p>
+<p>You can then forward your output of validation, the results of the tests below, and your license number to support here: <a target="_blank" rel="noopener" href="http://www.mathworks.com/support/contact_us/index.html">http://www.mathworks.com/support/contact_us/index.html</a></p>
 
     </div>
 
