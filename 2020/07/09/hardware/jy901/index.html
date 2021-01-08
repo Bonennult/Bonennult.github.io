@@ -1,263 +1,233 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-default-color-scheme=&#34;auto&#34;>
+
+
+
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Glooow">
+  <meta name="keywords" content="">
+  <title>JY901串口数据接收与处理(Python) - 你是下雨天</title>
 
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。 这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JY901串口数据接收与处理(Python)">
-<meta property="og:url" content="http://example.com/2020/07/09/hardware/jy901/index.html">
-<meta property="og:site_name" content="你是下雨天">
-<meta property="og:description" content="最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。 这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-07-08T23:40:23.000Z">
-<meta property="article:modified_time" content="2020-07-09T00:17:11.062Z">
-<meta property="article:author" content="Glooow">
-<meta property="article:tag" content="IMU">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://example.com/2020/07/09/hardware/jy901/">
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  <title>JY901串口数据接收与处理(Python) | 你是下雨天</title>
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
   
 
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+<link  rel="stylesheet" href="/css/main.css" />
 
-</head>
+<!-- 自定义样式保持在最底部 -->
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Glooow</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">你是下雨天</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
 </nav>
 
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/09/hardware/jy901/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Glooow">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="你是下雨天">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          JY901串口数据接收与处理(Python)
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="JY901串口数据接收与处理(Python)">
               
+            </span>
 
-              <time title="Created: 2020-07-09 07:40:23 / Modified: 08:17:11" itemprop="dateCreated datePublished" datetime="2020-07-09T07:40:23+08:00">2020-07-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hardware/" itemprop="url" rel="index"><span itemprop="name">Hardware</span></a>
-                </span>
-            </span>
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-07-09 07:40" pubdate>
+        July 9, 2020 am
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
 
           
-            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">Views: </span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2020/07/09/hardware/jy901/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/09/hardware/jy901/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
         </div>
-      </header>
+      </div>
+    </div>
+  </header>
 
+  <main>
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
       
-        <p>最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。</p>
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">JY901串口数据接收与处理(Python)</h1>
+            
+            <div class="markdown-body">
+              <p>最近在用JY901做一些实验，关于JY901网上有很多资料了，也有上位机软件，可以方便的查看输出数据。我想做的是对输出的角速度进行积分，对比积分后的结果与输出的角度，如果数据都比较准确地话，那么他们应该相差不大。</p>
 <p>这篇文章里，要完成的事情就是通过串口接收他输出的角速度和角度，然后对角速度进行积分，并实时显示数据结果。下面我首先对各个部分进行分块解释，完整的代码放在最后。</p>
 <a id="more"></a>
 <h2 id="1-串口通信"><a href="#1-串口通信" class="headerlink" title="1. 串口通信"></a>1. 串口通信</h2><p>python实现串口通信可以用 <code>pySerial</code> 库。我们首先选择串口对应的设备端口：</p>
@@ -273,279 +243,282 @@
 <h2 id="4-运行效果"><a href="#4-运行效果" class="headerlink" title="4. 运行效果"></a>4. 运行效果</h2><h2 id="5-完整代码"><a href="#5-完整代码" class="headerlink" title="5. 完整代码"></a>5. 完整代码</h2><p>为了便于共享数据，定义了一个类 <code>JY901</code>，将上面的各个函数放在这个类里面，输出的数据也都记录在 <code>JY901</code> 的成员变量里。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"><span class="keyword">import</span> serial.tools.list_ports</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JY901</span>():</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.time_last = <span class="number">0</span></span><br><span class="line">        self.time_now = <span class="number">0</span></span><br><span class="line">        self.record_angle = []</span><br><span class="line">        self.record_omega = []</span><br><span class="line">        self.record_inte = []</span><br><span class="line">        self.count_yaw = <span class="number">0</span></span><br><span class="line">        self.count_omega = <span class="number">0</span></span><br><span class="line">        self.omega_inte = <span class="number">0</span>         <span class="comment">#角速度积分</span></span><br><span class="line">        self.yaw_init = <span class="number">0</span></span><br><span class="line">        self.yaw = <span class="number">0</span></span><br><span class="line">        self.omega = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">extract_raw_data</span>(<span class="params">self, data</span>):</span></span><br><span class="line">        <span class="comment"># 根据报文格式读取角速度数据</span></span><br><span class="line">        <span class="comment"># 0x55 0x52 + data + CRC(8bits)</span></span><br><span class="line">        length = <span class="number">9</span></span><br><span class="line">        ext_omega = <span class="literal">None</span></span><br><span class="line">        ext_angle = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            st = data.index(<span class="string">b&#x27;\x55&#x27;</span>)                <span class="comment"># 寻找报文引导字</span></span><br><span class="line">            <span class="keyword">if</span> st &gt;= <span class="number">0</span>:</span><br><span class="line">                reserved = data[st+<span class="number">1</span>]               <span class="comment"># 数据类型</span></span><br><span class="line">                <span class="keyword">if</span> reserved == <span class="number">82</span>:                  <span class="comment"># 0x52，提取角速度消息</span></span><br><span class="line">                    <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; <span class="built_in">len</span>(data):</span><br><span class="line">                        <span class="keyword">if</span> self.count_omega==<span class="number">0</span>:</span><br><span class="line">                            self.time_now = self.time_last = time.time()</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            self.time_last = self.time_now</span><br><span class="line">                            self.time_now = time.time()</span><br><span class="line"></span><br><span class="line">                        ext_omega = data[st:st+length+<span class="number">2</span>]</span><br><span class="line">                        temp = <span class="built_in">int</span>.from_bytes(ext_omega[<span class="number">6</span>:<span class="number">8</span>], byteorder=<span class="string">&#x27;little&#x27;</span>, signed=<span class="literal">True</span>)</span><br><span class="line">                        self.omega = temp/<span class="number">32768</span>*<span class="number">2000</span></span><br><span class="line">                        self.record_omega.append(self.omega)   <span class="comment">#deg/s</span></span><br><span class="line">                        data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                        self.count_omega += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                        self.omega_inte += self.omega*(self.time_now - self.time_last)</span><br><span class="line">                        self.omega_inte = (self.omega_inte+<span class="number">180</span>)%<span class="number">360</span> - <span class="number">180</span></span><br><span class="line">                        self.record_inte.append(self.omega_inte)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">elif</span> reserved == <span class="number">83</span>:                <span class="comment"># 0x53，提取角度消息</span></span><br><span class="line">                    <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; <span class="built_in">len</span>(data):</span><br><span class="line">                        ext_angle = data[st:st+length+<span class="number">2</span>]</span><br><span class="line">                        temp = <span class="built_in">int</span>.from_bytes(ext_angle[<span class="number">6</span>:<span class="number">8</span>], byteorder=<span class="string">&#x27;little&#x27;</span>, signed=<span class="literal">True</span>)</span><br><span class="line">                        self.yaw = temp/<span class="number">32768</span>*<span class="number">180</span></span><br><span class="line">                        <span class="keyword">if</span> self.count_yaw==<span class="number">0</span>:                   <span class="comment">#记录初始相位</span></span><br><span class="line">                            self.yaw_init = self.yaw</span><br><span class="line">                        self.record_angle.append(self.yaw - self.yaw_init)      <span class="comment">#deg</span></span><br><span class="line">                        data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                        self.count_yaw += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">elif</span> reserved == <span class="number">81</span>:                <span class="comment"># 0x51, 丢弃加速度消息</span></span><br><span class="line">                    <span class="keyword">if</span> st+length+<span class="number">1</span> &lt; <span class="built_in">len</span>(data):</span><br><span class="line">                        ext_data = <span class="literal">None</span></span><br><span class="line">                        data = data[st+length+<span class="number">2</span>:]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    data = data[st+<span class="number">2</span>:]</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">return</span> data, ext_omega, ext_angle</span><br><span class="line">        <span class="keyword">if</span> self.count_yaw%<span class="number">100</span> == <span class="number">0</span> <span class="keyword">and</span> self.count_yaw&gt;<span class="number">0</span>:</span><br><span class="line">            self.save_data()</span><br><span class="line">            print(<span class="built_in">len</span>(self.record_omega),<span class="string">&#x27; extract omega  &#x27;</span>,ext_omega,self.omega_inte)</span><br><span class="line">            print(<span class="built_in">len</span>(self.record_angle),<span class="string">&#x27; extract angle  &#x27;</span>,ext_angle,self.yaw - self.yaw_init)</span><br><span class="line">            print(<span class="string">&#x27;*&#x27;</span>*<span class="number">30</span>)</span><br><span class="line">        <span class="keyword">return</span> data, ext_omega, ext_angle</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">serial_readers</span>(<span class="params">self, port = <span class="literal">None</span>, size = <span class="number">22</span></span>):</span></span><br><span class="line">        <span class="comment"># port   : 串口端口</span></span><br><span class="line">        <span class="comment"># size   : 默认一次读取数据长度(bytes)</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> port:</span><br><span class="line">            port = get_serial_port()</span><br><span class="line">        total = <span class="built_in">bytearray</span>()</span><br><span class="line">        ser = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> ser:</span><br><span class="line">                    ser = serial.Serial(port, <span class="number">115200</span>, timeout=<span class="number">60</span>)</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> ser.is_open:</span><br><span class="line">                    ser.<span class="built_in">open</span>()</span><br><span class="line">                tmp = ser.read(size)</span><br><span class="line">                total.extend(tmp)</span><br><span class="line">                total, ext_omega, ext_angle = self.extract_raw_data(total)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                print(<span class="string">&quot;exception &quot;</span>, e)</span><br><span class="line">                <span class="keyword">if</span> ser:</span><br><span class="line">                    ser.close()</span><br><span class="line">                time.sleep(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> self.record_omega, self.record_angle</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">save_data</span>(<span class="params">self</span>):</span></span><br><span class="line">        np.savez(<span class="string">&#x27;record.npz&#x27;</span>,record_omega=self.record_omega, record_angle=self.record_angle)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">plot</span>(<span class="params">self</span>):</span></span><br><span class="line">        plt.ion()</span><br><span class="line">        plt.figure()</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">len</span>(self.record_angle)&gt;<span class="number">0</span> <span class="keyword">and</span> <span class="built_in">len</span>(self.record_inte)&gt;<span class="number">0</span> :</span><br><span class="line">                    plt.clf()</span><br><span class="line">                    plt.plot(<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="built_in">len</span>(self.record_angle))),self.record_angle,<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">                    plt.plot(<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="built_in">len</span>(self.record_inte))),self.record_inte,<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">                    plt.xlim(<span class="built_in">max</span>(<span class="number">0</span>,self.count_yaw-<span class="number">3000</span>),self.count_yaw+<span class="number">200</span>)</span><br><span class="line">                    plt.legend(labels=[<span class="string">&#x27;angle&#x27;</span>,<span class="string">&#x27;integration&#x27;</span>])</span><br><span class="line">                    plt.pause(<span class="number">0.1</span>)</span><br><span class="line">                    plt.ioff()</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                print(<span class="string">&quot;exception &quot;</span>, e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_serial_port</span>():</span></span><br><span class="line">    ports = <span class="built_in">list</span>(serial.tools.list_ports.comports())</span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> ports:</span><br><span class="line">        print(ports.index(port), port)</span><br><span class="line">    selected = -<span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> selected &lt; <span class="number">0</span> <span class="keyword">or</span> selected &gt;= <span class="built_in">len</span>(ports):</span><br><span class="line">        print(<span class="string">&quot;please input serial to use [start from 0]:&quot;</span>)</span><br><span class="line">        selected = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">        print(<span class="string">&quot;selected: &quot;</span>, selected)</span><br><span class="line"></span><br><span class="line">    port = ports[selected]</span><br><span class="line">    print(<span class="string">&quot;use &quot;</span>, port)</span><br><span class="line">    port = <span class="built_in">list</span>(port)</span><br><span class="line">    <span class="keyword">return</span> port[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    imu = JY901()</span><br><span class="line">    thread_rcv = threading.Thread(target=imu.serial_readers)</span><br><span class="line">    thread_plt = threading.Thread(target=imu.plot)</span><br><span class="line">    thread_plt.start()</span><br><span class="line">    thread_rcv.start()</span><br></pre></td></tr></table></figure>
 
-    </div>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Hardware/">Hardware</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/IMU/">IMU</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/20/hardware/raspberrypi-autostart/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">树莓派设置开机自启动程序</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/12/music/WhyBabyWhy/">
+                        <span class="hidden-mobile">Why Baby Why</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/IMU/" rel="tag"># IMU</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2020/06/12/music/WhyBabyWhy/" rel="prev" title="Why Baby Why">
-      <i class="fa fa-chevron-left"></i> Why Baby Why
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/20/hardware/raspberrypi-autostart/" rel="next" title="树莓派设置开机自启动程序">
-      树莓派设置开机自启动程序 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-    <div class="comments" id="valine-comments"></div>
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
+            
+          </article>
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1"><span class="nav-text">1. 串口通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-IMU%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96"><span class="nav-text">2. IMU数据提取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BB%98%E5%9B%BE%E6%98%BE%E7%A4%BA"><span class="nav-text">3. 绘图显示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C"><span class="nav-text">4. 运行效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-text">5. 完整代码</span></a></li></ol></div>
       </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Glooow</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">75</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">130</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/glooow" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;glooow" rel="noopener" target="_blank"><i class=" fa-fw"></i>知乎</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
     </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Glooow</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
-  </div>
-
-        
-<div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
-      <span class="site-uv" title="Total Visitors">
-        <span id="busuanzi_value_site_uv"></span>
-      </span>
-    </span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
-      <span class="site-pv" title="Total Views">
-        <span id="busuanzi_value_site_pv"></span>
-      </span>
-    </span>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
 </div>
 
-
-
-
-
-
-
-
       </div>
-    </footer>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
   </div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/pisces.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
 
   
 
+  
+</footer>
 
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
 
 
   
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
+    <script  src="/js/lazyload.js" ></script>
+  
 
 
 
   
 
-  
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
 
   
 
+  
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        options: {
+          renderActions: {
+            findScript: [10, doc => {
+              document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = { node: text, delim: '', n: 0 };
+                math.end = { node: text, delim: '', n: 0 };
+                doc.math.push(math);
+              });
+            }, '', false],
+            insertedScript: [200, () => {
+              document.querySelectorAll('mjx-container').forEach(node => {
+                let target = node.parentNode;
+                if (target.nodeName.toLowerCase() === 'li') {
+                  target.parentNode.classList.add('has-jax');
+                }
+              });
+            }, '', false]
+          }
+        }
+      };
+    </script>
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
-      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
-      placeholder: "Comments here!",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : false,
-      lang       : '' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : false,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-svg.js" ></script>
+
+  
 
 
-  <!--<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>-->
-  <!--�������������Ч-->
-  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
-  <!--ѩ����Ч-->
-  <!--<script type="text/javascript" src="/js/snow1.js"></script>-->
-  <!--<script type="text/javascript" src="/js/snow2.js"></script>-->
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
 
 </body>
 </html>

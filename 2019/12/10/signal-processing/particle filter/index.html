@@ -1,276 +1,233 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-default-color-scheme=&#34;auto&#34;>
+
+
+
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Glooow">
+  <meta name="keywords" content="">
+  <title>Particle Filter - 你是下雨天</title>
 
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Particle Filter">
-<meta property="og:url" content="http://example.com/2019/12/10/signal-processing/particle%20filter/index.html">
-<meta property="og:site_name" content="你是下雨天">
-<meta property="og:description" content="今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_hmm.PNG">
-<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_particle.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_resample.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sir.PNG">
-<meta property="og:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sis.PNG">
-<meta property="article:published_time" content="2019-12-10T11:37:01.000Z">
-<meta property="article:modified_time" content="2020-12-27T03:41:00.415Z">
-<meta property="article:author" content="Glooow">
-<meta property="article:tag" content="滤波算法">
-<meta property="article:tag" content="粒子滤波">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_hmm.PNG">
-
-<link rel="canonical" href="http://example.com/2019/12/10/signal-processing/particle%20filter/">
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  <title>Particle Filter | 你是下雨天</title>
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
   
 
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+<link  rel="stylesheet" href="/css/main.css" />
 
-</head>
+<!-- 自定义样式保持在最底部 -->
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Glooow</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">你是下雨天</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
 </nav>
 
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Particle Filter">
+              
+            </span>
 
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
             
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-12-10 19:37" pubdate>
+        December 10, 2019 pm
+      </time>
+    </span>
+  
+</div>
 
+<div class="mt-1">
+  
     
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      51
+       分钟
+    </span>
+  
+
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/12/10/signal-processing/particle%20filter/">
+</div>
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Glooow">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="你是下雨天">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Particle Filter
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2019-12-10 19:37:01" itemprop="dateCreated datePublished" datetime="2019-12-10T19:37:01+08:00">2019-12-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-12-27 11:41:00" itemprop="dateModified" datetime="2020-12-27T11:41:00+08:00">2020-12-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Signal-Processing/" itemprop="url" rel="index"><span itemprop="name">Signal Processing</span></a>
-                </span>
-            </span>
+            
+          </div>
 
           
-            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">Views: </span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2019/12/10/signal-processing/particle%20filter/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2019/12/10/signal-processing/particle%20filter/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
         </div>
-      </header>
+      </div>
+    </div>
+  </header>
 
+  <main>
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
       
-        <p>今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。</p>
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Particle Filter</h1>
+            
+            <div class="markdown-body">
+              <p>今天我们来讲一下粒子滤波算法，这也是我在学习过程中的一个笔记，由于有很多的个人理解，有不对的地方欢迎大家批评指正。</p>
 <a id="more"></a>
 <p>[TOC]</p>
 <h2 id="1-贝叶斯滤波"><a href="#1-贝叶斯滤波" class="headerlink" title="1. 贝叶斯滤波"></a>1. 贝叶斯滤波</h2><p>贝叶斯滤波是我们理解粒子滤波的基础。假设我们有如下图的隐马尔科夫模型(Hidden Markov Model)，并且有如下的系统方程与观测方程，我们只有观测值 $\boldsymbol{y}_{1:T}$，但是现在想要根据观测值估计隐变量 $\boldsymbol{x}_{1:T}$，也就是<strong>滤波</strong>所要做的事情。</p>
@@ -278,7 +235,7 @@
 \begin{align}
 \text{System Model}&: x_{k}=f_{k}\left(x_{k-1}, v_{k-1}\right) \\
 \text{Observation Model}&: \mathrm{y}_{k}=h_{k}\left(\mathrm{x}_{k}, \mathrm{n}_{k}\right)
-\end{align}</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_hmm.PNG" alt="hmm"></p>
+\end{align}</script><p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_hmm.PNG" srcset="/img/loading.gif" alt="hmm"></p>
 <p>假设我们现在已经处于 $t_{k-1}$，且已经获得了 $p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$，这个概率分布的含义是什么呢？我们现在已经有了前 $k-1$ 个时刻的观测值 $\boldsymbol{y}_{1:k-1}$，并且根据这些观测值估计了 $k-1$ 时刻隐变量 $x_{k-1}$ 的<strong>后验概率</strong>分布，也即 $p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$。那么接下来到 $k$ 时刻，我们又获得了一个观测 $y_k$，要怎么估计新的后验概率分布 $p({x}_{k}|\boldsymbol{y}_{1:k})$ 呢？我们通过<strong>预测</strong>和<strong>更新</strong>两个阶段来估计，下面我就解释一下这两个阶段的含义。</p>
 <h3 id="1-1-预测"><a href="#1-1-预测" class="headerlink" title="1.1 预测"></a>1.1 预测</h3><p>前面说了我们有系统模型和观测模型，首先根据系统模型，我们有了 $k-1$ 时刻的后验，就可以根据 $x_{k-1}$ 到 $x_k$ 的转移模型得到 $x_k$ 对应的概率分布，这个过程就叫做<strong>预测(Update)</strong>。通过预测阶段，我们可以获得<strong>先验概率</strong>分布(注意这里我们将 $p({x}_k|\boldsymbol{y}_{1:k-1})$ 称为先验概率分布)</p>
 <script type="math/tex; mode=display">
@@ -310,7 +267,7 @@ p\left(x_{k} | \boldsymbol{y}_{1: k}\right)&=\frac{p\left(y_{k} | x_{k},\boldsym
 \text{Observation Model}&: \mathrm{y}_{k}=C\mathrm{x}_{k}+ \mathrm{n}_{k}
 \end{align}</script><p>但实际中要求线性系统模型往往是很困难的，对于非线性模型，如果我们还想应用卡尔曼滤波该怎么办呢？线性近似，也就是求一个雅可比矩阵(Jacobi)，这就是扩展卡尔曼滤波(EKF)。</p>
 <h2 id="3-大数定律"><a href="#3-大数定律" class="headerlink" title="3. 大数定律"></a>3. 大数定律</h2><p>粒子滤波是什么是意思呢？我们可以用大量的采样值来描述一个概率分布，当我们按照一个概率分布进行采样的时候，某个点的概率密度越高，这个点被采到的概率越大，当采样数目足够大(趋于无穷)的时候，粒子出现的频率就可以用来表示对应的分布，实际中我们可以理解一个粒子就是一个采样。</p>
-<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_particle.png" alt="particle"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_particle.png" srcset="/img/loading.gif" alt="particle"></p>
 <p>但是对于<strong>离散型</strong>的随机变量还好，可以很容易的求出来状态空间中每个状态的频率。但如果对于<strong>连续分布</strong>，其实是很不方便的，所幸实际中我们也不需要获得概率分布的全部信息，一般只需要求出<strong>期望</strong>就可以了。</p>
 <p>下面为了公式书写和推导方便，以离散型随机变量为例，假设状态空间为 $\mathcal{Z}=\{1,2,…,K\}$，有 $N$ 个采样样本 $z_i \in \mathcal{Z}$，服从概率分布 $q(\mathbf{z})$。我们将根据 $N$ 个采样样本 $\boldsymbol{z}_{1:N}$ 得到的分布记为<strong>经验分布</strong> $\hat{p}(b|\boldsymbol{z}_{1:N}) = \frac{1}{N}\sum_i \mathbb{I}(b-z_i)$，其中 $\mathbb{I}(\cdot)$ 为指示函数，那么当 $N$ 足够大的时候，经验分布 $\hat{p}(b|\boldsymbol{z}_{1:N})$ 就足够接近真实分布 $q(\mathbf{z})$。现在我们想估计随机变量 $\mathsf{t}=g(\mathsf{z})$ 的期望，即</p>
 <script type="math/tex; mode=display">
@@ -344,9 +301,9 @@ p\left(x_{k}^i | \boldsymbol{y}_{1: k}\right)\propto p\left(y_{k} | x_{k}^i\righ
 <p>这样我们就可以得到一个完整的粒子滤波算法了！但是还有问题！</p>
 <h3 id="重采样"><a href="#重采样" class="headerlink" title="重采样"></a>重采样</h3><p>但是呢，有人发现了上面的算法不好啊！不是因为麻烦，而是滤波到最后会发现只有少数一部分粒子有很大的权重，而其他绝大部分粒子的权重几乎为 0，这就意味着对于那些“不重要”的粒子，他们在我们求期望的时候贡献并不大，但是我们却花费了大量的计算精力来维护这些粒子，这样不好不好！于是就有人提出了<strong>重采样</strong>。</p>
 <p>重采样什么意思呢？你们粒子的权重不是不同吗，那我就采取手段给你们整相同了！简单理解，有两个粒子，粒子 $a$ 的权重是 8，粒子 $b$ 权重是 2，那我就把粒子 $a$ 复制 8 份，粒子 $b$ 复制 2 份，这样得到的 10 个粒子权重就都是 1 了。但是另一个问题是一开始我们只有 2 个粒子，这样弄完我们就有 10 个粒子了，如果一直这么做我们的粒子数会越来越多，算力跟不上。那就从这 10 个粒子里均匀分布地随机抽 2 个！那么粒子 $a$ 的概率就是 $0.8$，这就成了。</p>
-<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_resample.png" alt="resample"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_resample.png" srcset="/img/loading.gif" alt="resample"></p>
 <p>至此，加上重采样我们就获得了一个完整的比较好用的粒子滤波算法</p>
-<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sir.PNG" alt="sir"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sir.PNG" srcset="/img/loading.gif" alt="sir"></p>
 <h2 id="5-粒子滤波原理推导"><a href="#5-粒子滤波原理推导" class="headerlink" title="5. 粒子滤波原理推导"></a>5. 粒子滤波原理推导</h2><p>但是还有一个问题，就是前面我们直接说有 $N$ 个粒子 $x_{k-1}^i \sim p({x}_{k-1}|\boldsymbol{y}_{1:k-1})$，但是第 1 步(刚开始)的时候我们怎么获得这些粒子来描述 $p(x_1|y_1)$ 啊？如果是高斯分布还好，我们可以很方便的对高斯分布进行采样，但是如果是一个特别特别特别复杂的分布呢？我们甚至不能写出解析表达式，更没办法按照这个分布进行随机采样，那我们是不是就凉了？不！我们前面不是讲了粒子可以有权重嘛。</p>
 <p>假如我们现在有另一个分布 $q(\mathbf{x}_{1:k}|\mathbf{y}_{1:k})$，这个分布是我们自己指定的，可以很简单，而且我们可以按照这个分布来进行采样，那么我们就有 $x_{k-1}^i \sim q(\mathbf{x}_{1:k}|\mathbf{y}_{1:k})$，那么我们怎么用这些粒子来表示我们想要得到的真正的分布 $p(\mathbf{x}_{0:k}|\mathbf{y}_{1:k})$ 呢？再加个权就行了，就像前面用似然函数进行加权。</p>
 <script type="math/tex; mode=display">
@@ -359,340 +316,291 @@ w_{k}^{i} &\propto \frac{p\left(\mathbf{x}_{0: k}^{i} | \mathbf{y}_{1: k}\right)
             &= q\left(\mathbf{x}_{k} | \mathbf{x}_{k-1}, \mathbf{y}_{ k}\right) q\left(\mathbf{x}_{0: k-1} | \mathbf{y}_{1: k-1}\right) \notag \\
             w_{k}^{i} &\propto w_{k-1}^{i} \frac{p\left(\mathbf{y}_{k} | \mathbf{x}_{k}^{i}\right) p\left(\mathbf{x}_{k}^{i} | \mathbf{x}_{k-1}^{i}\right)}{q\left(\mathbf{x}_{k}^{i} | \mathbf{x}_{k-1}^{i}, \mathbf{y}_{k}\right)} \label{eq_sis}
             \end{align}</script><p>然后我们就得到了一个更加 universal/generic 的粒子滤波算法(下面图片所示算法中没加重采样步骤)。</p>
-<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sis.PNG" alt="sis"></p>
+<p><img src="https://raw.githubusercontent.com/Glooow1024/ImgHosting/master/hexo/2019/pf_sis.PNG" srcset="/img/loading.gif" alt="sis"></p>
 <h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><p>这篇文章主要是自己学习粒子滤波之后的一些理解，主要参考了文章 <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/978374">A Tutorial on Particle Filters for Online Nonlinear/Non-Gaussian Bayesian Tracking</a>，但是这篇文章中是从 general 的情况开始讲，然后举了一些常用的特例，个人感觉不利于初学者理解，因此本文写作过程中的思路是从简单的特例开始再到更一般的情况。</p>
 <p>最后一部分 <a href="## 粒子滤波原理推导">粒子滤波原理推导</a> 其实写的并没有很清楚，主要是因为自己太懒，到最后懒得一个个手敲公式了，如果想更清楚地了解其中的细节，可以阅读上面那篇论文。</p>
 <h2 id="7-Reference"><a href="#7-Reference" class="headerlink" title="7. Reference"></a>7. Reference</h2><ol>
 <li>M. S. Arulampalam, S. Maskell, N. Gordon and T. Clapp, “A tutorial on particle filters for online nonlinear/non-Gaussian Bayesian tracking,” in <em>IEEE Transactions on Signal Processing</em>, vol. 50, no. 2, pp. 174-188, Feb. 2002.</li>
 </ol>
 
-    </div>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Signal-Processing/">Signal Processing</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%BB%A4%E6%B3%A2%E7%AE%97%E6%B3%95/">滤波算法</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2/">粒子滤波</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/29/git/git-principle-1/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Git 工作原理(一)</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/09/hello-world/">
+                        <span class="hidden-mobile">Hello World</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%BB%A4%E6%B3%A2%E7%AE%97%E6%B3%95/" rel="tag"># 滤波算法</a>
-              <a href="/tags/%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2/" rel="tag"># 粒子滤波</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2019/11/09/hello-world/" rel="prev" title="Hello World">
-      <i class="fa fa-chevron-left"></i> Hello World
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/12/29/git/git-principle-1/" rel="next" title="Git 工作原理(一)">
-      Git 工作原理(一) <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-    <div class="comments" id="valine-comments"></div>
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
+            
+          </article>
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%BB%A4%E6%B3%A2"><span class="nav-text">1. 贝叶斯滤波</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%A2%84%E6%B5%8B"><span class="nav-text">1.1 预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%9B%B4%E6%96%B0"><span class="nav-text">1.2 更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2"><span class="nav-text">2. 卡尔曼滤波</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%A4%A7%E6%95%B0%E5%AE%9A%E5%BE%8B"><span class="nav-text">3. 大数定律</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B"><span class="nav-text">4. 粒子滤波简单实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E9%A2%84%E6%B5%8B"><span class="nav-text">4.1 预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%9B%B4%E6%96%B0"><span class="nav-text">4.2 更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E9%80%92%E6%8E%A8"><span class="nav-text">4.3 递推</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E9%87%87%E6%A0%B7"><span class="nav-text">重采样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2%E5%8E%9F%E7%90%86%E6%8E%A8%E5%AF%BC"><span class="nav-text">5. 粒子滤波原理推导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%80%BB%E7%BB%93"><span class="nav-text">6. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Reference"><span class="nav-text">7. Reference</span></a></li></ol></div>
       </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Glooow</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">75</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">130</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/glooow" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;glooow" rel="noopener" target="_blank"><i class=" fa-fw"></i>知乎</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
     </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Glooow</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
-  </div>
-
-        
-<div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
-      <span class="site-uv" title="Total Visitors">
-        <span id="busuanzi_value_site_uv"></span>
-      </span>
-    </span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
-      <span class="site-pv" title="Total Views">
-        <span id="busuanzi_value_site_pv"></span>
-      </span>
-    </span>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
 </div>
 
-
-
-
-
-
-
-
       </div>
-    </footer>
+    
   </div>
+</div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<!-- Custom -->
 
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/pisces.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
 
     
 
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
   
 
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
-      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
-      placeholder: "Comments here!",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : false,
-      lang       : '' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : false,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script>
+
+  
 
 
-  <!--<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>-->
-  <!--�������������Ч-->
-  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
-  <!--ѩ����Ч-->
-  <!--<script type="text/javascript" src="/js/snow1.js"></script>-->
-  <!--<script type="text/javascript" src="/js/snow2.js"></script>-->
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+  
+
+  
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        options: {
+          renderActions: {
+            findScript: [10, doc => {
+              document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = { node: text, delim: '', n: 0 };
+                math.end = { node: text, delim: '', n: 0 };
+                doc.math.push(math);
+              });
+            }, '', false],
+            insertedScript: [200, () => {
+              document.querySelectorAll('mjx-container').forEach(node => {
+                let target = node.parentNode;
+                if (target.nodeName.toLowerCase() === 'li') {
+                  target.parentNode.classList.add('has-jax');
+                }
+              });
+            }, '', false]
+          }
+        }
+      };
+    </script>
+
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-svg.js" ></script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
 
 </body>
 </html>

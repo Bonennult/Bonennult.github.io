@@ -1,403 +1,1121 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-default-color-scheme=&#34;auto&#34;>
+
+
+
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://example.com/categories/index.html">
-<meta property="og:site_name" content="你是下雨天">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2019-12-30T01:17:34.000Z">
-<meta property="article:modified_time" content="2019-12-30T01:27:20.725Z">
-<meta property="article:author" content="Glooow">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://example.com/categories/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : false,
-    lang   : 'en'
-  };
-</script>
-
-  <title>categories | 你是下雨天
-</title>
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Glooow">
+  <meta name="keywords" content="">
+  <title>Categories - 你是下雨天</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+<link  rel="stylesheet" href="/css/main.css" />
 
-</head>
+<!-- 自定义样式保持在最底部 -->
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <header style="height: 60vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Glooow</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">你是下雨天</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
 </nav>
 
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Category">
+              
+            </span>
 
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-  
-  
-
-          <div class="content page posts-expand">
             
-
-    
-    
-    
-    <div class="post-block" lang="en">
-      <header class="post-header">
-
-<h1 class="post-title" itemprop="name headline">categories
-</h1>
-
-<div class="post-meta">
-  
-
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
-          <div class="category-all-page">
-            <div class="category-all-title">
-              15 categories in total
-            </div>
-            <div class="category-all">
-              <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Convex-Optimization/">Convex Optimization</a><span class="category-list-count">28</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Cybernetics/">Cybernetics</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Functional-Analysis/">Functional Analysis</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Fuzzy-Mathematics/">Fuzzy Mathematics</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Git/">Git</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hardware/">Hardware</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo/">Hexo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linear-Algebra/">Linear Algebra</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Music/">Music</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Probability-Theory/">Probability Theory</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Signal-Processing/">Signal Processing</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Software/">Software</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Windows/">Windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%B5%E5%AD%90%E4%BA%A7%E5%93%81/">电子产品</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/">统计推断</a><span class="category-list-count">11</span></li></ul>
-            </div>
           </div>
-        
-      </div>
-      
-      
-      
-    </div>
-    
 
-    
-    
-    
-
-
-          </div>
           
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
       </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Glooow</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">75</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">130</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/glooow1024" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;glooow1024" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:glooow1024@gmail.com" title="E-Mail → mailto:glooow1024@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://glooow.gitee.io/" title="Gitee → https:&#x2F;&#x2F;glooow.gitee.io&#x2F;" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>Gitee</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/glooow" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;glooow" rel="noopener" target="_blank"><i class=" fa-fw"></i>知乎</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
     </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
 
 
-      </div>
-    </main>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
 
-        
 
-<div class="copyright">
+
+
+<div class="category-list">
   
-  &copy; 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Glooow</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  
+  
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0ih0036ygsk5nso3fln" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0ih0036ygsk5nso3fln"
+        aria-expanded="false"
+      >
+        Convex Optimization
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Convex-Optimization/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>28</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0ih0036ygsk5nso3fln" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0ih0036ygsk5nso3fln">
+    
+    
+    
+      
+      
+        <a href="/2020/05/27/optimization/ch26-fixed-point/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记26：不动点迭代</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/05/24/optimization/ch25-PDHG/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记25：原始对偶问题 PDHG</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/05/20/optimization/ch24-ADMM/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记24：ADMM</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/05/10/optimization/ch23-DR-splitting-admm/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记23：算子分裂法 &amp; ADMM</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/05/09/optimization/ch22-ppa/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记22：近似点算法</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/04/24/optimization/ch21-apg-fista/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记21：加速近似点梯度下降</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/04/23/optimization/ch20-dual-proximal-gradient/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记20：对偶近似点梯度下降</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/04/17/optimization/ch19-proximal-gradient/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记19：近似点梯度下降</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/04/16/optimization/ch18-proximal-mapping/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记18：近似点算子 Proximal Mapping</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/04/10/optimization/ch17-subgradient-descent/" class="list-group-item list-group-item-action">
+          <span class="category-post">凸优化笔记17：次梯度下降</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/Convex-Optimization/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
   </div>
 
         
-<div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
-      <span class="site-uv" title="Total Visitors">
-        <span id="busuanzi_value_site_uv"></span>
-      </span>
-    </span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
-      <span class="site-pv" title="Total Views">
-        <span id="busuanzi_value_site_pv"></span>
-      </span>
-    </span>
-</div>
-
-
-
-
-
-
-
-
       </div>
-    </footer>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0lj0068ygskgqb8ffc5" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0lj0068ygskgqb8ffc5"
+        aria-expanded="false"
+      >
+        统计推断
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>11</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0lj0068ygskgqb8ffc5" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0lj0068ygskgqb8ffc5">
+    
+    
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch11_Sumproduct/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(十一)  Sum-product algorithm</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch10_Elimination/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(十) Elimination algorithm</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch9_GraphModels/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(九) Graphical models</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch8_ModelSelection/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(八) Model Selection</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch7_TypicalSequence/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(七)  Typical Sequence</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch6_Modeling/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(六) Modeling</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch5_EMAlgorithm/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(五)  EM algorithm</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch4_InformationGeometry/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(四) Information Geometry</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch3_ExponentialFamily/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(三) Exponential Family</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/03/statistic/SI_Ch2_Estimation/" class="list-group-item list-group-item-action">
+          <span class="category-post">统计推断(二) Estimation Problem</span>
+        </a>
+      
+    
+      
+      
+        <a href="/categories/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="list-group-item list-group-item-action">
+          <span class="category-post">More...</span>
+        </a>
+        
   </div>
 
+        
+      </div>
+    </div>
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0do000dygsk080n2c37" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0do000dygsk080n2c37"
+        aria-expanded="false"
+      >
+        Functional Analysis
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Functional-Analysis/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>9</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0do000dygsk080n2c37" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0do000dygsk080n2c37">
+    
+    
+    
+      
+      
+        <a href="/2020/12/27/functional-analysis/ch4-5-open-closed/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记8：开映射定理与闭图像定理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/26/functional-analysis/ch4-4-convergence/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记7：弱收敛与弱星收敛</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/26/functional-analysis/ch4-3-banach-steinhauss/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记6：一致有界性原理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/26/functional-analysis/ch4-2-application/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记5：Hahn-Banach定理的应用</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/14/functional-analysis/ch4-1-hahn-banach/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记4：Hahn-Banach定理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/12/11/functional-analysis/ch3-hilbert-space/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记3：内积空间</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/11/10/functional-analysis/ch2-normed-space/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记2：赋范空间</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/10/18/functional-analysis/ch1-metric-space/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记1：度量空间</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/10/18/functional-analysis/ch0-intro/" class="list-group-item list-group-item-action">
+          <span class="category-post">泛函分析笔记0：绪论</span>
+        </a>
+      
+    
+  </div>
 
-<script src="/js/utils.js"></script>
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0f20012ygske4qp92w9" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0f20012ygske4qp92w9"
+        aria-expanded="false"
+      >
+        Fuzzy Mathematics
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Fuzzy-Mathematics/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>7</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0f20012ygske4qp92w9" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0f20012ygske4qp92w9">
+    
+    
+    
+      
+      
+        <a href="/2020/03/15/fuzzy/ch7-ahp/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 7：层次分析法</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/03/13/fuzzy/ch6-evaluate/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 6：模糊综合评判</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/03/07/fuzzy/ch5-clustering/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 5：模糊聚类</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/03/01/fuzzy/ch4-relation/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 4：模糊关系</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/03/01/fuzzy/ch3-extension/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 3：扩展原理</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/03/01/fuzzy/ch2-nearness/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 2：贴近度</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/26/fuzzy/ch1-set/" class="list-group-item list-group-item-action">
+          <span class="category-post">模糊数学笔记 1：模糊集 Fuzzy set</span>
+        </a>
+      
+    
+  </div>
 
-<script src="/js/motion.js"></script>
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0gl001xygsk0cfb900f" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0gl001xygsk0cfb900f"
+        aria-expanded="false"
+      >
+        Hardware
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Hardware/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>3</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0gl001xygsk0cfb900f" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0gl001xygsk0cfb900f">
+    
+    
+    
+      
+      
+        <a href="/2020/07/20/hardware/raspberrypi-autostart/" class="list-group-item list-group-item-action">
+          <span class="category-post">树莓派设置开机自启动程序</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/07/09/hardware/jy901/" class="list-group-item list-group-item-action">
+          <span class="category-post">JY901串口数据接收与处理(Python)</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/06/08/hardware/raspberrypi/" class="list-group-item list-group-item-action">
+          <span class="category-post">树莓派使用</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0hx002qygsk0mou581c" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0hx002qygsk0mou581c"
+        aria-expanded="false"
+      >
+        Music
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Music/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>3</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0hx002qygsk0mou581c" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0hx002qygsk0mou581c">
+    
+    
+    
+      
+      
+        <a href="/2021/01/08/music/BreakUp/" class="list-group-item list-group-item-action">
+          <span class="category-post">有些人走着走着就散了</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/06/12/music/WhyBabyWhy/" class="list-group-item list-group-item-action">
+          <span class="category-post">Why Baby Why</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/05/04/music/TroubleImIn/" class="list-group-item list-group-item-action">
+          <span class="category-post">Trouble I&#39;m In</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0m1007cygsk5w40dn1c" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0m1007cygsk5w40dn1c"
+        aria-expanded="false"
+      >
+        Software
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Software/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>3</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0m1007cygsk5w40dn1c" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0m1007cygsk5w40dn1c">
+    
+    
+    
+      
+      
+        <a href="/2020/08/11/software/vmware/" class="list-group-item list-group-item-action">
+          <span class="category-post">VMWare15 + Ubuntu18.04 踩坑记录</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/04/08/tools/matlab-parpool/" class="list-group-item list-group-item-action">
+          <span class="category-post">MATLAB R2016a 无法启动并行池</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2002/08/05/software/acrobat/" class="list-group-item list-group-item-action">
+          <span class="category-post">Adobe Acrobat Pro DC更新后提示登录激活问题</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0d20006ygskgo2tbji9" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0d20006ygskgo2tbji9"
+        aria-expanded="false"
+      >
+        Cybernetics
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Cybernetics/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>2</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0d20006ygskgo2tbji9" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0d20006ygskgo2tbji9">
+    
+    
+    
+      
+      
+        <a href="/2020/02/21/cybernetics/pid/" class="list-group-item list-group-item-action">
+          <span class="category-post">PID 控制器</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2020/02/20/cybernetics/lasalle/" class="list-group-item list-group-item-action">
+          <span class="category-post">LaSalle&#39;s invariance principle 拉萨尔不变性原理</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0h70027ygskbj7r4fzh" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0h70027ygskbj7r4fzh"
+        aria-expanded="false"
+      >
+        Git
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Git/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>2</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0h70027ygskbj7r4fzh" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0h70027ygskbj7r4fzh">
+    
+    
+    
+      
+      
+        <a href="/2019/12/29/git/git-principle-2/" class="list-group-item list-group-item-action">
+          <span class="category-post">Git 工作原理(二)</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2019/12/29/git/git-principle-1/" class="list-group-item list-group-item-action">
+          <span class="category-post">Git 工作原理(一)</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0pq00cdygsk83u96xci" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0pq00cdygsk83u96xci"
+        aria-expanded="false"
+      >
+        Linear Algebra
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Linear-Algebra/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0pq00cdygsk83u96xci" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0pq00cdygsk83u96xci">
+    
+    
+    
+      
+      
+        <a href="/2020/02/03/linear-algebra/matrix/" class="list-group-item list-group-item-action">
+          <span class="category-post">矩阵分析学习笔记</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0li0064ygsk2hh039b6" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0li0064ygsk2hh039b6"
+        aria-expanded="false"
+      >
+        Signal Processing
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Signal-Processing/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0li0064ygsk2hh039b6" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0li0064ygsk2hh039b6">
+    
+    
+    
+      
+      
+        <a href="/2019/12/10/signal-processing/particle%20filter/" class="list-group-item list-group-item-action">
+          <span class="category-post">Particle Filter</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0m2007jygsk85nhbv99" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0m2007jygsk85nhbv99"
+        aria-expanded="false"
+      >
+        电子产品
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/%E7%94%B5%E5%AD%90%E4%BA%A7%E5%93%81/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0m2007jygsk85nhbv99" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0m2007jygsk85nhbv99">
+    
+    
+    
+      
+      
+        <a href="/2020/02/09/tools/laptop/" class="list-group-item list-group-item-action">
+          <span class="category-post">笔记本选购指南</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0p200byygsk08uv9bv3" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0p200byygsk08uv9bv3"
+        aria-expanded="false"
+      >
+        Hexo
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Hexo/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0p200byygsk08uv9bv3" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0p200byygsk08uv9bv3">
+    
+    
+    
+      
+      
+        <a href="/2020/03/11/tools/next-beautify/" class="list-group-item list-group-item-action">
+          <span class="category-post">Hexo NexT 7.7 主题美化</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0pc00c4ygsk6hhc6pmu" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0pc00c4ygsk6hhc6pmu"
+        aria-expanded="false"
+      >
+        Windows
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Windows/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0pc00c4ygsk6hhc6pmu" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0pc00c4ygsk6hhc6pmu">
+    
+    
+    
+      
+      
+        <a href="/2020/01/08/tools/taskbar/" class="list-group-item list-group-item-action">
+          <span class="category-post">Windows任务栏右侧小图标显示不完整</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    <div class="category row">
+      <a
+        class="category-item collapsed list-group-item category-item-action col-10 col-md-11"
+        id="heading-ckjo9v0ld005zygskav6xghdn" role="tab" data-toggle="collapse" href="#collapse-ckjo9v0ld005zygskav6xghdn"
+        aria-expanded="false"
+      >
+        Probability Theory
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      <a href="/categories/Probability-Theory/" class="category-count col-2 col-md-1">
+        <i class="iconfont icon-articles"></i>
+        <span>1</span>
+      </a>
+      <div class="category-collapse">
+        
+          
+  <div id="collapse-ckjo9v0ld005zygskav6xghdn" class="collapse in" role="tabpanel"
+       aria-labelledby="heading-ckjo9v0ld005zygskav6xghdn">
+    
+    
+    
+      
+      
+        <a href="/2020/05/30/probability/law%20of%20large%20numbers/" class="list-group-item list-group-item-action">
+          <span class="category-post">强大数定律与弱大数定律</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
 
 
-<script src="/js/schemes/pisces.js"></script>
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
 
 
-<script src="/js/next-boot.js"></script>
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
 
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
 
 
 
@@ -406,8 +1124,44 @@
 
 
 
-  
-<script src="/js/local-search.js"></script>
+
+
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
 
 
 
@@ -421,48 +1175,12 @@
 
 
 
-  
-
-  
-
-  
 
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'iw199srhJNXO53sMUbMWkSxL-gzGzoHsz',
-      appKey     : 'ogmo6qYs8PSc7MBFk8A1PDUl',
-      placeholder: "Comments here!",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : false,
-      lang       : '' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : false,
-      serverURLs : ''
-    });
-  }, window.Valine);
-});
-</script>
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
 
 
-  <!--<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>-->
-  <!--�������������Ч-->
-  <!--<script type="text/javascript" src="/js/mouseline.js"></script>-->
-  <!--ѩ����Ч-->
-  <!--<script type="text/javascript" src="/js/snow1.js"></script>-->
-  <!--<script type="text/javascript" src="/js/snow2.js"></script>-->
 
 </body>
 </html>
