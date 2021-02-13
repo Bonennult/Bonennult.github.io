@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记21：加速近似点梯度下降</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：May 27, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>我们证明了梯度方法最快的收敛速度只能是 $O(1/k^2)$（没有强凸假设的话），但是前面的方法最多只能达到 $O(1/k)$ 的收敛速度，那么有没有方法能达到这一极限呢？有！这一节要讲的<strong>加速近似梯度方法(APG)</strong>就是。这个方法的构造非常的巧妙，证明过程中会发现每一项都恰到好处的抵消了！真不知道作者是怎么想出来这么巧妙地方法，各位可以看看证明过程自行体会。</p>

@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记12：KKT 条件</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：April 23, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>上一小节讲了拉格朗日函数，可以把原始问题转化为对偶问题，并且对偶问题是凸的。我们还得到了弱对偶性和强对偶性的概念，并且提到了 Slater Condition 保证凸问题的强对偶性成立，并且给出了一些几何的直观解释。那么在这一节，我们将引出著名的 <strong>KKT 条件</strong>，它给出了最优解需要满足的必要条件，是求解优化问题最优解的一个重要方式。</p>

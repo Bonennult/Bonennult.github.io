@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记26：不动点迭代</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：May 27, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>前面讲了很多具体的算法，比如梯度、次梯度、近似点梯度、加速近似点梯度、PPA、DR方法、ADMM、ALM等，对这些方法的迭代过程有了一些了解。这一节则主要是针对算法的<strong>收敛性</strong>进行分析，试图从一个更加抽象的层面，利用<strong>不动点迭代</strong>的思想，把上面的算法综合起来，给一个比较 general 的收敛性分析方法。</p>

@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记18：近似点算子 Proximal Mapping</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：May 9, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>前面讲了梯度下降法，分析了其收敛速度，对于存在不可导的函数介绍了次梯度的计算方法以及次梯度下降法，这一节要介绍的内容叫做<strong>近似点算子(Proximal mapping)</strong>，也是为了处理非光滑问题。</p>

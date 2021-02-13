@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记15：梯度方法 Gradient Method</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：May 9, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>前面的章节基本上讲完了凸优化相关的理论部分，在对偶原理以及 KKT 条件那里我们已经体会到了理论之美！接下来我们就要进入求解算法的部分，这也是需要浓墨重彩的一部分，毕竟我们学习凸优化就是为了解决实际当中的优化问题。我们今天首先要接触的就是大名鼎鼎的<strong>梯度方法</strong>。现在人工智能和人工神经网络很火，经常可以听到反向传播，这实际上就是梯度下降方法的应用，他的思想其实很简单，就是沿着函数梯度的反方向走就会使函数值不断减小。</p>

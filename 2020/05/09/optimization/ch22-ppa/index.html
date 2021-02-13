@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记22：近似点算法</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：May 27, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>在进入具体的优化算法后，我们首先讲了基于梯度的，比如梯度下降(GD)、次梯度下降(SD)；然后又讲了近似点算子，之后讲了基于近似点算子的方法，比如近似点梯度下降(PG)、对偶问题的近似点梯度下降(DPG)、加速近似点梯度下降(APG)。而这一节讲的，还是基于近似点的！他叫<strong>近似点方法(Proximal Point Algorithm, PPA)</strong>，除此之外还会介绍<strong>增广拉格朗日方法(Augmentted Larangian Method, ALM)</strong>。我们就开始吧！</p>

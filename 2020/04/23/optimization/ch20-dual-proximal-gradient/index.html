@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">凸优化笔记20：对偶近似点梯度下降</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：May 27, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>前面讲了梯度下降、次梯度下降、近似点梯度下降方法并分析了收敛性。一开始我们还讲了对偶原理，那么如果原问题比较难求解的时候，我们可不可以转化为对偶问题并应用梯度法求解呢？当然可以，不过有一个问题就是对偶函数的梯度或者次梯度怎么计算呢？这就是这一节要关注的问题。</p>

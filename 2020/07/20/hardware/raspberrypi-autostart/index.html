@@ -145,7 +145,7 @@
           
             <li class="nav-item">
               <a class="nav-link" href="/moments/">
-                <i class="iconfont icon-link-fill"></i>
+                <i class="iconfont icon-bookmark-fill"></i>
                 Moments
               </a>
             </li>
@@ -213,6 +213,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,6 +245,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">树莓派设置开机自启动程序</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：August 2, 2020 pm
+                
+              </p>
             
             <div class="markdown-body">
               <p>最近调试树莓派，希望<strong>开机运行两个程序</strong>，其中一个是<strong>可执行文件</strong>，另一个是 <strong>python 脚本</strong>，他们都是无限循环的程序，也就是说不关机不会停止运行。中间还是遇到了很多 bug，现在记录一下自启动程序的设置方法以及debug的整个过程。</p>
